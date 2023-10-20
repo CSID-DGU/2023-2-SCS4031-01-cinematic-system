@@ -2,6 +2,10 @@ plugins {
     id ('com.android.application')
     id 'org.jetbrains.kotlin.android'
     id ('com.google.gms.google-services')
+    /**
+     * Extension 대신 VeiwBinding 사용하기 위해 Kotlin-android-extionstion 주석 처리 후
+     * id 'kotlin-parcelize' plugin 추가
+     */
 //    id 'kotlin-android-extensions'
     id 'kotlin-parcelize'
 }

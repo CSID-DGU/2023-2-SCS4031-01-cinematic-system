@@ -40,7 +40,11 @@ import com.seoul42.relief_post_office.model.QuestionDTO
 import com.seoul42.relief_post_office.record.RecordActivity
 import com.seoul42.relief_post_office.tts.TextToSpeech
 import com.seoul42.relief_post_office.viewmodel.FirebaseViewModel
-import kotlinx.android.synthetic.main.activity_safety_question_setting.*
+/**
+ * app수준 gradle 파일 id 'kotlin-android-extensions' 주석 처리하면서
+ * kotlinx.android.synthetic 주석 처리
+ */
+//import kotlinx.android.synthetic.main.activity_safety_question_setting.*
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter

@@ -1,45 +1,26 @@
 {
   "project_info": {
-    "project_number": "949944019268",
-    "firebase_url": "https://relief-post-office-58784-default-rtdb.asia-southeast1.firebasedatabase.app",
-    "project_id": "relief-post-office-58784",
-    "storage_bucket": "relief-post-office-58784.appspot.com"
+    "project_number": "456238675902",
+    "project_id": "cinematic-system",
+    "storage_bucket": "cinematic-system.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:949944019268:android:5dec65de94f1e22fcacf11",
+        "mobilesdk_app_id": "1:456238675902:android:343c1b0fb5795d81c6abef",
         "android_client_info": {
           "package_name": "com.seoul42.relief_post_office"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "949944019268-c0gcgftoebd2b328tav223dgvvmchgv8.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.seoul42.relief_post_office",
-            "certificate_hash": "80ee87bee9ae5a6d191af894c394676bc04adfed"
-          }
-        },
-        {
-          "client_id": "949944019268-c6jesb82r7l3uss320fj421spg8j5ljb.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyB_-sd-sx8j8AVjfndHzu45AF4BBQUukFM"
+          "current_key": "AIzaSyDIqpOhHns348x89xS9SYvbGLHu2ruWd7c"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "949944019268-c6jesb82r7l3uss320fj421spg8j5ljb.apps.googleusercontent.com",
-              "client_type": 3
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }

@@ -16,3 +16,4 @@ dependencyResolutionManagement {
 }
 rootProject.name = "relief_post_office"
 include ':app'
+

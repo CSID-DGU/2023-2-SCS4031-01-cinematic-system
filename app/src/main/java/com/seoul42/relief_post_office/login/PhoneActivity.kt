@@ -167,6 +167,11 @@ class PhoneActivity : AppCompatActivity() {
             if (userSnapshot.getValue(UserDTO::class.java) != null) {
                 setInfo()
             }
+            /**
+             * 10/19 firebase Auth sms 인증으로 user 등록까지 되는 거 확인
+             * Problem
+             * - firebase에 user는 등록되는데 Join Page로 넘어가지 않는 현상 발생
+             */
             else {
                 val intent = Intent(this, JoinActivity::class.java)
 

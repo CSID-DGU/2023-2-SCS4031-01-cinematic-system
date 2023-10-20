@@ -98,6 +98,7 @@ class JoinActivity : AppCompatActivity() {
         getToken()
     }
 
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun setUserInfo() {
         setBirth()
         setAddress()
@@ -391,6 +392,7 @@ class JoinActivity : AppCompatActivity() {
     /**
      * 변경된 이미지의 uri 을 받아와 사진 업로드를 수행하는 메서드
      */
+    @RequiresApi(Build.VERSION_CODES.N)
     private fun setPhotoUpload(uri : Uri) {
         val bitmap = BitmapFactory.decodeStream(contentResolver.openInputStream(uri))
         val orientation = getOrientationOfImage(uri).toFloat()

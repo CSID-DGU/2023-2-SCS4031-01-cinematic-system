@@ -1,21 +1,40 @@
 {
   "project_info": {
-    "project_number": "456238675902",
-    "project_id": "cinematic-system",
-    "storage_bucket": "cinematic-system.appspot.com"
+    "project_number": "866950273213",
+    "project_id": "fir-phoneauth-97f7e",
+    "storage_bucket": "fir-phoneauth-97f7e.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:456238675902:android:343c1b0fb5795d81c6abef",
+        "mobilesdk_app_id": "1:866950273213:android:7b78ccfc85a369738cffd4",
         "android_client_info": {
-          "package_name": "com.seoul42.relief_post_office"
+          "package_name": "com.example.fiebasephoneauth"
         }
       },
       "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyDIqpOhHns348x89xS9SYvbGLHu2ruWd7c"
+          "current_key": "AIzaSyAv3nj7dj9ugsavaDrV4POupMFydjHhsF0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:866950273213:android:50d0b7c6e3d48a908cffd4",
+        "android_client_info": {
+          "package_name": "com.example.firebasephoneauth"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAv3nj7dj9ugsavaDrV4POupMFydjHhsF0"
         }
       ],
       "services": {

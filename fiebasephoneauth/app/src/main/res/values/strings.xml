@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Firebase Phone Auth</string>
     <string name="didn_t_get_otp_resend">Didn\'t get OTP? <b>Resend</b></string>
+
+    <string name="Splash_title">응급안전안심 앱</string>
+    <string name="Sign_up">회원가입</string>
 </resources>

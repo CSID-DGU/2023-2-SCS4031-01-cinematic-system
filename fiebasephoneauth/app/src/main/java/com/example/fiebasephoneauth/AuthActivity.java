@@ -13,7 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.example.fiebasephoneauth.databinding.ActivityMainBinding;
+import com.example.fiebasephoneauth.databinding.ActivityAuthBinding;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.FirebaseException;
@@ -25,8 +25,8 @@ import com.google.firebase.auth.PhoneAuthProvider;
 
 import java.util.concurrent.TimeUnit;
 
-public class MainActivity extends AppCompatActivity {
-    private ActivityMainBinding binding;
+public class AuthActivity extends AppCompatActivity {
+    private ActivityAuthBinding binding;
 
     //if code send failed
     private PhoneAuthProvider.ForceResendingToken forceResendingToken;
@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityAuthBinding.inflate(getLayoutInflater());
 
         setContentView(binding.getRoot());
 
@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onVerificationFailed(@NonNull FirebaseException e) {
                 pd.dismiss();
-                Toast.makeText(MainActivity.this,""+e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(AuthActivity.this,""+e.getMessage(), Toast.LENGTH_SHORT).show();
             }
 
             @Override
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 binding.phoneLl.setVisibility(View.GONE);
                 binding.codeLl.setVisibility(View.VISIBLE);
 
-                Toast.makeText(MainActivity.this, "Verification code sent...", Toast.LENGTH_SHORT).show();
+                Toast.makeText(AuthActivity.this, "Verification code sent...", Toast.LENGTH_SHORT).show();
 
                 binding.codeSentDescription.setText("Please type the verification code we sent \nto"+binding.phoneEt.getText().toString().trim());
 
@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String phone = binding.phoneEt.getText().toString().trim();
                 if(TextUtils.isEmpty(phone)){
-                    Toast.makeText(MainActivity.this,"Please enter phone number...",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AuthActivity.this,"Please enter phone number...",Toast.LENGTH_SHORT).show();
                 }
                 else{
                     startPhoneNumberVerification(phone);
@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String phone = binding.phoneEt.getText().toString().trim();
                 if(TextUtils.isEmpty(phone)){
-                    Toast.makeText(MainActivity.this,"Please enter phone number...",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AuthActivity.this,"Please enter phone number...",Toast.LENGTH_SHORT).show();
                 }
                 else{
                     resendVerificationCode(phone, forceResendingToken);
@@ -118,7 +118,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String code = binding.codeEt.getText().toString().trim();
                 if (TextUtils.isEmpty(code)){
-                    Toast.makeText(MainActivity.this,"Please enter verification code...",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(AuthActivity.this,"Please enter verification code...",Toast.LENGTH_SHORT).show();
                 }
                 else{
                     verifyPhoneNumberWithCode(mVerificationId, code);
@@ -175,9 +175,9 @@ public class MainActivity extends AppCompatActivity {
                         pd.dismiss();
 
                         String phone = firebaseAuth.getCurrentUser().getPhoneNumber();
-                        Toast.makeText(MainActivity.this,"Logged In as"+phone,Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AuthActivity.this,"Logged In as"+phone,Toast.LENGTH_SHORT).show();
 
-                        Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+                        Intent intent = new Intent(AuthActivity.this, ProfileActivity.class);
                         intent.putExtra("text",phone);
                         startActivity(intent);
 
@@ -188,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(@NonNull Exception e) {
                         pd.dismiss();
-                        Toast.makeText(MainActivity.this, ""+e.getMessage(),Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AuthActivity.this, ""+e.getMessage(),Toast.LENGTH_SHORT).show();
                     }
                 });
     }

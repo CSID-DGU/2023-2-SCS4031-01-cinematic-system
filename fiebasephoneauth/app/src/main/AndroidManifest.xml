@@ -14,7 +14,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Fiebasephoneauth"
         tools:targetApi="31">
-        
+        <activity
+            android:name=".login.SignUpActivity"
+            android:exported="false" />
+        <activity
+            android:name=".login.MainActivity"
+            android:exported="false"/>
         <activity
             android:name=".services.CheckLoginService"
             android:exported="true"

@@ -13,7 +13,7 @@
         >
 
         <TextView
-            android:id="@+id/userInfo"
+            android:id="@+id/userInfoText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -45,7 +45,7 @@
             android:textColorHint="@color/white_2"
             android:textSize="15dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userInfo" />
+            app:layout_constraintTop_toBottomOf="@+id/userInfoText" />
 
         <TextView
             android:id="@+id/nameText"
@@ -59,7 +59,7 @@
             android:textColor="@color/black_1"
             android:textSize="16dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/userInfo" />
+            app:layout_constraintTop_toBottomOf="@+id/userInfoText" />
 
         <EditText
             android:id="@+id/phoneNumForm"

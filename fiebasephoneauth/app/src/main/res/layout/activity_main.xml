@@ -11,7 +11,7 @@
     >
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="220dp"
@@ -27,7 +27,7 @@
     />
 
     <EditText
-        android:id="@+id/editText2"
+        android:id="@+id/idForm"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentLeft="true"
@@ -45,16 +45,16 @@
         android:textColorHint="@color/white_2"
         android:textSize="15dp"
         android:textColor="@color/black_1"
-        app:layout_constraintBottom_toTopOf="@+id/editText"
+        app:layout_constraintBottom_toTopOf="@+id/pwForm"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/textView5"
+        app:layout_constraintStart_toEndOf="@+id/idText"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
     />
 
     <EditText
-        android:id="@+id/editText"
+        android:id="@+id/pwForm"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_alignParentLeft="true"
@@ -74,13 +74,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
+        app:layout_constraintStart_toEndOf="@+id/pwText"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editText2"
+        app:layout_constraintTop_toBottomOf="@+id/idForm"
     />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/idText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="52dp"
@@ -90,12 +90,12 @@
         android:text="ID"
         android:textColor="@color/black_2"
         android:textSize="20dp"
-        app:layout_constraintBottom_toBottomOf="@+id/editText2"
-        app:layout_constraintEnd_toStartOf="@+id/editText2"
+        app:layout_constraintBottom_toBottomOf="@+id/idForm"
+        app:layout_constraintEnd_toStartOf="@+id/idForm"
         app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/pwText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="45dp"
@@ -105,12 +105,12 @@
         android:text="PW"
         android:textColor="@color/black_2"
         android:textSize="20dp"
-        app:layout_constraintEnd_toStartOf="@+id/editText"
+        app:layout_constraintEnd_toStartOf="@+id/pwForm"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/editText" />
+        app:layout_constraintTop_toTopOf="@+id/pwForm" />
 
     <Button
-        android:id="@+id/login_button"
+        android:id="@+id/loginButton"
         android:layout_width="260dp"
         android:layout_height="35dp"
         android:layout_marginTop="450dp"
@@ -130,7 +130,7 @@
         />
 
     <Button
-        android:id="@+id/signup_button"
+        android:id="@+id/signupButton"
         android:layout_width="260dp"
         android:layout_height="35dp"
         android:layout_marginStart="76dp"

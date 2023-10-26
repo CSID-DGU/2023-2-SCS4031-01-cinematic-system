@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
-    <color name="white">#FFFFFFFF</color>
+    <color name="black_0">#000000</color>
+    <color name="black_1">#171717</color>
+    <color name="black_2">#343434</color>
+    <color name="white_0">#FFFFFF</color>
+    <color name="white_1">#F0F0F0</color>
+    <color name="white_2">#ACACAC</color>
+    <color name="primary_key">#042940</color>
+    <color name="secondary_key">#3FA79D</color>
+    <color name="emer_red">#DF6969</color>
+    <color name="emer_blue">#3888FF</color>
+    <color name="alert_yellow">#EABB44</color>
+    <color name="alert_green">#39C861</color>
+    <color name="alert_orange">#EA6C44</color>
+    <color name="alert_red">#D64545</color>
 </resources>

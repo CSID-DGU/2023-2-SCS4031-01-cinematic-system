@@ -15,7 +15,10 @@
         android:theme="@style/Theme.Fiebasephoneauth"
         tools:targetApi="31">
         <activity
-            android:name=".CareReceiver.page.CareReceiverQuery"
+            android:name=".CareReceiver.page.CareReceiverIsOutdoorQuery"
+            android:exported="false" />
+        <activity
+            android:name=".CareReceiver.page.CareReceiverIsEmerQuery"
             android:exported="false" />
         <activity
             android:name=".CareReceiver.page.CareReceiverEventLog"

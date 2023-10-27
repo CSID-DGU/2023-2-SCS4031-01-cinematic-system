@@ -4,4 +4,29 @@
 
     <string name="Splash_title">응급안전안심 앱</string>
     <string name="Sign_up">회원가입</string>
+    <string name="Sign_in">로그인</string>
+    <string name="Sign_out">로그아웃</string>
+    <string name="reload">새로고침</string>
+    <string name="verify_phone_number">전화번호 인증</string>
+    <string name="verification_code">인증코드</string>
+    <string name="get_connected">연동하기</string>
+    <string name="request_phone_auth">인증번호 요청</string>
+    <string name="please_connected_from_guardian">보호자의 계정을 통해 연동해주세요</string>
+    <string name="please_connection_to_care_receiver">피보호자의 정보를 연동해주세요</string>
+    <string name="connect_care_receiver">정보 연동하기</string>
+    <string name="input_care_receiver_info" >회원정보 입력</string>
+    <string name="enter_your_id">아이디를 입력하세요</string>
+    <string name="enter_your_pw">비밀번호를 입력하세요</string>
+    <string name="enter_your_name">이름을 입력하세요</string>
+    <string name="enter_your_phone_number">전화번호를 입력하세요</string>
+    <string name="enter_vertification_code">인증번호를 입력해주세요</string>
+    <string name="name">이름</string>
+    <string name="phone_number">전화번호</string>
+    <string name="id">ID</string>
+    <string name="pw">PW</string>
+    <string name="select_sign_up_type">회원의 유형을 선택해주세요</string>
+    <string name="guardian">보호자</string>
+    <string name="care_receiver">피보호자</string>
+
+
 </resources>

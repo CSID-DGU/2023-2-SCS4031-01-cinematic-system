@@ -4,13 +4,13 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".CareReceiver.page.CareReceiverEventLog">
+    tools:context=".CareReceiver.page.CareReceiverIsOutdoorQuery">
 
     <TextView
-        android:id="@+id/recentNotificationText"
+        android:id="@+id/isOutdoorText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/recent_notification"
+        android:text="@string/is_outdoor"
         android:textSize="28dp"
         android:textFontWeight="900"
         android:textColor="@color/black_1"
@@ -23,59 +23,41 @@
         app:layout_constraintVertical_bias="0.05"
         />
 
-    <TextView
-        android:id="@+id/signOutText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/Sign_out"
-        android:textSize="14dp"
-        android:textFontWeight="900"
-        android:textColor="@color/black_1"
-        android:fontFamily="@font/interextrabold"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintHorizontal_bias="0.88"
-        app:layout_constraintVertical_bias="0.05"
-        app:layout_constraintBaseline_toBaselineOf="@+id/recentNotificationText"
-        />
-
     <Button
-        android:id="@+id/emerCallButton"
+        android:id="@+id/yesButton"
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/button_alert_red"
-        android:text="@string/emergency_call"
-        android:textSize="16dp"
+        android:layout_height="0dp"
+        android:background="@drawable/button_layout_blue"
+        android:text="@string/yes"
+        android:textSize="60dp"
         android:textFontWeight="900"
         android:textColor="@color/white_0"
         android:fontFamily="@font/interextrabold"
-        android:layout_marginTop="20dp"
+        android:layout_marginVertical="30dp"
         android:layout_marginHorizontal="60dp"
-        app:layout_constraintTop_toBottomOf="@+id/recentNotificationText"
+        app:layout_constraintTop_toBottomOf="@+id/isOutdoorText"
+        app:layout_constraintBottom_toTopOf="@+id/noButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
 
-
-    <ScrollView
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/noButton"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginTop="30dp"
-        app:layout_constraintTop_toBottomOf="@+id/emerCallButton"
+        android:background="@drawable/button_alert_red"
+        android:text="@string/no"
+        android:textSize="60dp"
+        android:textFontWeight="900"
+        android:textColor="@color/white_0"
+        android:fontFamily="@font/interextrabold"
+        android:layout_marginVertical="30dp"
+        android:layout_marginHorizontal="60dp"
+        app:layout_constraintTop_toBottomOf="@+id/yesButton"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        >
-    <!-- 여기에서 이벤트 로그 컴포넌트 생성  -->
-
-    </ScrollView>
-
-
-
-
-
+        />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

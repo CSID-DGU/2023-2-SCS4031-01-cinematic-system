@@ -7,6 +7,22 @@
     tools:context=".Guardian.connection.GuardianGetConnection">
 
     <TextView
+        android:id="@+id/logoutText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/interextrabold"
+        android:text="@string/Sign_out"
+        android:textColor="@color/black_1"
+        android:textSize="12dp"
+        app:layout_constraintVertical_bias="0.03"
+        app:layout_constraintHorizontal_bias="0.93"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <TextView
         android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -119,7 +135,7 @@
         android:layout_height="20dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/button_layout"
+        android:background="@drawable/button_layout_primary"
         android:textSize="11dp"
         android:padding="2dp"
         android:text="@string/request_phone_auth"
@@ -173,7 +189,7 @@
         android:layout_height="20dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="24dp"
-        android:background="@drawable/button_layout"
+        android:background="@drawable/button_layout_primary"
         android:textSize="11dp"
         android:padding="2dp"
         android:text="@string/verify_phone_number"
@@ -191,7 +207,7 @@
         android:layout_marginTop="24dp"
         android:layout_marginBottom="24dp"
         android:textSize="16dp"
-        android:background="@drawable/button_layout"
+        android:background="@drawable/button_layout_primary"
         android:padding="0dp"
         android:text="@string/Sign_up"
         android:textColor="@color/white_0"

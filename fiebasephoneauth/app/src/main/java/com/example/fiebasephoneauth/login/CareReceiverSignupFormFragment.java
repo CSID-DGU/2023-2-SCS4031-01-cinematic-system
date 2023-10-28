@@ -79,7 +79,7 @@ public class CareReceiverSignupFormFragment extends Fragment implements View.OnC
 
         signup_button = root.findViewById(R.id.signup_button);
         signup_button.setOnClickListener(this);
-        userInfo = root.findViewById(R.id.userInfo);
+        userInfo = root.findViewById(R.id.userInfoText);
         nameText = root.findViewById(R.id.nameText);
         phoneNumText = root.findViewById(R.id.phoneNumText);
         care_giver_Info = root.findViewById(R.id.care_giver_Info);

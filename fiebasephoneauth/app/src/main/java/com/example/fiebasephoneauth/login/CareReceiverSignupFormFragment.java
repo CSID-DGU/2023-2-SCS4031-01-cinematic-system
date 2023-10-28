@@ -15,8 +15,11 @@ import androidx.fragment.app.Fragment;
 
 import com.example.fiebasephoneauth.CareReceiverInfo;
 import com.example.fiebasephoneauth.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -39,7 +42,6 @@ public class CareReceiverSignupFormFragment extends Fragment implements View.OnC
      * Firebase DB 피보호자 정보 저장
      */
     private DatabaseReference mPostreference;
-    private FirebaseDatabase mFirebaseDatabase;
 
 
     TextView userInfo;
@@ -121,14 +123,15 @@ public class CareReceiverSignupFormFragment extends Fragment implements View.OnC
             CareReceiverInfo post = new CareReceiverInfo(name, phoneNum, ID, careGiverName, careGiverPhoneNum, password, passwordConfirm);
             postValues = post.toMap();
         }
-        childUpates.put("/CareReceiver_list/" + phoneNum, postValues);
+        childUpates.put("/CareReceiver_list/" +phoneNum, postValues);
         mPostreference.updateChildren(childUpates);
     }
     /**
      * isExistPhoneNum() DB에서 PhoneNum 검색 후
      * 같은 PhoneNum이 존재하면 -> 회원가입 실패
-     * 등록된 PhoneNum이 존재하지 않으면 -> 회원가입 성공(화면 넘기기까지)
+     * 등록된 PhoneNum이 존재하지 않으면 -> 회원가입 성공
      */
+
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -140,10 +143,26 @@ public class CareReceiverSignupFormFragment extends Fragment implements View.OnC
             careGiverPhoneNum = Long.parseLong(careGiverPhoneNumForm.getText().toString());
             password  = Long.parseLong(passwordForm.getText().toString());
             passwordConfirm = Long.parseLong(passwordConfirmForm.getText().toString());
+            mPostreference.child("CareReceiver_list")
+                    .child(String.valueOf(phoneNum)).child("Id")
+                    .addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            String value = snapshot.getValue(String.class);
+                            if (value != null){
+                                Toast.makeText(getActivity(), "이미 존재하는 아이디입니다.", Toast.LENGTH_SHORT).show();
+                            }
+                            else{
+                                postFirebaseDatabase(true);
+                                setSignupMode();
+                            }
+                        }
 
-            postFirebaseDatabase(true);
-            setSignupMode();
-            Toast.makeText(getActivity(),"회원가입 완료!",Toast.LENGTH_SHORT).show();
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
         }
     }
 }

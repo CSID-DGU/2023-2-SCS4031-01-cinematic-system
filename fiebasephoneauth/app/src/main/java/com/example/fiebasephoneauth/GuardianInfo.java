@@ -10,13 +10,12 @@ import java.util.Map;
  */
 public class GuardianInfo {
     public String name;
-    public Long phoneNum;
-
+    public String phoneNum;
     public String ID;
-    public Long password;
-    public Long passwordConfirm;
+    public String password;
+    public String passwordConfirm;
 
-    public GuardianInfo(String name, long phoneNum, String ID, long password, long passwordConfirm){
+    public GuardianInfo(String name, String phoneNum, String ID, String password, String passwordConfirm){
         this.name = name;
         this.phoneNum = phoneNum;
         this.ID = ID;

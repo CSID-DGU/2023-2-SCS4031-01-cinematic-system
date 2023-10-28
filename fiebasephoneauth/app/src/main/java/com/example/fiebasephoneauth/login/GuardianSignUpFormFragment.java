@@ -1,6 +1,5 @@
 package com.example.fiebasephoneauth.login;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,13 +13,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.fiebasephoneauth.GuardianInfo;
 import com.example.fiebasephoneauth.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.HashMap;
-import java.util.Map;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * <h3>보호자 회원가입 입력 폼</h3>
@@ -32,7 +30,9 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
      * jsm512
      * Firebase DB 보호자 정보 저장
      */
-    private DatabaseReference mPostreference;
+    private DatabaseReference mPostreference = FirebaseDatabase
+            .getInstance()
+            .getReference();
 
     TextView userInfo;
     TextView nameText;
@@ -51,9 +51,9 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
 
     String name;
     String ID;
-    long phoneNum;
-    long password;
-    long passwordConfirm;
+    String phoneNum;
+    String password;
+    String passwordConfirm;
     @Nullable
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -94,17 +94,17 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
         signup_button.setEnabled(true);
     }
 
-    public void postFirebaseDatabase(boolean add){
-        mPostreference = FirebaseDatabase.getInstance().getReference();
-        Map<String, Object> childUpates = new HashMap<>();
-        Map<String, Object> postValues = null;
-        if(add){
-            GuardianInfo post = new GuardianInfo(name,phoneNum,ID,password,passwordConfirm);
-            postValues = post.toMap();
-        }
-        childUpates.put("/Guardian_list/" + phoneNum, postValues);
-        mPostreference.updateChildren(childUpates);
-    }
+//    public void postFirebaseDatabase(boolean add){
+//        mPostreference = FirebaseDatabase.getInstance().getReference();
+//        Map<String, Object> childUpates = new HashMap<>();
+//        Map<String, Object> postValues = null;
+//        if(add){
+//            GuardianInfo post = new GuardianInfo(name,phoneNum,ID,password,passwordConfirm);
+//            postValues = post.toMap();
+//        }
+//        childUpates.put("/Guardian_list/" + phoneNum, postValues);
+//        mPostreference.updateChildren(childUpates);
+//    }
 
     /**
      * isExistPhoneNum과 같은 DB에서 PhoneNum 검색 후
@@ -113,21 +113,41 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
      */
     @Override
     public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.signup_button){
-            name = nameForm.getText().toString();
-            phoneNum = Long.parseLong(phoneNumForm.getText().toString());
-            ID = idForm.getText().toString();
-            password  = Long.parseLong(passwordForm.getText().toString());
-            passwordConfirm = Long.parseLong(passwordConfirmForm.getText().toString());
+        name = nameForm.getText().toString();
+        phoneNum = phoneNumForm.getText().toString();
+        ID = idForm.getText().toString();
+        password  = passwordForm.getText().toString();
+        passwordConfirm = passwordConfirmForm.getText().toString();
 
-            postFirebaseDatabase(true);
-            setSignupMode();
-            Toast.makeText(getActivity(),"존재아이디",Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getActivity(),MainActivity.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-            startActivity(intent);
+        if (name.isEmpty() || phoneNum.isEmpty() || ID.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()){
+            Toast.makeText(getActivity(), "사용자 정보를 모두 입력해주세요!", Toast.LENGTH_SHORT).show();
         }
+        else if(!password.equals(passwordConfirm)){
+            Toast.makeText(getActivity(), "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            mPostreference.child("Guardian_list").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.hasChild(phoneNum)){
+                        Toast.makeText(getActivity(), "이미 등록된 번호입니다.", Toast.LENGTH_SHORT).show();
+                    }
+                    else{
+                        mPostreference.child("Guardian_list").child(phoneNum).child("name").setValue(name);
+                        mPostreference.child("Guardian_list").child(phoneNum).child("id").setValue(ID);
+                        mPostreference.child("Guardian_list").child(phoneNum).child("password").setValue(password);
+                        mPostreference.child("Guardian_list").child(phoneNum).child("phoneNum").setValue(phoneNum);
 
+                        setSignupMode();
+                        Toast.makeText(getActivity(), "회원가입이 완료되었습니다!", Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+        }
     }
 }

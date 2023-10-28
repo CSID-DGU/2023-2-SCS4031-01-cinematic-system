@@ -29,19 +29,17 @@ import java.util.Map;
  *
  * 회원가입에서 피보호자 버튼을 클릭했을 때 보여지는 입력 폼
  */
-public class CareReceiverSignupFormFragment extends Fragment implements View.OnClickListener{
+public class CareReceiverSignupFormFragment extends Fragment implements View.OnClickListener {
     /**
      * Firebase DB에서 테이블 값 호출 메소드
      */
-
-
 
 
     /**
      * jsm512
      * Firebase DB 피보호자 정보 저장
      */
-    private DatabaseReference mPostreference;
+    private DatabaseReference mPostreference = FirebaseDatabase.getInstance().getReference();
 
 
     TextView userInfo;
@@ -66,12 +64,12 @@ public class CareReceiverSignupFormFragment extends Fragment implements View.OnC
     Button signup_button;
 
     String name;
-    long phoneNum;
+    String phoneNum;
     String careGiverName;
-    long careGiverPhoneNum;
+    String careGiverPhoneNum;
     String ID;
-    long password;
-    long passwordConfirm;
+    String password;
+    String passwordConfirm;
 
     @Nullable
     @Override
@@ -107,25 +105,18 @@ public class CareReceiverSignupFormFragment extends Fragment implements View.OnC
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
     }
-    public void setSignupMode(){
+
+    public void setSignupMode() {
         nameForm.setText("");
         phoneNumForm.setText("");
         idForm.setText("");
+        careGiverNameForm.setText("");
+        careGiverPhoneNumForm.setText("");
         passwordForm.setText("");
         passwordConfirmForm.setText("");
         signup_button.setEnabled(true);
     }
-    public void postFirebaseDatabase(boolean add){
-        mPostreference = FirebaseDatabase.getInstance().getReference();
-        Map<String, Object> childUpates = new HashMap<>();
-        Map<String, Object> postValues = null;
-        if(add){
-            CareReceiverInfo post = new CareReceiverInfo(name, phoneNum, ID, careGiverName, careGiverPhoneNum, password, passwordConfirm);
-            postValues = post.toMap();
-        }
-        childUpates.put("/CareReceiver_list/" +phoneNum, postValues);
-        mPostreference.updateChildren(childUpates);
-    }
+
     /**
      * isExistPhoneNum() DB에서 PhoneNum 검색 후
      * 같은 PhoneNum이 존재하면 -> 회원가입 실패
@@ -134,35 +125,48 @@ public class CareReceiverSignupFormFragment extends Fragment implements View.OnC
 
     @Override
     public void onClick(View v) {
-        int id = v.getId();
-        if (id == R.id.signup_button){
-            name = nameForm.getText().toString();
-            phoneNum = Long.parseLong(phoneNumForm.getText().toString());
-            ID = idForm.getText().toString();
-            careGiverName = careGiverNameForm.getText().toString();
-            careGiverPhoneNum = Long.parseLong(careGiverPhoneNumForm.getText().toString());
-            password  = Long.parseLong(passwordForm.getText().toString());
-            passwordConfirm = Long.parseLong(passwordConfirmForm.getText().toString());
-            mPostreference.child("CareReceiver_list")
-                    .child(String.valueOf(phoneNum)).child("Id")
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            String value = snapshot.getValue(String.class);
-                            if (value != null){
-                                Toast.makeText(getActivity(), "이미 존재하는 아이디입니다.", Toast.LENGTH_SHORT).show();
-                            }
-                            else{
-                                postFirebaseDatabase(true);
-                                setSignupMode();
-                            }
-                        }
+        name = nameForm.getText().toString();
+        phoneNum = phoneNumForm.getText().toString();
+        ID = idForm.getText().toString();
+        careGiverName = careGiverNameForm.getText().toString();
+        careGiverPhoneNum = careGiverPhoneNumForm.getText().toString();
+        password = passwordForm.getText().toString();
+        passwordConfirm = passwordConfirmForm.getText().toString();
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
+        if (name.isEmpty() || phoneNum.isEmpty() || ID.isEmpty() || careGiverName.isEmpty()
+                || careGiverPhoneNum.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()) {
+            Toast.makeText(getActivity(), "사용자 정보를 모두 입력해주세요!", Toast.LENGTH_SHORT).show();
+        } else if (!password.equals(passwordConfirm)) {
+            Toast.makeText(getActivity(), "비밀번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show();
+        } else {
+            mPostreference.child("CareReceiver_list").addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    if(snapshot.hasChild(phoneNum)){
+                        Toast.makeText(getActivity(), "이미 등록된 번호입니다.", Toast.LENGTH_SHORT).show();
+                    }
 
-                        }
-                    });
+                    else{
+
+                        Map<String, Object> childUpates = new HashMap<>();
+                        Map<String, Object> postValues = null;
+                        CareReceiverInfo post = new CareReceiverInfo(name,phoneNum,ID,password, careGiverName, careGiverPhoneNum);
+                        postValues = post.toMap();
+                        childUpates.put("/CareReceiver_list/" + phoneNum, postValues);
+                        mPostreference.updateChildren(childUpates);
+
+                        setSignupMode();
+                        Toast.makeText(getActivity(), "회원가입이 완료되었습니다!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError error) {
+
+                }
+            });
+
+
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.example.fiebasephoneauth.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -142,7 +143,7 @@ public class CareReceiverSignupFormFragment extends Fragment implements View.OnC
             mPostreference.child("CareReceiver_list").addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot snapshot) {
-                    if(snapshot.hasChild(phoneNum)){
+                    if(snapshot.hasChild(ID)){
                         Toast.makeText(getActivity(), "이미 등록된 번호입니다.", Toast.LENGTH_SHORT).show();
                     }
 
@@ -152,11 +153,13 @@ public class CareReceiverSignupFormFragment extends Fragment implements View.OnC
                         Map<String, Object> postValues = null;
                         CareReceiverInfo post = new CareReceiverInfo(name,phoneNum,ID,password, careGiverName, careGiverPhoneNum);
                         postValues = post.toMap();
-                        childUpates.put("/CareReceiver_list/" + phoneNum, postValues);
+                        childUpates.put("/CareReceiver_list/" + ID, postValues);
                         mPostreference.updateChildren(childUpates);
 
                         setSignupMode();
                         Toast.makeText(getActivity(), "회원가입이 완료되었습니다!", Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(getActivity(), MainActivity.class);
+                        startActivity(intent);
                     }
                 }
 

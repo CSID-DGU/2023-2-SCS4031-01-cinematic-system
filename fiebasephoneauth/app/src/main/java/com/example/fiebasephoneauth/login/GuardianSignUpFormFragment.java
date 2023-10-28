@@ -1,5 +1,6 @@
 package com.example.fiebasephoneauth.login;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -74,6 +75,7 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
         passwordForm = root.findViewById(R.id.passwordForm);
         passwordConfirmForm = root.findViewById(R.id.passwordConfirmForm);
 
+
         return root;
     }
 
@@ -82,27 +84,6 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-    }
-    public View onCreate(@NonNull LayoutInflater inflater, ViewGroup container,
-                         Bundle savedInstanceState){
-        View root = inflater.inflate(R.layout.fragment_guardian_sign_up_form, container, false);
-
-        signup_button = root.findViewById(R.id.signup_button);
-        signup_button.setOnClickListener(this);
-        userInfo = root.findViewById(R.id.userInfo);
-        nameText = root.findViewById(R.id.nameText);
-        phoneNumText = root.findViewById(R.id.phoneNumText);
-        accountInfo = root.findViewById(R.id.accountInfo);
-        idText = root.findViewById(R.id.idText);
-        pwText = root.findViewById(R.id.pwText);
-        pwConfirmText = root.findViewById(R.id.pwConfirmText);
-        nameForm = root.findViewById(R.id.nameForm);
-        phoneNumForm = root.findViewById(R.id.phoneNumForm);
-        idForm = root.findViewById(R.id.idForm);
-        passwordForm = root.findViewById(R.id.passwordForm);
-        passwordConfirmForm = root.findViewById(R.id.passwordConfirmForm);
-
-        return root;
     }
     public void setSignupMode(){
         nameForm.setText("");
@@ -124,6 +105,12 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
         childUpates.put("/Guardian_list/" + phoneNum, postValues);
         mPostreference.updateChildren(childUpates);
     }
+
+    /**
+     * isExistPhoneNum과 같은 DB에서 PhoneNum 검색 후
+     * 같은 PhoneNum이 존재하면 -> 회원가입 실패
+     * 등록된 PhoneNum이 존재하지 않으면 -> 회원가입 성공(화면 넘기기까지)
+     */
     @Override
     public void onClick(View v) {
         int id = v.getId();
@@ -137,6 +124,9 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
             postFirebaseDatabase(true);
             setSignupMode();
             Toast.makeText(getActivity(),"존재아이디",Toast.LENGTH_SHORT).show();
+            Intent intent = new Intent(getActivity(),MainActivity.class);
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            startActivity(intent);
         }
 
     }

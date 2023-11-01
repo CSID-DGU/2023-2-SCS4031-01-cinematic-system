@@ -1,0 +1,67 @@
+ECLIPSE ANDROID PROJECT IMPORT SUMMARY
+======================================
+
+Ignored Files:
+--------------
+The following files were *not* copied into the new Gradle project; you
+should evaluate whether these are still needed in your project and if
+so manually move them:
+
+* .gitignore
+* .idea\
+* .idea\.gitignore
+* .idea\misc.xml
+* .idea\modules.xml
+* .idea\vcs.xml
+* .idea\workspace.xml
+* AN_208_FT31xD_Demo_APK_User_Guide.pdf
+* UARTTest.iml
+* out\
+* out\production\
+* out\production\UARTTest\
+* out\production\UARTTest\.idea\
+* out\production\UARTTest\.idea\.gitignore
+* out\production\UARTTest\.idea\misc.xml
+* out\production\UARTTest\.idea\modules.xml
+* out\production\UARTTest\UARTTest.iml
+* out\production\UARTTest\out\
+* out\production\UARTTest\out\production\
+* out\production\UARTTest\out\production\UARTTest\
+* out\production\UARTTest\out\production\UARTTest\.idea\
+* out\production\UARTTest\out\production\UARTTest\.idea\.gitignore
+* out\production\UARTTest\out\production\UARTTest\.idea\misc.xml
+* out\production\UARTTest\out\production\UARTTest\.idea\modules.xml
+* out\production\UARTTest\out\production\UARTTest\UARTTest.iml
+* proguard.cfg
+
+Moved Files:
+------------
+Android Gradle projects use a different directory structure than ADT
+Eclipse projects. Here's how the projects were restructured:
+
+* AndroidManifest.xml => app\src\main\AndroidManifest.xml
+* res\ => app\src\main\res\
+* src\ => app\src\main\java\
+* src\.idea\.gitignore => app\src\main\resources\.idea\.gitignore
+* src\.idea\misc.xml => app\src\main\resources\.idea\misc.xml
+* src\.idea\modules.xml => app\src\main\resources\.idea\modules.xml
+* src\out\production\UARTTest\.idea\.gitignore => app\src\main\resources\out\production\UARTTest\.idea\.gitignore
+* src\out\production\UARTTest\.idea\misc.xml => app\src\main\resources\out\production\UARTTest\.idea\misc.xml
+* src\out\production\UARTTest\.idea\modules.xml => app\src\main\resources\out\production\UARTTest\.idea\modules.xml
+* src\out\production\UARTTest\UARTTest.iml => app\src\main\resources\out\production\UARTTest\UARTTest.iml
+* src\UARTTest.iml => app\src\main\resources\UARTTest.iml
+
+Next Steps:
+-----------
+You can now build the project. The Gradle project needs network
+connectivity to download dependencies.
+
+Bugs:
+-----
+If for some reason your project does not build, and you determine that
+it is due to a bug or limitation of the Eclipse to Gradle importer,
+please file a bug at http://b.android.com with category
+Component-Tools.
+
+(This import summary is for your information only, and can be deleted
+after import once you are satisfied with the results.)

@@ -8,6 +8,20 @@
     tools:context=".login.SignUpActivity">
 
     <TextView
+        android:id="@+id/backButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/back"
+        android:fontFamily="@font/interextrabold"
+        android:textSize="14dp"
+        android:textColor="@color/black_1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="30dp"
+        android:layout_marginEnd="30dp"
+        />
+
+    <TextView
         android:id="@+id/titleText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

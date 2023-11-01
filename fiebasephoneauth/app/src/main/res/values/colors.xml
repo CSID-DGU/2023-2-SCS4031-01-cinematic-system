@@ -14,4 +14,6 @@
     <color name="alert_green">#39C861</color>
     <color name="alert_orange">#EA6C44</color>
     <color name="alert_red">#D64545</color>
+    <color name="bg_solid">#618FAE</color>
+    <color name="home_card_text">#B1DAF5</color>
 </resources>

@@ -13,14 +13,12 @@ public class GuardianInfo {
     public String phoneNum;
     public String ID;
     public String password;
-    public String passwordConfirm;
 
-    public GuardianInfo(String name, String phoneNum, String ID, String password, String passwordConfirm){
+    public GuardianInfo(String name, String phoneNum, String ID, String password){
         this.name = name;
         this.phoneNum = phoneNum;
         this.ID = ID;
         this.password = password;
-        this.passwordConfirm = passwordConfirm;
     }
     @Exclude
     public Map<String, Object> toMap(){
@@ -29,7 +27,6 @@ public class GuardianInfo {
         result.put("phoneNum", phoneNum);
         result.put("id", ID);
         result.put("password", password);
-        result.put("passwordConfirm", passwordConfirm);
 
         return result;
     }

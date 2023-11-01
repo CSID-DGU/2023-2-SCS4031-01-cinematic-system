@@ -29,7 +29,7 @@ import java.util.Map;
  *
  * 회원가입에서 피보호자 버튼을 클릭했을 때 보여지는 입력 폼
  */
-public class CareReceiverSignupFormFragment extends Fragment implements View.OnClickListener{
+public class CareReceiverSignUpFormFragment extends Fragment implements View.OnClickListener{
     /**
      * Firebase DB에서 테이블 값 호출 메소드
      */

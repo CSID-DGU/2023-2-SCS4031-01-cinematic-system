@@ -1,8 +1,5 @@
 package com.example.fiebasephoneauth.login;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -11,6 +8,10 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
+import com.example.fiebasephoneauth.Guardian.page.GuardianHome;
 import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianSignInBinding;
 import com.google.firebase.database.DataSnapshot;
@@ -74,7 +75,9 @@ public class GuardianSignInActivity extends AppCompatActivity {
                                 if(getPassword.equals(passwordTxt)){
                                     Toast.makeText(GuardianSignInActivity.this, "로그인 성공 !", Toast.LENGTH_SHORT).show();
 
-                                    startActivity(new Intent(GuardianSignInActivity.this, MainActivity.class));
+                                    Intent intent = new Intent(GuardianSignInActivity.this, GuardianHome.class);
+                                    intent.putExtra("id",idTxt);
+                                    startActivity(intent);
                                     finish();
                                 }
 

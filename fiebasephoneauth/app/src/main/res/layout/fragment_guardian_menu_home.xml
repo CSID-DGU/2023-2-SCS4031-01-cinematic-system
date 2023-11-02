@@ -45,9 +45,9 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal">
             <TextView
+                android:id="@+id/care_receiver_name"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="이름 님"
                 android:textColor="@color/white_1"
                 android:fontFamily="@font/intersemibold"
                 android:textSize="25dp"

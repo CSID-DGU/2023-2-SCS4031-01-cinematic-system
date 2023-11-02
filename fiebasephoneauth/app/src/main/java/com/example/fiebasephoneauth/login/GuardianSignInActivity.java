@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fiebasephoneauth.Guardian.connection.GuardianNotConnected;
 import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianSignInBinding;
 import com.google.firebase.database.DataSnapshot;
@@ -74,7 +75,7 @@ public class GuardianSignInActivity extends AppCompatActivity {
                                 if(getPassword.equals(passwordTxt)){
                                     Toast.makeText(GuardianSignInActivity.this, "로그인 성공 !", Toast.LENGTH_SHORT).show();
 
-                                    startActivity(new Intent(GuardianSignInActivity.this, MainActivity.class));
+                                    startActivity(new Intent(GuardianSignInActivity.this, GuardianNotConnected.class));
                                     finish();
                                 }
 

@@ -12,6 +12,12 @@ import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianHomeBinding;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+/**
+ * <h3> Guardian Home Activity </h3>
+ *
+ * GuardianMenuHomeFragment, GuardianMenuEventFragment, GuardianMenuProfileFragment를
+ * BottomNavigationView를 통해 전환할 수 있음
+ */
 public class GuardianHome extends AppCompatActivity {
 
     ActivityGuardianHomeBinding binding;

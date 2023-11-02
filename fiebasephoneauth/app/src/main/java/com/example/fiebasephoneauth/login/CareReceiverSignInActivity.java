@@ -11,6 +11,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.fiebasephoneauth.CareReceiver.connection.CareReceiverNotConnected;
 import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityCareReceiverSignInBinding;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianSignInBinding;
@@ -74,7 +75,7 @@ public class CareReceiverSignInActivity extends AppCompatActivity {
                                 if(getPassword.equals(passwordTxt)){
                                     Toast.makeText(CareReceiverSignInActivity.this, "로그인 성공 !", Toast.LENGTH_SHORT).show();
 
-                                    startActivity(new Intent(CareReceiverSignInActivity.this, MainActivity.class));
+                                    startActivity(new Intent(CareReceiverSignInActivity.this, CareReceiverNotConnected.class));
                                     finish();
                                 }
 

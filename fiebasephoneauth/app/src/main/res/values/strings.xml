@@ -41,4 +41,5 @@
     <string name="sign_in_as_guardian">보호자로 로그인하기</string>
     <string name="sign_in_as_care_receiver">피보호자로 로그인하기</string>
     <string name="back">뒤로가기</string>
+    <string name="new_notificaton">새로운 알림</string>
 </resources>

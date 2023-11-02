@@ -10,6 +10,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.fiebasephoneauth.R;
 
 public class HomeMainAdapter extends RecyclerView.Adapter<HomeMainAdapter.viewHolder> {
+    CareReceiverActivityData[] mData;
+
+    public HomeMainAdapter(CareReceiverActivityData[] data) {
+        mData = data;
+    }
 
     class viewHolder extends RecyclerView.ViewHolder {
         CardView homeMainCard;
@@ -24,6 +29,7 @@ public class HomeMainAdapter extends RecyclerView.Adapter<HomeMainAdapter.viewHo
         }
     }
 
+
         @Override
         public HomeMainAdapter.viewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
             View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_main_card_view, parent, false);
@@ -32,12 +38,12 @@ public class HomeMainAdapter extends RecyclerView.Adapter<HomeMainAdapter.viewHo
 
         @Override
         public void onBindViewHolder(HomeMainAdapter.viewHolder holder, int position) {
-            holder.mainCardText.setText("Card");
-            holder.mainCardDescription.setText("Description");
+            holder.mainCardText.setText(mData[position].getTitle());
+            holder.mainCardDescription.setText(mData[position].getDescription());
         }
 
         @Override
         public int getItemCount() {
-            return 2;
+            return mData.length;
         }
 }

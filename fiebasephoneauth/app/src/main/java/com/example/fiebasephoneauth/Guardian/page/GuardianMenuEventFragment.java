@@ -3,6 +3,8 @@ package com.example.fiebasephoneauth.Guardian.page;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,56 +13,61 @@ import android.view.ViewGroup;
 import com.example.fiebasephoneauth.R;
 
 /**
- * A simple {@link Fragment} subclass.
- * Use the {@link GuardianMenuEventFragment#newInstance} factory method to
- * create an instance of this fragment.
+ * <h3> 보호자 이벤트 로그 페이지 </h3>
+ *
+ * 보호자가 피보호자의 이벤트 로그를 확인할 수 있는 페이지
  */
 public class GuardianMenuEventFragment extends Fragment {
 
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    EventCardInfo[] eventCardInfo;
 
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
-
-    public GuardianMenuEventFragment() {
-        // Required empty public constructor
-    }
-
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment GuardianMenuEventFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static GuardianMenuEventFragment newInstance(String param1, String param2) {
-        GuardianMenuEventFragment fragment = new GuardianMenuEventFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
-        return fragment;
-    }
+    RecyclerView recyclerViewEventLog;
+    RecyclerView.Adapter eventLogAdapter;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_guardian_menu_event, container, false);
+        View view = inflater.inflate(R.layout.fragment_guardian_menu_event, container, false);
+        recyclerViewEventLog = (RecyclerView) view.findViewById(R.id.recent_notification_recycler_view);
+        recyclerViewEventLog.setHasFixedSize(true);
+
+        eventLogAdapter = new HomeEventLogAdapter(eventCardInfo);
+        recyclerViewEventLog.setAdapter(eventLogAdapter);
+        recyclerViewEventLog.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+
+        return view;
+    }
+}
+
+
+class EventCardInfo {
+    String date;
+    String time;
+    String description;
+    String EmergencyType;
+
+    public EventCardInfo(String date, String time, String description, String EmergencyType) {
+        this.date = date;
+        this.time = time;
+        this.EmergencyType = EmergencyType;
+        this.description = description;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public String getDescription() {
+        return description;
     }
 }

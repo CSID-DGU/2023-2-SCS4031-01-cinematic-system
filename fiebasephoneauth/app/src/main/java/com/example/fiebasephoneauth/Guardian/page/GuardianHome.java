@@ -1,12 +1,13 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
-
-import android.os.Bundle;
-import android.view.MenuItem;
 
 import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianHomeBinding;
@@ -19,7 +20,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
  * BottomNavigationView를 통해 전환할 수 있음
  */
 public class GuardianHome extends AppCompatActivity {
-
     ActivityGuardianHomeBinding binding;
 
     FragmentManager fragmentManager = getSupportFragmentManager();
@@ -30,16 +30,26 @@ public class GuardianHome extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Intent intent = getIntent();
+        String idTxt = intent.getStringExtra("id");
+
         binding = ActivityGuardianHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         fragmentTransaction.add(R.id.frameLayout, guardianMenuHomeFragment).commitAllowingStateLoss();
 
+        Bundle bundle = new Bundle();
+        bundle.putString("id",idTxt);
+        guardianMenuHomeFragment.setArguments(bundle);
+
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new ItemSelectedListener());
 
     }
+
+
 
     class ItemSelectedListener implements BottomNavigationView.OnNavigationItemSelectedListener {
 

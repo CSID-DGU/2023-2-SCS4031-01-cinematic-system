@@ -1,18 +1,16 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.example.fiebasephoneauth.CareReceiverInfo;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.fiebasephoneauth.R;
 
 /**
@@ -26,6 +24,7 @@ public class GuardianMenuHomeFragment extends Fragment {
     // 피보호자 정보
     TextView homeCareReceiverName, homeCareReceiverGenderAge, homeCareReceiverAddress;
     Button homeSeeDetailButton;
+
 
 
     // 외출, 활동 및 새로운 알림 리사이클러뷰

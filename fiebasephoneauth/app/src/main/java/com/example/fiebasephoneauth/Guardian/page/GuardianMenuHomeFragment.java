@@ -16,7 +16,7 @@ import com.example.fiebasephoneauth.CareReceiverInfo;
 import com.example.fiebasephoneauth.R;
 
 /**
- * <h3> Home Tap Fragment </h3>
+ * <h3> 보호자의 홈 메인 페이지 </h3>
  *
  *
  * activityData 및 newNotificationData에 피보호자의 데이터를 입력하면

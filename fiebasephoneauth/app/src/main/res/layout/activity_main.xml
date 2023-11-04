@@ -78,7 +78,7 @@
         android:elevation="15dp"
         android:fontFamily="@font/intersemibold"
         android:padding="0dp"
-        android:text="@string/Sign_up"
+        android:text="@string/sign_up"
         android:textColor="@color/white_1"
         android:textSize="15dp"
         app:layout_constraintEnd_toEndOf="parent"

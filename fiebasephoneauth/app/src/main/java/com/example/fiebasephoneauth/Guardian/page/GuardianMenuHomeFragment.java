@@ -7,11 +7,17 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fiebasephoneauth.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 /**
  * <h3> 보호자의 홈 메인 페이지 </h3>
@@ -21,9 +27,14 @@ import com.example.fiebasephoneauth.R;
  */
 public class GuardianMenuHomeFragment extends Fragment {
 
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
+
     // 피보호자 정보
     TextView homeCareReceiverName, homeCareReceiverGenderAge, homeCareReceiverAddress;
     Button homeSeeDetailButton;
+    String getName;
+    String getOuting;
+
 
 
 
@@ -31,20 +42,6 @@ public class GuardianMenuHomeFragment extends Fragment {
     private RecyclerView recyclerViewMain, recyclerViewNewNotification;
     private RecyclerView.Adapter mainViewAdapter, newNotificationAdapter;
 
-    // 더미 데이터 -----------------------------------
-    // 데이터를 받아올 떄 CareReceiverActivityData[] activityData = { ... },
-    // NewNotificationData[] newNotificationData = { ... } 부분을 수정하면 됨
-    CareReceiverActivityData activityData[] = {
-            new CareReceiverActivityData("외출", "김보호님은 현재 외출중입니다"),
-            new CareReceiverActivityData("활동", "최근 24시간 동안 5번의 활동 감지가 있었습니다")
-    };
-
-    NewNotificationData newNotificationData[] = {
-        new NewNotificationData("2020-05-01", "12:00:00", "김보호님이 외출을 시작하였습니다"),
-        new NewNotificationData("2020-05-01", "12:00:00", "김보호님이 외출을 시작하였습니다"),
-        new NewNotificationData("2020-05-01", "12:00:00", "김보호님이 외출을 시작하였습니다"),
-    };
-    // ----------------------------------------------
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -77,14 +74,59 @@ public class GuardianMenuHomeFragment extends Fragment {
         recyclerViewNewNotification.setAdapter(newNotificationAdapter);
         recyclerViewNewNotification.setLayoutManager(new LinearLayoutManager(getActivity()));
 
+        Bundle bundle = getArguments();
+        String idTxt = bundle.getString("id");
+        databaseReference.child("CareReceiver_list").addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.hasChild(idTxt)){
+                    getName = snapshot.child(idTxt).child("name").getValue(String.class);
+                    getOuting = snapshot.child(idTxt).child("ActivityData").child("외출").getValue(String.class);
+                    homeCareReceiverName.setText(getName);
+                    homeCareReceiverGenderAge.setText("남/72");
+                    homeCareReceiverAddress.setText("서울 중구 필동로1길 30");
+                    /**
+                     * new CareReceiverActivityData를 인식 못하는 문제 있음
+                     */
+                    if (getOuting == "0"){
+                        // "외출" DB에 저장된 값이 0 이면 -> 외출 중
+                    }
+                    else{
+                        // "외출" DB에 저장된 값이 1이면 -> 외출 X
+                    }
+
+
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
         return view;
 
     }
+    // 더미 데이터 -----------------------------------
+    // 데이터를 받아올 떄 CareReceiverActivityData[] activityData = { ... },
+    // NewNotificationData[] newNotificationData = { ... } 부분을 수정하면 됨
+    CareReceiverActivityData activityData[] = {
+            new CareReceiverActivityData("외출", getName+"님은 현재 외출중입니다."),
+            new CareReceiverActivityData("활동", "최근 24시간 동안 5번의 활동 감지가 있었습니다")
+    };
+
+    NewNotificationData newNotificationData[] = {
+            new NewNotificationData("2020-05-01", "12:00:00", getName+"님이 외출을 시작하였습니다."),
+            new NewNotificationData("2020-05-01", "12:00:00", getName+"님이 외출을 시작하였습니다."),
+            new NewNotificationData("2020-05-01", "12:00:00", getName+"님이 외출을 시작하였습니다."),
+    };
+    // ----------------------------------------------
 }
 
 class CareReceiverActivityData {
-    private String title;
-    private String description;
+    String title;
+    String description;
 
     public CareReceiverActivityData(String title, String description) {
         this.title = title;

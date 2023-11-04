@@ -84,7 +84,7 @@
         android:layout_marginTop="29dp"
         android:elevation="15dp"
         android:fontFamily="@font/intersemibold"
-        android:text="@string/name"
+        android:text="@string/id"
         android:textColor="@color/black_1"
         android:textSize="16dp"
         app:layout_constraintStart_toStartOf="parent"

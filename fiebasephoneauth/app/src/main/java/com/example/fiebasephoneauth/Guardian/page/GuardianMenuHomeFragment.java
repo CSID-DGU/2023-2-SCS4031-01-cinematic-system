@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fiebasephoneauth.R;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 
 /**
  * <h3> Home Tap Fragment </h3>
@@ -21,9 +23,12 @@ import com.example.fiebasephoneauth.R;
  */
 public class GuardianMenuHomeFragment extends Fragment {
 
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
+
     // 피보호자 정보
     TextView homeCareReceiverName, homeCareReceiverGenderAge, homeCareReceiverAddress;
     Button homeSeeDetailButton;
+
 
 
 
@@ -76,6 +81,10 @@ public class GuardianMenuHomeFragment extends Fragment {
         newNotificationAdapter = new HomeNewNotificationAdapter(newNotificationData);
         recyclerViewNewNotification.setAdapter(newNotificationAdapter);
         recyclerViewNewNotification.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        Bundle bundle = getArguments();
+        String idTxt = bundle.getString("id");
+        homeCareReceiverName.setText(idTxt);
 
         return view;
 

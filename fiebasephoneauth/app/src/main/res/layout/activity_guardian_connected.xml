@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Guardian.connection.GuardianConnected"
+    tools:layout_editor_absoluteX="0dp"
+    tools:layout_editor_absoluteY="13dp"
+    android:background="@color/white_0"
+    >
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintVertical_bias="0.4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        >
+
+    <ImageView
+        android:id="@+id/check_image"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/check"
+        android:layout_gravity="center_vertical"
+        />
+
+
+    <TextView
+        android:id="@+id/title_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/interextrabold"
+        android:text="@string/complate_connection"
+        android:textColor="@color/black_2"
+        android:textSize="20dp"
+        android:layout_gravity="center_vertical"
+        android:layout_marginStart="10dp"
+
+        />
+
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/get_start_button"
+        android:layout_width="240dp"
+        android:layout_height="35dp"
+        android:textFontWeight="900"
+        android:background="@drawable/button_layout_primary"
+        android:fontFamily="@font/intersemibold"
+        android:padding="0dp"
+        android:elevation="15dp"
+        android:text="@string/get_start"
+        android:textColor="@color/white_1"
+        android:textSize="15dp"
+        android:layout_marginTop="15dp"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

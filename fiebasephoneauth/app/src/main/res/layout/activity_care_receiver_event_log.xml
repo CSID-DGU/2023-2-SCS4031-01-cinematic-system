@@ -27,7 +27,7 @@
         android:id="@+id/signOutText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/Sign_out"
+        android:text="@string/sign_out"
         android:textSize="14dp"
         android:textFontWeight="900"
         android:textColor="@color/black_1"

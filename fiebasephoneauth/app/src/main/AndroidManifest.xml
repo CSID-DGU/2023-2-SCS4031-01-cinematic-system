@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Fiebasephoneauth"
         tools:targetApi="31">
         <activity
+            android:name=".Guardian.connection.GuardianConnected"
+            android:exported="false" />
+        <activity
             android:name=".login.CareReceiverSignInActivity"
             android:exported="false" />
         <activity

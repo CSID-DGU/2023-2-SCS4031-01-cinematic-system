@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/guardian_menu_home_fragment"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -92,19 +93,124 @@
             />
 
     </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        android:id="@+id/recyclerview_home_main"
+    <LinearLayout
+        android:id="@+id/home_Outing_Frame"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="30dp"
         android:layout_marginTop="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/home_card"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        >
-    </androidx.recyclerview.widget.RecyclerView>
+        android:layout_marginHorizontal="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/home_card">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/home_Outing_Form"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                card_view:cardBackgroundColor="@color/primary_key"
+                card_view:cardCornerRadius="4dp"
+                card_view:contentPadding="3dp"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintStart_toStartOf="parent"
+                >
+
+                <TextView
+                    android:id="@+id/home_Outing_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="외출"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="@color/white_1"
+                    android:fontFamily="@font/intersemibold"
+                    />
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/home_Outing_description"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/intersemibold"
+                android:paddingStart="70dp"
+                android:gravity="start"
+                android:textColor="@color/black_2"
+                android:text="김보호님은 현재 외출중입니다"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/home_Activity_Frame"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="60dp"
+        android:layout_marginHorizontal="20dp"
+        app:layout_constraintTop_toBottomOf="@+id/home_card">
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.cardview.widget.CardView
+                android:id="@+id/home_Activity_Form"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                card_view:cardBackgroundColor="@color/primary_key"
+                card_view:cardCornerRadius="4dp"
+                card_view:contentPadding="3dp"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                card_view:layout_constraintStart_toStartOf="parent"
+                >
+
+                <TextView
+                    android:id="@+id/home_Activity_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="활동"
+                    android:layout_marginHorizontal="10dp"
+                    android:textColor="@color/white_1"
+                    android:fontFamily="@font/intersemibold"
+                    />
+
+            </androidx.cardview.widget.CardView>
+
+            <TextView
+                android:id="@+id/home_Activity_description"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="5dp"
+                android:fontFamily="@font/intersemibold"
+                android:paddingStart="70dp"
+                android:gravity="start"
+                android:textColor="@color/black_2"
+                android:text="김보호님은 현재 외출중입니다"
+                card_view:layout_constraintTop_toTopOf="parent"
+                card_view:layout_constraintBottom_toBottomOf="parent"
+                />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </LinearLayout>
+
+
+<!--    <androidx.recyclerview.widget.RecyclerView-->
+<!--        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"-->
+<!--        android:id="@+id/recyclerview_home_main"-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:layout_marginHorizontal="30dp"-->
+<!--        android:layout_marginTop="20dp"-->
+<!--        app:layout_constraintTop_toBottomOf="@+id/home_card"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        >-->
+<!--    </androidx.recyclerview.widget.RecyclerView>-->
 
     <TextView
         android:id="@+id/new_notification"
@@ -115,7 +221,7 @@
         android:textSize="15dp"
         android:layout_marginTop="20dp"
         android:layout_marginHorizontal="30dp"
-        app:layout_constraintTop_toBottomOf="@+id/recyclerview_home_main"
+        app:layout_constraintTop_toBottomOf="@+id/home_Activity_Frame"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
     />

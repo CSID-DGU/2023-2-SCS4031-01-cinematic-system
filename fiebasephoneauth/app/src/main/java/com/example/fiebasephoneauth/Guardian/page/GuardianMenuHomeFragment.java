@@ -31,6 +31,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
     // 피보호자 정보
     TextView homeCareReceiverName, homeCareReceiverGenderAge, homeCareReceiverAddress;
+    TextView  home_Outing_description, home_Activity_description;
     Button homeSeeDetailButton;
     String getName;
     String getOuting;
@@ -60,12 +61,16 @@ public class GuardianMenuHomeFragment extends Fragment {
         homeCareReceiverAddress = (TextView) view.findViewById(R.id.care_receiver_address); // 피보호자 주소
         homeSeeDetailButton = (Button) view.findViewById(R.id.home_see_detail_button); // 피보호자 상세 정보 보기 버튼
 
+
+        home_Outing_description = (TextView) view.findViewById(R.id.home_Outing_description);
+        home_Activity_description = (TextView) view.findViewById(R.id.home_Activity_description);
+
         // 활동 정보 리사이클러뷰
-        recyclerViewMain = (RecyclerView) view.findViewById(R.id.recyclerview_home_main);
-        recyclerViewMain.setHasFixedSize(true);
-        mainViewAdapter = new HomeMainAdapter(activityData);
-        recyclerViewMain.setAdapter(mainViewAdapter);
-        recyclerViewMain.setLayoutManager(new LinearLayoutManager(getActivity()));
+//        recyclerViewMain = (RecyclerView) view.findViewById(R.id.recyclerview_home_main);
+//        recyclerViewMain.setHasFixedSize(true);
+//        mainViewAdapter = new HomeMainAdapter(activityData);
+//        recyclerViewMain.setAdapter(mainViewAdapter);
+//        recyclerViewMain.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification = (RecyclerView) view.findViewById(R.id.recyclerview_home_new_notification);
@@ -90,19 +95,16 @@ public class GuardianMenuHomeFragment extends Fragment {
                      */
                     if (getOuting == "0"){
                         // "외출" DB에 저장된 값이 0 이면 -> 외출 중
-                        activityData[0] = new CareReceiverActivityData("외출",getName+"님은 현재 외출 중 입니다.");
-                        activityData[1] = new CareReceiverActivityData("활동",getName+"님은 현재 외출 중 입니다.");
+                        home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
 
                     }
-                    else{
+                    else if(getOuting == "1"){
                         // "외출" DB에 저장된 값이 1이면 -> 외출 X
-                        activityData[0] = new CareReceiverActivityData("외출",getName+"님은 현재 실내에 있습니다.");
-                        activityData[1] = new CareReceiverActivityData("활동",getName+"님은 현재 외출 중 입니다.");
+                        home_Outing_description.setText(getName+"님은 현재 실내에 있습니다.");
                     }
 
 
                 }
-                mainViewAdapter.notifyDataSetChanged();
 
 
             }

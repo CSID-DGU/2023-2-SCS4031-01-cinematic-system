@@ -156,7 +156,11 @@ public class GuardianGetConnection extends AppCompatActivity {
 //        super.onStart();
 //        FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 //        if(currentUser != null){
-//            startActivity(new Intent(GuardianGetConnection.this, GuardianConnected.class));
+//            Intent intent = new Intent(GuardianGetConnection.this, GuardianHome.class);
+//            EditText nameForm = binding.nameForm;
+//            final String idTxt = nameForm.getText().toString();
+//            intent.putExtra("id",idTxt);
+//            startActivity(intent);
 //            finish();
 //        }
 //    }

@@ -86,17 +86,25 @@ public class GuardianMenuHomeFragment extends Fragment {
                     homeCareReceiverGenderAge.setText("남/72");
                     homeCareReceiverAddress.setText("서울 중구 필동로1길 30");
                     /**
-                     * new CareReceiverActivityData를 인식 못하는 문제 있음
+                     *
                      */
                     if (getOuting == "0"){
                         // "외출" DB에 저장된 값이 0 이면 -> 외출 중
+                        activityData[0] = new CareReceiverActivityData("외출",getName+"님은 현재 외출 중 입니다.");
+                        activityData[1] = new CareReceiverActivityData("활동",getName+"님은 현재 외출 중 입니다.");
+
                     }
                     else{
                         // "외출" DB에 저장된 값이 1이면 -> 외출 X
+                        activityData[0] = new CareReceiverActivityData("외출",getName+"님은 현재 실내에 있습니다.");
+                        activityData[1] = new CareReceiverActivityData("활동",getName+"님은 현재 외출 중 입니다.");
                     }
 
 
                 }
+                mainViewAdapter.notifyDataSetChanged();
+
+
             }
 
             @Override
@@ -112,7 +120,7 @@ public class GuardianMenuHomeFragment extends Fragment {
     // 데이터를 받아올 떄 CareReceiverActivityData[] activityData = { ... },
     // NewNotificationData[] newNotificationData = { ... } 부분을 수정하면 됨
     CareReceiverActivityData activityData[] = {
-            new CareReceiverActivityData("외출", getName+"님은 현재 외출중입니다."),
+            new CareReceiverActivityData("외출", "님은 현재 외출중입니다."),
             new CareReceiverActivityData("활동", "최근 24시간 동안 5번의 활동 감지가 있었습니다")
     };
 

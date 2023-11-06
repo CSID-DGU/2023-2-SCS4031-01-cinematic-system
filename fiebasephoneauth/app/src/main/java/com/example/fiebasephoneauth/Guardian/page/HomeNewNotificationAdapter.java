@@ -10,12 +10,14 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fiebasephoneauth.R;
 
+import java.util.ArrayList;
+
 public class HomeNewNotificationAdapter extends RecyclerView.Adapter<HomeNewNotificationAdapter.viewHolder> {
 
-    NewNotificationData[] mData;
+    private ArrayList<NewNotificationData> Notification_arrayList;
 
-    HomeNewNotificationAdapter(NewNotificationData data[]) {
-        mData = data;
+    HomeNewNotificationAdapter(ArrayList<NewNotificationData> arrayList){
+        this.Notification_arrayList = arrayList;
     }
 
     class viewHolder extends RecyclerView.ViewHolder {
@@ -40,14 +42,14 @@ public class HomeNewNotificationAdapter extends RecyclerView.Adapter<HomeNewNoti
 
     @Override
     public void onBindViewHolder(HomeNewNotificationAdapter.viewHolder holder, int position) {
-        holder.newNotificationCardDate.setText(mData[position].getDate());
-        holder.newNotificationCardTime.setText(mData[position].getTime());
-        holder.newNotificationCardDescription.setText(mData[position].getDescription());
+        holder.newNotificationCardDate.setText(Notification_arrayList.get(position).getDate());
+        holder.newNotificationCardTime.setText(Notification_arrayList.get(position).getTime());
+        holder.newNotificationCardDescription.setText(Notification_arrayList.get(position).getDescription());
     }
 
     @Override
     public int getItemCount() {
-        return mData.length;
+        return Notification_arrayList.size();
     }
 
 }

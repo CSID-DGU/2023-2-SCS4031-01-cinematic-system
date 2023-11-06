@@ -19,6 +19,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 /**
  * <h3> 보호자의 홈 메인 페이지 </h3>
  *
@@ -41,8 +43,10 @@ public class GuardianMenuHomeFragment extends Fragment {
 
 
     // 외출, 활동 및 새로운 알림 리사이클러뷰
+    private ArrayList<NewNotificationData> Main_dataList;
+    private HomeNewNotificationAdapter Main_adapter;
     private RecyclerView recyclerViewNewNotification;
-    private RecyclerView.Adapter newNotificationAdapter;
+    private LinearLayoutManager linearLayoutManager;
 
 
     @Override
@@ -67,10 +71,14 @@ public class GuardianMenuHomeFragment extends Fragment {
 
         // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification = (RecyclerView) view.findViewById(R.id.recyclerview_home_new_notification);
-        recyclerViewNewNotification.setHasFixedSize(true);
-        newNotificationAdapter = new HomeNewNotificationAdapter(newNotificationData);
-        recyclerViewNewNotification.setAdapter(newNotificationAdapter);
-        recyclerViewNewNotification.setLayoutManager(new LinearLayoutManager(getActivity()));
+        recyclerViewNewNotification.setLayoutManager(linearLayoutManager);
+        linearLayoutManager = new LinearLayoutManager(getActivity());
+        recyclerViewNewNotification.setLayoutManager(linearLayoutManager);
+        Main_dataList = new ArrayList<>();
+        Main_adapter = new HomeNewNotificationAdapter(Main_dataList);
+        recyclerViewNewNotification.setAdapter(Main_adapter);
+
+
 
         Bundle bundle = getArguments();
         String idTxt = bundle.getString("id");
@@ -91,10 +99,17 @@ public class GuardianMenuHomeFragment extends Fragment {
                     if ("0".equals(getOuting)) {
                         // "외출" DB에 저장된 값이 "0"이면 -> 외출 중
                         home_Outing_description.setText(getName + "님은 현재 외출 중 입니다.");
+                        NewNotificationData Data = new NewNotificationData("2020-05-01", "12:00:00",getName+"님이 외출을 시작하였습니다.");
+                        Main_dataList.add(0,Data);
+                        Main_adapter.notifyDataSetChanged();
                     }
+
                     else{
                         // "외출" DB에 저장된 값이 "1"이면 -> 외출 X
                         home_Outing_description.setText(getName + "님은 현재 실내에 있습니다.");
+                        NewNotificationData Data = new NewNotificationData("2020-05-01", "12:00:00",getName+"님이 외출을 마쳤습니다..");
+                        Main_dataList.add(0,Data);
+                        Main_adapter.notifyDataSetChanged();
                     }
 
 
@@ -113,15 +128,6 @@ public class GuardianMenuHomeFragment extends Fragment {
         return view;
 
     }
-    // 더미 데이터 -----------------------------------
-    // 데이터를 받아올 떄 CareReceiverActivityData[] activityData = { ... },
-    // NewNotificationData[] newNotificationData = { ... } 부분을 수정하면 됨
-    NewNotificationData newNotificationData[] = {
-            new NewNotificationData("2020-05-01", "12:00:00", getName+"님이 외출을 시작하였습니다."),
-            new NewNotificationData("2020-05-01", "12:00:00", getName+"님이 외출을 시작하였습니다."),
-            new NewNotificationData("2020-05-01", "12:00:00", getName+"님이 외출을 시작하였습니다."),
-    };
-    // ----------------------------------------------
 }
 
 class NewNotificationData {
@@ -142,7 +148,6 @@ class NewNotificationData {
     public String getTime() {
         return time;
     }
-
     public String getDescription() {
         return description;
     }

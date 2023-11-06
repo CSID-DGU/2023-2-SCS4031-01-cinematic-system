@@ -35,6 +35,7 @@ public class GuardianMenuHomeFragment extends Fragment {
     Button homeSeeDetailButton;
     String getName;
     String getOuting;
+    String getActivity_cnt;
 
 
 
@@ -86,9 +87,11 @@ public class GuardianMenuHomeFragment extends Fragment {
                 if(snapshot.hasChild(idTxt)){
                     getName = snapshot.child(idTxt).child("name").getValue(String.class);
                     getOuting = snapshot.child(idTxt).child("ActivityData").child("외출").getValue(String.class);
+                    getActivity_cnt = snapshot.child(idTxt).child("ActivityData").child("활동").getValue(String.class);
                     homeCareReceiverName.setText(getName);
                     homeCareReceiverGenderAge.setText("남/72");
                     homeCareReceiverAddress.setText("서울 중구 필동로1길 30");
+                    home_Activity_description.setText("최근 24시간 동안 "+getActivity_cnt+"번의 활동 감지가 있었습니다");
                     /**
                      *
                      */
@@ -96,7 +99,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                         // "외출" DB에 저장된 값이 "0"이면 -> 외출 중
                         home_Outing_description.setText(getName + "님은 현재 외출 중 입니다.");
                     }
-                    else if ("1".equals(getOuting)) {
+                    else{
                         // "외출" DB에 저장된 값이 "1"이면 -> 외출 X
                         home_Outing_description.setText(getName + "님은 현재 실내에 있습니다.");
                     }

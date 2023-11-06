@@ -209,7 +209,7 @@
         android:textSize="16dp"
         android:background="@drawable/button_layout_primary"
         android:padding="0dp"
-        android:text="@string/sign_up"
+        android:text="@string/get_connection"
         android:textColor="@color/white_0"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

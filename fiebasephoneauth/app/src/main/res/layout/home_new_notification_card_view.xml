@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginVertical="5dp"
+    android:layout_marginHorizontal="10dp"
     android:padding="5dp"
     card_view:cardBackgroundColor="@color/white_0"
     card_view:cardCornerRadius="0dp"

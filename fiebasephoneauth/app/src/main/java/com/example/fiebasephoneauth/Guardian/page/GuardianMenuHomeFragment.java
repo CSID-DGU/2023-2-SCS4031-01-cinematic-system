@@ -101,6 +101,10 @@ public class GuardianMenuHomeFragment extends Fragment {
                         home_Outing_description.setText(getName + "님은 현재 외출 중 입니다.");
                         NewNotificationData Data = new NewNotificationData("2020-05-01", "12:00:00",getName+"님이 외출을 시작하였습니다.");
                         Main_dataList.add(0,Data);
+                        // 알림 목록이 4개를 초과하면 가장 오래된 알림을 제거합니다.
+                        if (Main_dataList.size() > 4) {
+                            Main_dataList.remove(Main_dataList.size() - 1);
+                        }
                         Main_adapter.notifyDataSetChanged();
                     }
 
@@ -109,6 +113,10 @@ public class GuardianMenuHomeFragment extends Fragment {
                         home_Outing_description.setText(getName + "님은 현재 실내에 있습니다.");
                         NewNotificationData Data = new NewNotificationData("2020-05-01", "12:00:00",getName+"님이 외출을 마쳤습니다..");
                         Main_dataList.add(0,Data);
+                        // 알림 목록이 4개를 초과하면 가장 오래된 알림을 제거합니다.
+                        if (Main_dataList.size() > 4) {
+                            Main_dataList.remove(Main_dataList.size() - 1);
+                        }
                         Main_adapter.notifyDataSetChanged();
                     }
 

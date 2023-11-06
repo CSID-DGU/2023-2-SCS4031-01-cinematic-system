@@ -134,11 +134,11 @@
 
             <TextView
                 android:id="@+id/home_outing_description"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:fontFamily="@font/intersemibold"
-                android:paddingStart="15dp"
+                android:paddingStart="70dp"
                 android:gravity="start"
                 android:textColor="@color/black_2"
                 android:text="김보호님은 현재 외출중입니다"
@@ -189,12 +189,12 @@
 
             <TextView
                 android:id="@+id/home_activity_description"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:maxWidth="300dp"
                 android:layout_height="match_parent"
                 android:layout_margin="5dp"
                 android:fontFamily="@font/intersemibold"
-                android:paddingStart="15dp"
+                android:paddingStart="70dp"
                 android:gravity="start"
                 android:textColor="@color/black_2"
                 android:text="최근 1시간 동안 김보호님은 3번의 활동을 하였습니다."

@@ -20,6 +20,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.text.SimpleDateFormat;
 
 /**
  * <h3> 보호자의 홈 메인 페이지 </h3>
@@ -99,7 +101,16 @@ public class GuardianMenuHomeFragment extends Fragment {
                     if ("0".equals(getOuting)) {
                         // "외출" DB에 저장된 값이 "0"이면 -> 외출 중
                         home_Outing_description.setText(getName + "님은 현재 외출 중 입니다.");
-                        NewNotificationData Data = new NewNotificationData("2020-05-01", "12:00:00",getName+"님이 외출을 시작하였습니다.");
+
+                        // 현재 날짜와 시간을 얻어옴
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                        String currentDate = dateFormat.format(calendar.getTime());
+                        String currentTime = timeFormat.format(calendar.getTime());
+
+                        // currentDate와 currentTime을 사용하여 알림을 생성
+                        NewNotificationData Data = new NewNotificationData(currentDate, currentTime, getName + "님이 외출을 시작하였습니다.");
                         Main_dataList.add(0,Data);
                         // 알림 목록이 4개를 초과하면 가장 오래된 알림을 제거합니다.
                         if (Main_dataList.size() > 4) {
@@ -111,7 +122,16 @@ public class GuardianMenuHomeFragment extends Fragment {
                     else{
                         // "외출" DB에 저장된 값이 "1"이면 -> 외출 X
                         home_Outing_description.setText(getName + "님은 현재 실내에 있습니다.");
-                        NewNotificationData Data = new NewNotificationData("2020-05-01", "12:00:00",getName+"님이 외출을 마쳤습니다..");
+
+                        // 현재 날짜와 시간을 얻어옴
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                        String currentDate = dateFormat.format(calendar.getTime());
+                        String currentTime = timeFormat.format(calendar.getTime());
+
+                        // currentDate와 currentTime을 사용하여 알림을 생성
+                        NewNotificationData Data = new NewNotificationData(currentDate, currentTime,getName+"님이 외출을 마쳤습니다.");
                         Main_dataList.add(0,Data);
                         // 알림 목록이 4개를 초과하면 가장 오래된 알림을 제거합니다.
                         if (Main_dataList.size() > 4) {

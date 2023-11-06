@@ -41,8 +41,8 @@ public class GuardianMenuHomeFragment extends Fragment {
 
 
     // 외출, 활동 및 새로운 알림 리사이클러뷰
-    private RecyclerView recyclerViewMain, recyclerViewNewNotification;
-    private RecyclerView.Adapter mainViewAdapter, newNotificationAdapter;
+    private RecyclerView recyclerViewNewNotification;
+    private RecyclerView.Adapter newNotificationAdapter;
 
 
     @Override
@@ -64,13 +64,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
         home_Outing_description = (TextView) view.findViewById(R.id.home_outing_description);
         home_Activity_description = (TextView) view.findViewById(R.id.home_activity_description);
-
-        // 활동 정보 리사이클러뷰
-//        recyclerViewMain = (RecyclerView) view.findViewById(R.id.recyclerview_home_main);
-//        recyclerViewMain.setHasFixedSize(true);
-//        mainViewAdapter = new HomeMainAdapter(activityData);
-//        recyclerViewMain.setAdapter(mainViewAdapter);
-//        recyclerViewMain.setLayoutManager(new LinearLayoutManager(getActivity()));
 
         // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification = (RecyclerView) view.findViewById(R.id.recyclerview_home_new_notification);
@@ -123,35 +116,12 @@ public class GuardianMenuHomeFragment extends Fragment {
     // 더미 데이터 -----------------------------------
     // 데이터를 받아올 떄 CareReceiverActivityData[] activityData = { ... },
     // NewNotificationData[] newNotificationData = { ... } 부분을 수정하면 됨
-    CareReceiverActivityData activityData[] = {
-            new CareReceiverActivityData("외출", "님은 현재 외출중입니다."),
-            new CareReceiverActivityData("활동", "최근 24시간 동안 5번의 활동 감지가 있었습니다")
-    };
-
     NewNotificationData newNotificationData[] = {
             new NewNotificationData("2020-05-01", "12:00:00", getName+"님이 외출을 시작하였습니다."),
             new NewNotificationData("2020-05-01", "12:00:00", getName+"님이 외출을 시작하였습니다."),
             new NewNotificationData("2020-05-01", "12:00:00", getName+"님이 외출을 시작하였습니다."),
     };
     // ----------------------------------------------
-}
-
-class CareReceiverActivityData {
-    String title;
-    String description;
-
-    public CareReceiverActivityData(String title, String description) {
-        this.title = title;
-        this.description = description;
-    }
-
-    public String getTitle() {
-        return title;
-    }
-
-    public String getDescription() {
-        return description;
-    }
 }
 
 class NewNotificationData {

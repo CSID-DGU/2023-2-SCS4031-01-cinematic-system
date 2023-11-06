@@ -62,8 +62,8 @@ public class GuardianMenuHomeFragment extends Fragment {
         homeSeeDetailButton = (Button) view.findViewById(R.id.home_see_detail_button); // 피보호자 상세 정보 보기 버튼
 
 
-        home_Outing_description = (TextView) view.findViewById(R.id.home_Outing_description);
-        home_Activity_description = (TextView) view.findViewById(R.id.home_Activity_description);
+        home_Outing_description = (TextView) view.findViewById(R.id.home_outing_description);
+        home_Activity_description = (TextView) view.findViewById(R.id.home_activity_description);
 
         // 활동 정보 리사이클러뷰
 //        recyclerViewMain = (RecyclerView) view.findViewById(R.id.recyclerview_home_main);

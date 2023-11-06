@@ -9,7 +9,7 @@
     <string name="reload">새로고침</string>
     <string name="verify_phone_number">전화번호 인증</string>
     <string name="verification_code">인증코드</string>
-    <string name="get_connected">연동하기</string>
+    <string name="get_connection">연동하기</string>
     <string name="request_phone_auth">인증번호 요청</string>
     <string name="please_connected_from_guardian">보호자의 계정을 통해 연동해주세요</string>
     <string name="please_connection_to_care_receiver">피보호자의 정보를 연동해주세요</string>

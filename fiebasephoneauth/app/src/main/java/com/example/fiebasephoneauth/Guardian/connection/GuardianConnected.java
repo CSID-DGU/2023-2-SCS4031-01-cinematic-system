@@ -32,6 +32,5 @@ public class GuardianConnected extends AppCompatActivity {
             intent2.putExtra("id",idTxt);
             startActivity(intent2);
         });
-
     }
 }

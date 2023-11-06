@@ -84,7 +84,7 @@
         android:translationZ="-5dp"
         android:fontFamily="@font/intersemibold"
         android:hint="@string/enter_your_pw"
-        android:inputType="text"
+        android:inputType="textPassword"
         android:paddingStart="60dp"
         android:textColorHint="@color/white_2"
         android:textSize="15dp"

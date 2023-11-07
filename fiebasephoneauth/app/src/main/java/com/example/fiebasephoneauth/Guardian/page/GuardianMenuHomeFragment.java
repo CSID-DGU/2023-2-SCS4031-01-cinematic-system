@@ -98,7 +98,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                     /**
                      *
                      */
-                    if ("0".equals(getOuting)) {
+                    if (getOuting.equals("0")) {
                         // "외출" DB에 저장된 값이 "0"이면 -> 외출 중
                         home_Outing_description.setText(getName + "님은 현재 외출 중 입니다.");
 
@@ -119,7 +119,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                         Main_adapter.notifyDataSetChanged();
                     }
 
-                    else{
+                    else if(getOuting.equals("1")){
                         // "외출" DB에 저장된 값이 "1"이면 -> 외출 X
                         home_Outing_description.setText(getName + "님은 현재 실내에 있습니다.");
 
@@ -139,8 +139,9 @@ public class GuardianMenuHomeFragment extends Fragment {
                         }
                         Main_adapter.notifyDataSetChanged();
                     }
-
-
+                    else{
+                        home_Outing_description.setText(getName + "님 반갑습니다.");
+                    }
 
                 }
 

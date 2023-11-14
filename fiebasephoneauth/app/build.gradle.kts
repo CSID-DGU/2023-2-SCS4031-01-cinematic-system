@@ -55,17 +55,19 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
+
     /**
      * firebase 연동 dependencies 추가
      */
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
     implementation("com.google.firebase:firebase-analytics-ktx")
-
+    implementation("com.google.firebase:firebase-messaging-ktx")
     /**
      * Play Integrity
      */
     implementation("com.google.firebase:firebase-appcheck-playintegrity")
     implementation("com.google.firebase:firebase-appcheck-ktx")
+
 
     implementation("androidx.browser:browser:1.5.0")
 

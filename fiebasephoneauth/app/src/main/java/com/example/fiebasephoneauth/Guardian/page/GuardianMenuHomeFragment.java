@@ -1,6 +1,9 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,20 +11,22 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fiebasephoneauth.R;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.text.SimpleDateFormat;
 
 /**
  * <h3> 보호자의 홈 메인 페이지 </h3>
@@ -84,67 +89,113 @@ public class GuardianMenuHomeFragment extends Fragment {
 
         Bundle bundle = getArguments();
         String idTxt = bundle.getString("id");
-        databaseReference.child("CareReceiver_list").addValueEventListener(new ValueEventListener() {
+        databaseReference.child("CareReceiver_list").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.hasChild(idTxt)){
                     getName = snapshot.child(idTxt).child("name").getValue(String.class);
-                    getOuting = snapshot.child(idTxt).child("ActivityData").child("외출").getValue(String.class);
-                    getActivity_cnt = snapshot.child(idTxt).child("ActivityData").child("활동").getValue(String.class);
                     homeCareReceiverName.setText(getName);
                     homeCareReceiverGenderAge.setText("남/72");
-                    homeCareReceiverAddress.setText("서울 중구 필동로1길 30");
-                    home_Activity_description.setText("최근 24시간 동안 "+getActivity_cnt+"번의 활동 감지가 있었습니다");
-                    /**
-                     *
-                     */
-                    if (getOuting.equals("0")) {
-                        // "외출" DB에 저장된 값이 "0"이면 -> 외출 중
-                        home_Outing_description.setText(getName + "님은 현재 외출 중 입니다.");
-
-                        // 현재 날짜와 시간을 얻어옴
-                        Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-                        String currentDate = dateFormat.format(calendar.getTime());
-                        String currentTime = timeFormat.format(calendar.getTime());
-
-                        // currentDate와 currentTime을 사용하여 알림을 생성
-                        NewNotificationData Data = new NewNotificationData(currentDate, currentTime, getName + "님이 외출을 시작하였습니다.");
-                        Main_dataList.add(0,Data);
-                        // 알림 목록이 4개를 초과하면 가장 오래된 알림을 제거합니다.
-                        if (Main_dataList.size() > 4) {
-                            Main_dataList.remove(Main_dataList.size() - 1);
-                        }
-                        Main_adapter.notifyDataSetChanged();
-                    }
-
-                    else if(getOuting.equals("1")){
-                        // "외출" DB에 저장된 값이 "1"이면 -> 외출 X
-                        home_Outing_description.setText(getName + "님은 현재 실내에 있습니다.");
-
-                        // 현재 날짜와 시간을 얻어옴
-                        Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-                        String currentDate = dateFormat.format(calendar.getTime());
-                        String currentTime = timeFormat.format(calendar.getTime());
-
-                        // currentDate와 currentTime을 사용하여 알림을 생성
-                        NewNotificationData Data = new NewNotificationData(currentDate, currentTime,getName+"님이 외출을 마쳤습니다.");
-                        Main_dataList.add(0,Data);
-                        // 알림 목록이 4개를 초과하면 가장 오래된 알림을 제거합니다.
-                        if (Main_dataList.size() > 4) {
-                            Main_dataList.remove(Main_dataList.size() - 1);
-                        }
-                        Main_adapter.notifyDataSetChanged();
-                    }
-                    else{
-                        home_Outing_description.setText(getName + "님 반갑습니다.");
-                    }
+                    homeCareReceiverAddress.setText("서울 중구 필동로 1길 30");
 
                 }
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+
+
+        databaseReference.child("CareReceiver_list").child(idTxt).child("ActivityData").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                if(snapshot.getKey().matches("외출")){
+                    Log.d(TAG, "외출: "+snapshot.getValue());
+                    if (snapshot.getValue().equals("0")){
+                        home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
+
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                        String currentDate = dateFormat.format(calendar.getTime());
+                        String currentTime = timeFormat.format(calendar.getTime());
+
+                        NewNotificationData Data = new NewNotificationData(currentDate, currentTime, getName + "님이 외출을 시작하였습니다.");
+                        Main_dataList.add(0,Data);
+                        if (Main_dataList.size() > 4) {
+                            Main_dataList.remove(Main_dataList.size() - 1);
+                        }
+
+                    }
+                    else if (snapshot.getValue().equals("1")){
+                        home_Outing_description.setText(getName+"님은 현재 실내에 있습니다.");
+
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                        String currentDate = dateFormat.format(calendar.getTime());
+                        String currentTime = timeFormat.format(calendar.getTime());
+
+                        NewNotificationData Data = new NewNotificationData(currentDate, currentTime,getName+"님이 외출을 마쳤습니다.");
+                        Main_dataList.add(0,Data);
+                        if (Main_dataList.size() > 4) {
+                            Main_dataList.remove(Main_dataList.size() - 1);
+                        }
+                    }
+                }
+                else if(snapshot.getKey().matches("응급")){
+                    if (snapshot.getValue().equals("1")) {
+
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                        String currentDate = dateFormat.format(calendar.getTime());
+                        String currentTime = timeFormat.format(calendar.getTime());
+
+                        NewNotificationData Data = new NewNotificationData(currentDate, currentTime, getName + "님이 응급버튼을 눌렀습니다.");
+                        Main_dataList.add(0, Data);
+                        if (Main_dataList.size() > 4) {
+                            Main_dataList.remove(Main_dataList.size() - 1);
+                        }
+                    }
+                }
+                else if(snapshot.getKey().matches("화재")){
+
+                    if (snapshot.getValue().equals("1")) {
+
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                        String currentDate = dateFormat.format(calendar.getTime());
+                        String currentTime = timeFormat.format(calendar.getTime());
+
+                        NewNotificationData Data = new NewNotificationData(currentDate, currentTime, getName + "님이 화재가 발생했습니다.");
+                        Main_dataList.add(0, Data);
+                        if (Main_dataList.size() > 4) {
+                            Main_dataList.remove(Main_dataList.size() - 1);
+                        }
+                    }
+                }
+                else if(snapshot.getKey().matches("활동")){
+                    getActivity_cnt = snapshot.getValue().toString();
+                    home_Activity_description.setText("최근 24시간 동안 "+getActivity_cnt+"번의 활동 감지가 있었습니다");
+
+                }
+                Main_adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
             }
 

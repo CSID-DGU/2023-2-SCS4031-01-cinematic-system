@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".Guardian.page.GuardianEventLogDetail">
+
+    <LinearLayout
+        android:id="@+id/emer_type_wrapper"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:layout_marginTop="40dp"
+        android:layout_marginStart="30dp"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        >
+
+    <ImageView
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:src="@drawable/emer"
+        />
+
+    <TextView
+        android:id="@+id/emer_type"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:text="EmerType"
+        android:fontFamily="@font/interextrabold"
+        android:textColor="@color/black_2"
+        android:textSize="26dp"
+        android:layout_marginStart="12dp"
+        />
+        
+    </LinearLayout>
+    
+    <TextView
+        android:id="@+id/event_date_time_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DatenTime"
+        android:fontFamily="@font/interextrabold"
+        android:textColor="@color/black_1"
+        android:textSize="14dp"
+        android:layout_marginTop="10dp"
+        android:layout_marginStart="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/emer_type_wrapper"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <TextView
+        android:id="@+id/event_description_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EventDescription"
+        android:fontFamily="@font/interextrabold"
+        android:textColor="@color/black_1"
+        android:textSize="14dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginStart="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/event_date_time_text"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+
+    <include
+        layout="@layout/phone_number_card_view"
+        android:id="@+id/care_receiver_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_marginHorizontal="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/event_description_text"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <include
+        layout="@layout/phone_number_card_view"
+        android:id="@+id/care_giver_phone_number"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:layout_marginHorizontal="30dp"
+        app:layout_constraintTop_toBottomOf="@+id/care_receiver_phone_number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <Button
+        android:id="@+id/back"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:text="@string/back"
+        android:textSize="15dp"
+        android:layout_marginTop="40dp"
+        android:textColor="@color/white_1"
+        android:fontFamily="@font/intersemibold"
+        android:background="@drawable/button_layout_primary"
+        app:layout_constraintTop_toBottomOf="@+id/care_giver_phone_number"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        />
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

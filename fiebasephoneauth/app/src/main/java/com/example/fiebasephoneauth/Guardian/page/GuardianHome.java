@@ -11,6 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianHomeBinding;
+import com.example.fiebasephoneauth.login.GuardianSignUpFormFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 
@@ -48,6 +49,12 @@ public class GuardianHome extends AppCompatActivity {
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new ItemSelectedListener());
 
+        int selectedItemId = getIntent().getIntExtra("SELECTED_ITEM", 0);
+        if (selectedItemId != 0) {
+            // 선택된 아이템이 있다면 해당 아이템을 선택하도록 함
+            bottomNavigationView.setSelectedItemId(selectedItemId);
+        }
+
     }
 
 
@@ -65,6 +72,7 @@ public class GuardianHome extends AppCompatActivity {
             } else if (item.getItemId() == R.id.menu_profile) {
                 transaction.replace(R.id.frameLayout, guardianMenuProfileFragment).commitAllowingStateLoss();
             }
+
             return true;
         }
     }

@@ -48,4 +48,7 @@
     <string name="address">주소</string>
     <string name="complate_connection">연동되었습니다!</string>
     <string name="get_start">시작하기</string>
+    <string name="activity_info">활동 정보</string>
+    <string name="call">전화하기</string>
+    <string name="see_detail">자세히 보기</string>
 </resources>

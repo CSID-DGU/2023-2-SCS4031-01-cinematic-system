@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId = "com.example.fiebasephoneauth"
-        minSdk = 24
+        minSdk = 26
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
@@ -62,7 +62,8 @@ dependencies {
      */
     implementation(platform("com.google.firebase:firebase-bom:32.3.1"))
     implementation("com.google.firebase:firebase-analytics-ktx")
-    implementation("com.google.firebase:firebase-messaging-ktx")
+    implementation("com.google.firebase:firebase-messaging-ktx:23.3.1")
+    implementation("com.pusher:push-notifications-android:1.9.0")
     /**
      * Play Integrity
      */

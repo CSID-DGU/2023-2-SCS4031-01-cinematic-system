@@ -17,7 +17,7 @@
     <string name="input_care_receiver_info">피보호자 회원정보 입력</string>
     <string name="enter_your_id">아이디를 입력하세요</string>
     <string name="enter_your_pw">비밀번호를 입력하세요</string>
-    <string name="enter_your_name">피보호자 ID를 입력하세요</string>
+    <string name="enter_care_receiver_id">피보호자 ID를 입력하세요</string>
     <string name="enter_your_phone_number">전화번호를 입력하세요</string>
     <string name="enter_vertification_code">인증번호를 입력해주세요</string>
     <string name="name">이름</string>
@@ -51,4 +51,19 @@
     <string name="activity_info">활동 정보</string>
     <string name="call">전화하기</string>
     <string name="see_detail">자세히 보기</string>
+    <string name="gender">성별</string>
+    <string name="age">나이</string>
+    <string name="enter_your_name">이름을 입력하세요</string>
+    <string name="enter_your_info">회원 정보 입력</string>
+    <string name="enter_your_address">주소를 입력하세요</string>
+    <string name="enter_your_gender">성별을 입력하세요</string>
+    <string name="enter_your_care_giver_info">담당자 정보 입력</string>
+    <string name="care_giver_name">담당자 이름</string>
+    <string name="enter_care_giver_phone_number">담당자 전화번호를 입력하세요</string>
+    <string name="enter_account_info">계정 정보 입력</string>
+    <string name="id_kr">아이디</string>
+    <string name="pw_kr">비밀번호</string>
+    <string name="pw_confirm">비밀번호 확인</string>
+    <string name="enter_your_pw_confirm">위 비밀번호를 동일하게 입력하세요</string>
+    <string name="enter_your_age">나이를 입력하세요</string>
 </resources>

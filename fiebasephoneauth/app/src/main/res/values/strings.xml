@@ -46,6 +46,8 @@
     <string name="care_receiver_profile">피보호자 정보</string>
     <string name="care_giver_profile">담당자 정보</string>
     <string name="address">주소</string>
+    <string name="address_detail">상세주소</string>
+    <string name="enter_your_address_detail">상세 주소를 입력해주세요</string>
     <string name="complate_connection">연동되었습니다!</string>
     <string name="get_start">시작하기</string>
     <string name="activity_info">활동 정보</string>

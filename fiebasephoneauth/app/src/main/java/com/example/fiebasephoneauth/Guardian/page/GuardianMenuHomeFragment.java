@@ -1,6 +1,10 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,11 +23,15 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <h3> 보호자의 홈 메인 페이지 </h3>
@@ -34,7 +42,7 @@ import java.util.Calendar;
 public class GuardianMenuHomeFragment extends Fragment {
 
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
-
+    DatabaseReference docRef;
     // 피보호자 정보
     TextView homeCareReceiverName, homeCareReceiverGenderAge, homeCareReceiverAddress;
     TextView  home_Outing_description, home_Activity_description;
@@ -42,6 +50,14 @@ public class GuardianMenuHomeFragment extends Fragment {
     String getName;
     String getOuting;
     String getActivity_cnt;
+    String getCareReceiverId;
+
+
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
+    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+    String current_Date = dateFormat.format(calendar.getTime());
+    String current_Time = timeFormat.format(calendar.getTime());
 
 
 
@@ -50,7 +66,6 @@ public class GuardianMenuHomeFragment extends Fragment {
     private ArrayList<NewNotificationData> Main_dataList;
     private HomeNewNotificationAdapter Main_adapter;
     private RecyclerView recyclerViewNewNotification;
-    private LinearLayoutManager linearLayoutManager;
 
 
     @Override
@@ -128,7 +143,7 @@ public class GuardianMenuHomeFragment extends Fragment {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.hasChild("CareReceiverID")){
-                    String getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
+                    getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
 
                     databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").addChildEventListener(new ChildEventListener() {
                         @Override
@@ -204,11 +219,6 @@ public class GuardianMenuHomeFragment extends Fragment {
                                     }
                                 }
                             }
-                            else if(snapshot.getKey().matches("활동")){
-                                getActivity_cnt = snapshot.getValue().toString();
-                                home_Activity_description.setText("최근 24시간 동안 "+getActivity_cnt+"번의 활동 감지가 있었습니다");
-
-                            }
                             Main_adapter.notifyDataSetChanged();
                         }
 
@@ -227,6 +237,40 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                         }
                     });
+                    docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("활동");
+//run() 안에 db에서 가져온 time값과 현재 시간을 (기준 시간 ex 10분 마다) 비교하는 코드 작성
+                    docRef.child("cnt").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            updateLastActivityTime();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            compareTimeAndPerformAction();
+                            handler.postDelayed(this,4000);
+                        }
+                    },4000);
+
+                    docRef.child("cnt").addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                            updateLastActivityTime();
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
                 }
             }
 
@@ -236,8 +280,122 @@ public class GuardianMenuHomeFragment extends Fragment {
             }
         });
 
+        homeSeeDetailButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         return view;
 
+    }
+
+    private void updateLastActivityTime() {
+        Map<String,Object> updateData = new HashMap<>();
+        updateData.put("time", ServerValue.TIMESTAMP);
+
+        docRef.updateChildren(updateData, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+                if(error != null){
+                    Log.e(TAG, "not be saved"+ error.getMessage());
+                }
+                else{
+                    Log.e(TAG, "saved success");
+                }
+            }
+        });
+    }
+
+    private void compareTimeAndPerformAction() {
+        docRef.child("time").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    long lastActivityTime = snapshot.getValue(Long.class);
+                    long currentTime = System.currentTimeMillis();
+
+                    long timeDifference = currentTime - lastActivityTime;
+
+                    long hoursDifference = timeDifference / 1000;
+
+                    if(hoursDifference > 0 &&hoursDifference < 8){
+                        home_Activity_description.setText("정상 상태입니다.");
+                    }
+                    //주의
+                    else if (hoursDifference >= 8 && hoursDifference < 12) {
+                        home_Activity_description.setText("주의 상태입니다.");
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                        String currentDate = dateFormat.format(calendar.getTime());
+                        String ServerTime = timeFormat.format(calendar.getTime());
+
+                        NewNotificationData Data = new NewNotificationData(currentDate, ServerTime, getName + "님이 8시간 이상 활동이 없습니다.");
+                        Main_dataList.add(0, Data);
+                        if (Main_dataList.size() > 4) {
+                            Main_dataList.remove(Main_dataList.size() - 1);
+                        }
+                    }
+                    //경고
+                    else if(hoursDifference >= 12 && hoursDifference < 24){
+                        home_Activity_description.setText("경고 상태입니다.");
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                        String currentDate = dateFormat.format(calendar.getTime());
+                        String ServerTime = timeFormat.format(calendar.getTime());
+
+                        NewNotificationData Data = new NewNotificationData(currentDate, ServerTime, getName + "님이 12시간 이상 활동이 없습니다.");
+                        Main_dataList.add(0, Data);
+                        if (Main_dataList.size() > 4) {
+                            Main_dataList.remove(Main_dataList.size() - 1);
+                        }
+                    }
+                    //응급
+                    else if (hoursDifference >= 24) {
+                        home_Activity_description.setText("응급 상태입니다.");
+                        Calendar calendar = Calendar.getInstance();
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                        String currentDate = dateFormat.format(calendar.getTime());
+                        String ServerTime = timeFormat.format(calendar.getTime());
+
+                        NewNotificationData Data = new NewNotificationData(currentDate, ServerTime, getName + "님이 24시간 이상 활동이 없습니다.");
+                        Main_dataList.add(0, Data);
+                        if (Main_dataList.size() > 4) {
+                            Main_dataList.remove(Main_dataList.size() - 1);
+                        }
+
+                    }Main_adapter.notifyDataSetChanged();
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
+    private void checkLastActivityTimestamp(DataSnapshot snapshot) {
+        Object timestamp = snapshot.getValue();
+
+        if(timestamp instanceof Long){
+            Date lastActivityTime = new Date((Long)timestamp);
+
+            Date ServerTime = new Date();
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+            long timeDifference = ServerTime.getTime() - lastActivityTime.getTime();
+
+            long hoursDifference = timeDifference /(60*60*1000);
+
+            //정상
+
+        }
     }
 }
 

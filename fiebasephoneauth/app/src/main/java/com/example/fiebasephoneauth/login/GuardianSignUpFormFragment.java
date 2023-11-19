@@ -1,6 +1,10 @@
 package com.example.fiebasephoneauth.login;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
+import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,6 +14,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.DrawableRes;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -59,6 +64,11 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
     String phoneNum;
     String password;
     String passwordConfirm;
+
+    // 입력 레이아웃 객체
+    GradientDrawable requiredFormLayout = new GradientDrawable();
+    GradientDrawable formLayout = new GradientDrawable();
+
     @Nullable
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -79,6 +89,16 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
         idForm = root.findViewById(R.id.idForm);
         passwordForm = root.findViewById(R.id.passwordForm);
         passwordConfirmForm = root.findViewById(R.id.passwordConfirmForm);
+
+        // 미입력 시 빨간색으로 표시할 레이아웃
+        requiredFormLayout.setStroke(5, Color.parseColor("#D64545"));
+        requiredFormLayout.setCornerRadius(10);
+        requiredFormLayout.setColor(Color.parseColor("#F0F0F0"));
+
+        // 기본 입력 레이아웃
+        formLayout.setColor(Color.parseColor("#F0F0F0"));
+        formLayout.setCornerRadius(10);
+
 
 
         return root;
@@ -125,6 +145,28 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
         passwordConfirm = passwordConfirmForm.getText().toString();
 
         if (name.isEmpty() || phoneNum.isEmpty() || ID.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()){
+
+            if(name.isEmpty())
+                nameForm.setBackground(requiredFormLayout);
+            else if(!name.isEmpty())
+                nameForm.setBackground(formLayout);
+            if (phoneNum.isEmpty())
+                phoneNumForm.setBackground(requiredFormLayout);
+            else if(!phoneNum.isEmpty())
+                phoneNumForm.setBackground(formLayout);
+            if (ID.isEmpty())
+                idForm.setBackground(requiredFormLayout);
+            else if(!ID.isEmpty())
+                idForm.setBackground(formLayout);
+            if (password.isEmpty())
+                passwordForm.setBackground(requiredFormLayout);
+            else if(!password.isEmpty())
+                passwordForm.setBackground(formLayout);
+            if (passwordConfirm.isEmpty())
+                passwordConfirmForm.setBackground(requiredFormLayout);
+            else if(!passwordConfirm.isEmpty())
+                passwordConfirmForm.setBackground(formLayout);
+
             Toast.makeText(getActivity(), "사용자 정보를 모두 입력해주세요!", Toast.LENGTH_SHORT).show();
         }
         else if(!password.equals(passwordConfirm)){

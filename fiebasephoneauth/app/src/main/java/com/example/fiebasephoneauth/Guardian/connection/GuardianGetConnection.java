@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.fiebasephoneauth.databinding.ActivityGuardianGetConnectionBinding;
+import com.example.fiebasephoneauth.login.MainActivity;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -55,6 +56,14 @@ public class GuardianGetConnection extends AppCompatActivity {
         Button singup_button = binding.signupButton;
         mAuth = FirebaseAuth.getInstance();
 
+        logoutText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(GuardianGetConnection.this, MainActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
         requestAuthNumButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -77,6 +86,12 @@ public class GuardianGetConnection extends AppCompatActivity {
                 else{
                     verifycode(phoneNumConfirmForm.getText().toString());
                 }
+            }
+        });
+        singup_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
             }
         });
     }

@@ -12,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.fiebasephoneauth.Guardian.connection.GuardianNotConnected;
+import com.example.fiebasephoneauth.Guardian.page.GuardianHome;
 import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianSignInBinding;
 import com.google.firebase.database.DataSnapshot;
@@ -74,11 +75,29 @@ public class GuardianSignInActivity extends AppCompatActivity {
 
                                 if(getPassword.equals(passwordTxt)){
                                     Toast.makeText(GuardianSignInActivity.this, "로그인 성공 !", Toast.LENGTH_SHORT).show();
+//로그인 성공 시 연동 여부 파악 후 Home화면으로 이동 or 연동 화면으로 이동
+                                    databaseReference.child("Guardian_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if(snapshot.hasChild("CareReceiverID")){
+                                                Intent intent = new Intent(GuardianSignInActivity.this, GuardianHome.class);
+                                                intent.putExtra("id",idTxt);
+                                                startActivity(intent);
+                                                finish();
+                                            }
 
-                                    Intent intent = new Intent(GuardianSignInActivity.this, GuardianNotConnected.class);
-                                    intent.putExtra("id",idTxt);
-                                    startActivity(intent);
-                                    finish();
+                                            else{
+                                                Intent intent = new Intent(GuardianSignInActivity.this, GuardianNotConnected.class);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
                                 }
 
                                 else{

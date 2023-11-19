@@ -75,9 +75,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
         // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification = (RecyclerView) view.findViewById(R.id.recyclerview_home_new_notification);
-        recyclerViewNewNotification.setLayoutManager(linearLayoutManager);
-        linearLayoutManager = new LinearLayoutManager(getActivity());
-        recyclerViewNewNotification.setLayoutManager(linearLayoutManager);
+        recyclerViewNewNotification.setLayoutManager(new LinearLayoutManager(getActivity()));
         Main_dataList = new ArrayList<>();
         Main_adapter = new HomeNewNotificationAdapter(Main_dataList);
         recyclerViewNewNotification.setAdapter(Main_adapter);

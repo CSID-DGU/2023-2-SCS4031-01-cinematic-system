@@ -46,6 +46,9 @@ public class GuardianGetConnection extends AppCompatActivity {
         binding = ActivityGuardianGetConnectionBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        Intent intent = getIntent();
+        String idTxt = intent.getStringExtra("id");
+
         // 레이아웃 요소들
         EditText nameForm = binding.nameForm;
         EditText phoneForm = binding.phoneNumForm;
@@ -92,6 +95,11 @@ public class GuardianGetConnection extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
+                Intent intent = new Intent(GuardianGetConnection.this, GuardianConnected.class);
+
+                intent.putExtra("id",idTxt);
+                startActivity(intent);
+                finish();
             }
         });
     }
@@ -148,14 +156,6 @@ public class GuardianGetConnection extends AppCompatActivity {
 
                         if(task.isSuccessful()){
                             Toast.makeText(GuardianGetConnection.this,"연동 성공",Toast.LENGTH_SHORT).show();
-
-                            Intent intent = new Intent(GuardianGetConnection.this, GuardianConnected.class);
-                            EditText nameForm = binding.nameForm;
-                            final String idTxt = nameForm.getText().toString();
-                            intent.putExtra("id",idTxt);
-                            startActivity(intent);
-                            finish();
-
                         }
 
                     }

@@ -1,6 +1,10 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import static android.content.ContentValues.TAG;
+
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -233,8 +237,8 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                         }
                     });
-                    //DB에 setValue로 시간을 저장함 -> 활동 시간 페이지로 변경하면 좋을 거 같은데?
                     docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("활동");
+//run() 안에 db에서 가져온 time값과 현재 시간을 (기준 시간 ex 10분 마다) 비교하는 코드 작성
                     docRef.child("cnt").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -247,12 +251,19 @@ public class GuardianMenuHomeFragment extends Fragment {
                         }
                     });
 
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        @Override
+                        public void run() {
+                            compareTimeAndPerformAction();
+                            handler.postDelayed(this,4000);
+                        }
+                    },4000);
 
-
-                    databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("활동").addValueEventListener(new ValueEventListener() {
+                    docRef.child("cnt").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            checkLastActivityTimestamp(snapshot);
+                            updateLastActivityTime();
                         }
 
                         @Override
@@ -260,7 +271,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                         }
                     });
-
                 }
             }
 
@@ -288,7 +298,12 @@ public class GuardianMenuHomeFragment extends Fragment {
         docRef.updateChildren(updateData, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
-                compareTimeAndPerformAction();
+                if(error != null){
+                    Log.e(TAG, "not be saved"+ error.getMessage());
+                }
+                else{
+                    Log.e(TAG, "saved success");
+                }
             }
         });
     }
@@ -303,9 +318,9 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                     long timeDifference = currentTime - lastActivityTime;
 
-                    long hoursDifference = timeDifference / (60*60*1000);
+                    long hoursDifference = timeDifference / 1000;
 
-                    if(hoursDifference >= 0 &&hoursDifference < 8){
+                    if(hoursDifference > 0 &&hoursDifference < 8){
                         home_Activity_description.setText("정상 상태입니다.");
                     }
                     //주의
@@ -353,7 +368,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                             Main_dataList.remove(Main_dataList.size() - 1);
                         }
 
-                    }
+                    }Main_adapter.notifyDataSetChanged();
                 }
             }
 

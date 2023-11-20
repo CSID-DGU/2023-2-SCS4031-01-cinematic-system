@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -110,7 +110,7 @@
             android:fontFamily="@font/intersemibold"
             android:hint="@string/enter_your_gender"
             android:inputType="text"
-            android:paddingStart="80dp"
+            android:paddingStart="50dp"
             android:textColor="@color/black_1"
             android:textColorHint="@color/white_2"
             android:textSize="15dp"
@@ -144,8 +144,8 @@
             android:elevation="15dp"
             android:fontFamily="@font/intersemibold"
             android:hint="@string/enter_your_age"
-            android:inputType="text"
-            android:paddingStart="80dp"
+            android:inputType="number"
+            android:paddingStart="50dp"
             android:textColor="@color/black_1"
             android:textColorHint="@color/white_2"
             android:textSize="15dp"
@@ -166,6 +166,76 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/genderForm" />
 
+        <EditText
+            android:id="@+id/addressForm"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/form_layout"
+            android:elevation="15dp"
+            android:fontFamily="@font/intersemibold"
+            android:hint="@string/enter_your_address"
+            android:inputType="text"
+            android:paddingStart="50dp"
+            android:textColor="@color/black_1"
+            android:textColorHint="@color/white_2"
+            android:textSize="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ageForm" />
+
+        <TextView
+            android:id="@+id/addressText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="22dp"
+            android:elevation="15dp"
+            android:fontFamily="@font/intersemibold"
+            android:text="@string/address"
+            android:textColor="@color/black_1"
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/ageForm" />
+
+        <EditText
+            android:id="@+id/addressDetailForm"
+            android:layout_width="match_parent"
+            android:layout_height="35dp"
+            android:layout_alignParentLeft="true"
+            android:layout_marginHorizontal="30dp"
+            android:layout_marginStart="30dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginEnd="30dp"
+            android:background="@drawable/form_layout"
+            android:elevation="15dp"
+            android:fontFamily="@font/intersemibold"
+            android:hint="@string/enter_your_address_detail"
+            android:inputType="text"
+            android:paddingStart="80dp"
+            android:textColor="@color/black_1"
+            android:textColorHint="@color/white_2"
+            android:textSize="15dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addressForm" />
+
+        <TextView
+            android:id="@+id/addressDetailText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="40dp"
+            android:layout_marginTop="22dp"
+            android:elevation="15dp"
+            android:fontFamily="@font/intersemibold"
+            android:text="@string/address_detail"
+            android:textColor="@color/black_1"
+            android:textSize="16dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/addressForm" />
+
         <TextView
             android:id="@+id/care_giver_Info"
             android:layout_width="wrap_content"
@@ -178,7 +248,7 @@
             android:textColor="@color/black_1"
             android:textSize="20dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/ageForm" />
+            app:layout_constraintTop_toBottomOf="@+id/addressDetailForm" />
 
         <EditText
             android:id="@+id/careGiverNameForm"
@@ -387,4 +457,4 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</FrameLayout>
+</ScrollView>

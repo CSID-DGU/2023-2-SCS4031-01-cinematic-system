@@ -15,6 +15,9 @@
         android:theme="@style/Theme.Fiebasephoneauth"
         tools:targetApi="31">
         <activity
+            android:name=".login.SearchAddressActivity"
+            android:exported="false" />
+        <activity
             android:name=".Guardian.page.GuardianEventLogDetail"
             android:exported="false" />
         <activity
@@ -62,9 +65,11 @@
             android:theme="@style/Splash.Theme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".MyFirebaseMessagingService"
             android:exported="false">

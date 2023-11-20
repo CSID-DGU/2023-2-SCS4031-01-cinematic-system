@@ -143,26 +143,8 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
 
         if (name.isEmpty() || phoneNum.isEmpty() || ID.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty()){
 
-            if(name.isEmpty())
-                nameForm.setBackground(requiredFormLayout);
-            else if(!name.isEmpty())
-                nameForm.setBackground(formLayout);
-            if (phoneNum.isEmpty())
-                phoneNumForm.setBackground(requiredFormLayout);
-            else if(!phoneNum.isEmpty())
-                phoneNumForm.setBackground(formLayout);
-            if (ID.isEmpty())
-                idForm.setBackground(requiredFormLayout);
-            else if(!ID.isEmpty())
-                idForm.setBackground(formLayout);
-            if (password.isEmpty())
-                passwordForm.setBackground(requiredFormLayout);
-            else if(!password.isEmpty())
-                passwordForm.setBackground(formLayout);
-            if (passwordConfirm.isEmpty())
-                passwordConfirmForm.setBackground(requiredFormLayout);
-            else if(!passwordConfirm.isEmpty())
-                passwordConfirmForm.setBackground(formLayout);
+            // 입력하지 않은 부분을 빨간색으로 표시
+            isFilled();
 
             Toast.makeText(getActivity(), "사용자 정보를 모두 입력해주세요!", Toast.LENGTH_SHORT).show();
         }
@@ -198,5 +180,28 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
                 }
             });
         }
+    }
+
+    private void isFilled() {
+        if(name.isEmpty())
+            nameForm.setBackground(requiredFormLayout);
+        else if(!name.isEmpty())
+            nameForm.setBackground(formLayout);
+        if (phoneNum.isEmpty())
+            phoneNumForm.setBackground(requiredFormLayout);
+        else if(!phoneNum.isEmpty())
+            phoneNumForm.setBackground(formLayout);
+        if (ID.isEmpty())
+            idForm.setBackground(requiredFormLayout);
+        else if(!ID.isEmpty())
+            idForm.setBackground(formLayout);
+        if (password.isEmpty())
+            passwordForm.setBackground(requiredFormLayout);
+        else if(!password.isEmpty())
+            passwordForm.setBackground(formLayout);
+        if (passwordConfirm.isEmpty())
+            passwordConfirmForm.setBackground(requiredFormLayout);
+        else if(!passwordConfirm.isEmpty())
+            passwordConfirmForm.setBackground(formLayout);
     }
 }

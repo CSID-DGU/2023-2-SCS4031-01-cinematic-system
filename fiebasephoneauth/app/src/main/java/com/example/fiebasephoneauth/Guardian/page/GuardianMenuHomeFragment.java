@@ -153,7 +153,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                         @Override
                         public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                            if(snapshot.getKey().matches("외출")){
+                            if(snapshot.getKey().matches("outing")){
                                 if (snapshot.getValue().equals("0")){
                                     home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
 
@@ -186,7 +186,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                                     }
                                 }
                             }
-                            else if(snapshot.getKey().matches("응급")){
+                            else if(snapshot.getKey().matches("emergency")){
                                 if (snapshot.getValue().equals("1")) {
 
                                     Calendar calendar = Calendar.getInstance();
@@ -202,7 +202,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                                     }
                                 }
                             }
-                            else if(snapshot.getKey().matches("화재")){
+                            else if(snapshot.getKey().matches("fire")){
 
                                 if (snapshot.getValue().equals("1")) {
 
@@ -237,8 +237,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                         }
                     });
-                    docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("활동");
-//run() 안에 db에서 가져온 time값과 현재 시간을 (기준 시간 ex 10분 마다) 비교하는 코드 작성
+                    docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity");
                     docRef.child("cnt").addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {

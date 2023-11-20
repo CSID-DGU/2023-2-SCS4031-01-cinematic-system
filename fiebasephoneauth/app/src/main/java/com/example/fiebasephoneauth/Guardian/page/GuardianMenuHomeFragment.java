@@ -2,6 +2,7 @@ package com.example.fiebasephoneauth.Guardian.page;
 
 import static android.content.ContentValues.TAG;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -45,6 +47,7 @@ public class GuardianMenuHomeFragment extends Fragment {
     DatabaseReference docRef;
     // 피보호자 정보
     TextView homeCareReceiverName, homeCareReceiverGenderAge, homeCareReceiverAddress;
+    CardView home_Outing_cardView, home_Activity_cardView;
     TextView  home_Outing_description, home_Activity_description;
     Button homeSeeDetailButton;
     String getName;
@@ -84,12 +87,14 @@ public class GuardianMenuHomeFragment extends Fragment {
         homeCareReceiverAddress = (TextView) view.findViewById(R.id.care_receiver_address); // 피보호자 주소
         homeSeeDetailButton = (Button) view.findViewById(R.id.home_see_detail_button); // 피보호자 상세 정보 보기 버튼
 
-
-        home_Outing_description = (TextView) view.findViewById(R.id.home_outing_description);
-        home_Activity_description = (TextView) view.findViewById(R.id.home_activity_description);
+        // 외출, 활동
+        home_Outing_cardView = (CardView) view.findViewById(R.id.home_outing_card); // 외출 카드뷰
+        home_Activity_cardView = (CardView) view.findViewById(R.id.home_activity_card); // 활동 카드뷰
+        home_Outing_description = (TextView) view.findViewById(R.id.home_outing_description); // 외출 설명
+        home_Activity_description = (TextView) view.findViewById(R.id.home_activity_description); // 활동 설명
 
         // 새로운 알림 리사이클러뷰
-        recyclerViewNewNotification = (RecyclerView) view.findViewById(R.id.recyclerview_home_new_notification);
+        recyclerViewNewNotification = (RecyclerView) view.findViewById(R.id.recyclerview_home_new_notification); // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification.setLayoutManager(new LinearLayoutManager(getActivity()));
         Main_dataList = new ArrayList<>();
         Main_adapter = new HomeNewNotificationAdapter(Main_dataList);
@@ -100,7 +105,7 @@ public class GuardianMenuHomeFragment extends Fragment {
         Bundle bundle = getArguments();
         String idTxt = bundle.getString("id");
 
-
+        // 피보호자 정보 조회
         databaseReference.child("Guardian_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -138,7 +143,7 @@ public class GuardianMenuHomeFragment extends Fragment {
             }
         });
 
-
+        // 외출, 활동 조회
         databaseReference.child("Guardian_list").child(idTxt).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -286,8 +291,27 @@ public class GuardianMenuHomeFragment extends Fragment {
             }
         });
 
-        return view;
+        // 외출, 활동 상세 정보 보기
+        home_Outing_cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getActivity(), GuardianActivitiesDetail.class);
+                intent.putExtra("id", idTxt);
+                startActivity(intent);
+            }
+        });
 
+        home_Activity_cardView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Intent intent = new Intent(getActivity(), GuardianActivitiesDetail.class);
+                //intent.putExtra("id", idTxt);
+                //startActivity(intent);
+            }
+        });
+
+
+        return view;
     }
 
     private void updateLastActivityTime() {

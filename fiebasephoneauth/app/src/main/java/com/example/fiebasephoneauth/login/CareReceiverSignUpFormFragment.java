@@ -4,11 +4,14 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -64,7 +67,7 @@ public class CareReceiverSignUpFormFragment extends Fragment implements View.OnC
 
     EditText nameForm;
     EditText phoneNumForm;
-    EditText genderForm;
+    RadioGroup genderForm;
     EditText ageForm;
     EditText addressForm;
     EditText addressDetailForm;
@@ -156,7 +159,7 @@ public class CareReceiverSignUpFormFragment extends Fragment implements View.OnC
     public void setSignupMode() {
         nameForm.setText("");
         phoneNumForm.setText("");
-        genderForm.setText("");
+        genderForm.clearCheck();
         ageForm.setText("");
         addressForm.setText("");
         addressDetailForm.setText("");
@@ -178,7 +181,7 @@ public class CareReceiverSignUpFormFragment extends Fragment implements View.OnC
     public void onClick(View v) {
         name = nameForm.getText().toString();
         phoneNum = phoneNumForm.getText().toString();
-        gender = genderForm.getText().toString();
+        if (genderForm.getCheckedRadioButtonId() != -1) gender = ((RadioButton) getView().findViewById(genderForm.getCheckedRadioButtonId())).getText().toString();
         age = ageForm.getText().toString();
         address = addressForm.getText().toString();
         addressDetail = addressDetailForm.getText().toString();
@@ -189,7 +192,7 @@ public class CareReceiverSignUpFormFragment extends Fragment implements View.OnC
         passwordConfirm = passwordConfirmForm.getText().toString();
 
         if (name.isEmpty() || phoneNum.isEmpty() || ID.isEmpty() || careGiverName.isEmpty()
-                || careGiverPhoneNum.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty() || gender.isEmpty() || age.isEmpty() || address.isEmpty() || addressDetail.isEmpty()) {
+                || careGiverPhoneNum.isEmpty() || password.isEmpty() || passwordConfirm.isEmpty() || gender == null || age.isEmpty() || address.isEmpty() || addressDetail.isEmpty()) {
 
             // 입력하지 않은 부분을 빨간색으로 표시
             isFilled();
@@ -249,9 +252,9 @@ public class CareReceiverSignUpFormFragment extends Fragment implements View.OnC
             phoneNumForm.setBackground(requiredFormLayout);
         else if (!phoneNum.isEmpty())
             phoneNumForm.setBackground(formLayout);
-        if (gender.isEmpty())
+        if (gender == null)
             genderForm.setBackground(requiredFormLayout);
-        else if (!gender.isEmpty())
+        else if (gender != null)
             genderForm.setBackground(formLayout);
         if (age.isEmpty())
             ageForm.setBackground(requiredFormLayout);

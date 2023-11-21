@@ -6,10 +6,10 @@
 #define WIFI_SSID "KT_GiGA_8EF1"
 #define WIFI_PASSWORD "a1fb44dc38"
 
-int inputPIN = 26;
-int statusPIR = 0;
-int valueRead = 0;
-int motionCount = 0;
+#define BUTTON_PIN  18 // ESP32 pin GPIO18, which is connected to the button
+#define LED_PIN     21 // ESP32 pin GPIO21, which is connected to the LED
+
+String led_state_str; // Variable to store led_state as a string
 
 void setup() {
   Serial.begin(9600);
@@ -27,35 +27,35 @@ void setup() {
 
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
 
-  pinMode(inputPIN, INPUT);
+  pinMode(BUTTON_PIN, INPUT_PULLUP);
+  pinMode(LED_PIN, OUTPUT);
 }
 
 void loop() {
-  valueRead = digitalRead(inputPIN);
+  int button_state = digitalRead(BUTTON_PIN);
 
-  if ((valueRead == HIGH) && (statusPIR == LOW)) {
-    Serial.println("Motion Detected!");
-    statusPIR = HIGH;
-    motionCount++;  // 움직임이 탐지되면 카운트 증가
+  if (last_button_state == HIGH && button_state == LOW) {
+    // Toggle state of LED
+    led_state = !led_state;
 
-    // motionCount를 문자열로 변환
-    String motionCountStr = String(motionCount);
+    // Control LED according to the toggled state
+    digitalWrite(LED_PIN, led_state);
 
-    // Firebase에 motionCountStr을 업데이트
-    Firebase.set("/CareReceiver_list/abcd/ActivityData/activity/cnt", motionCountStr);
+    // Convert led_state to string
+    led_state_str = String(led_state);
+
+    // Set the LED state to Firebase "led_state" path
+    Firebase.set("/CareReceiver_list/abcd/ActivityData/emergency", led_state_str);
 
     // Handle error
     if (Firebase.failed()) {
-      Serial.print("Setting /motionCount failed:");
+      Serial.print("Setting /Emergency_Button failed:");
       Serial.println(Firebase.error());
       return;
     }
-  } else {
-    if ((valueRead == LOW) && (statusPIR == HIGH)) {
-      Serial.println("Motion Ended!");
-      statusPIR = LOW;
-    }
   }
 
-  delay(1000);
+  last_button_state = button_state;  // Update last button state
+
+  delay(100);  // Add a small delay for stability
 }

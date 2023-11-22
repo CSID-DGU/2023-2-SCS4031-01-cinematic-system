@@ -68,4 +68,6 @@
     <string name="pw_confirm">비밀번호 확인</string>
     <string name="enter_your_pw_confirm">위 비밀번호를 동일하게 입력하세요</string>
     <string name="enter_your_age">나이를 입력하세요</string>
+    <string name="male">남자</string>
+    <string name="female">여자</string>
 </resources>

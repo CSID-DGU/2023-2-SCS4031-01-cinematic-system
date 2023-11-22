@@ -1,8 +1,10 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -31,18 +33,30 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
         return data;
     }
 
-    class viewHolder extends RecyclerView.ViewHolder{
+    class viewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         CardView eventLogCard;
         TextView eventLogCardTitle;
         TextView eventLogCardDescription;
         ImageView eventLogCardIcon;
+        Button eventLogCardSeeDetail;
         public viewHolder(View itemView){
             super(itemView);
             eventLogCard = itemView.findViewById(R.id.event_log_card);
             eventLogCardIcon = itemView.findViewById(R.id.event_log_card_icon);
             eventLogCardTitle = itemView.findViewById(R.id.event_log_card_title);
             eventLogCardDescription = itemView.findViewById(R.id.event_log_card_description);
+
+            eventLogCardSeeDetail = itemView.findViewById(R.id.event_log_see_detail_button);
+            eventLogCardSeeDetail.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(v.getId() == R.id.event_log_see_detail_button){
+                Intent intent = new Intent(v.getContext(), GuardianEventLogDetail.class);
+                v.getContext().startActivity(intent);
+            }
         }
     }
 

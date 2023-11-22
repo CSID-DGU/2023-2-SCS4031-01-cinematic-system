@@ -259,7 +259,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                         }
                     },10000);
 
-
+                    docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity");
                     docRef.child("cnt").addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {

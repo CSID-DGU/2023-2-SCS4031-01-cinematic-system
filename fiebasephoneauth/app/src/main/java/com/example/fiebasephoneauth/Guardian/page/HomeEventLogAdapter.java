@@ -19,7 +19,7 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
 
     private ArrayList<EventCardInfo> EventCardInfo_arrayList;
     private ArrayList<EventCardInfo> data;
-
+    String Title;
 
     public HomeEventLogAdapter(ArrayList<EventCardInfo> arrayList){
         this.EventCardInfo_arrayList = arrayList;
@@ -54,7 +54,11 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
         @Override
         public void onClick(View v) {
             if(v.getId() == R.id.event_log_see_detail_button){
+                String Title = eventLogCardTitle.getText().toString();
+                String Description = eventLogCardDescription.getText().toString();
                 Intent intent = new Intent(v.getContext(), GuardianEventLogDetail.class);
+                intent.putExtra("Title",Title);
+                intent.putExtra("Description",Description);
                 v.getContext().startActivity(intent);
             }
         }
@@ -69,6 +73,7 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
     @Override
     public void onBindViewHolder(HomeEventLogAdapter.viewHolder holder, int position){
         holder.eventLogCardTitle.setText(EventCardInfo_arrayList.get(position).getTitle());
+        Title = EventCardInfo_arrayList.get(position).getTitle();
         holder.eventLogCardDescription.setText(EventCardInfo_arrayList.get(position).getDescription_short());
         holder.eventLogCardIcon.setImageResource(R.drawable.fire);
         holder.eventLogCardIcon.setBackgroundColor(0xD64545);

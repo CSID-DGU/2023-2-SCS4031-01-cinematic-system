@@ -161,7 +161,7 @@ class EventCardInfo {
                 imgSrc = "fire";
                 break;
             case "emergency" :
-                title = "응급 버튼 눌림";
+                title = "응급 호출";
                 description_short = "응급 버튼이 눌려 자동 신고 처리되었습니다.";
                 description_long = "응급 버튼이 눌렀습니다.\n" +
                         "담당자에게 응급 상황이 전달되었으며,\n" +

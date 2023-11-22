@@ -238,17 +238,6 @@ public class GuardianMenuHomeFragment extends Fragment {
                         }
                     });
                     docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity");
-                    docRef.child("cnt").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            updateLastActivityTime();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
@@ -259,10 +248,26 @@ public class GuardianMenuHomeFragment extends Fragment {
                         }
                     },4000);
 
-                    docRef.child("cnt").addValueEventListener(new ValueEventListener() {
+
+                    docRef.child("cnt").addChildEventListener(new ChildEventListener() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                             updateLastActivityTime();
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
                         }
 
                         @Override

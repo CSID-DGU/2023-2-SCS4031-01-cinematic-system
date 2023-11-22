@@ -19,7 +19,8 @@
             android:exported="false" />
         <activity
             android:name=".Guardian.page.GuardianEventLogDetail"
-            android:exported="false" />
+            android:exported="false">
+        </activity>
         <activity
             android:name=".Guardian.page.GuardianActivitiesDetail"
             android:exported="false" />

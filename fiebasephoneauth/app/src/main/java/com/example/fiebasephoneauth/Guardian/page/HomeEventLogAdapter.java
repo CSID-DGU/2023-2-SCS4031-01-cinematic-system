@@ -11,14 +11,24 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fiebasephoneauth.R;
 
+import java.util.ArrayList;
+
 public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapter.viewHolder> {
 
-    EventCardInfo[] mData;
+    private ArrayList<EventCardInfo> EventCardInfo_arrayList;
+    private ArrayList<EventCardInfo> data;
 
 
+    public HomeEventLogAdapter(ArrayList<EventCardInfo> arrayList){
+        this.EventCardInfo_arrayList = arrayList;
+    }
 
-    public HomeEventLogAdapter(EventCardInfo[] eventCardInfo){
-        this.mData = eventCardInfo;
+    public void setData(ArrayList<EventCardInfo> data){
+        this.data = data;
+    }
+
+    public ArrayList<EventCardInfo> getData() {
+        return data;
     }
 
     class viewHolder extends RecyclerView.ViewHolder{
@@ -44,15 +54,15 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
 
     @Override
     public void onBindViewHolder(HomeEventLogAdapter.viewHolder holder, int position){
-        holder.eventLogCardTitle.setText(mData[position].getTitle());
-        holder.eventLogCardDescription.setText(mData[position].getDescription_short());
+        holder.eventLogCardTitle.setText(EventCardInfo_arrayList.get(position).getTitle());
+        holder.eventLogCardDescription.setText(EventCardInfo_arrayList.get(position).getDescription_short());
         holder.eventLogCardIcon.setImageResource(R.drawable.fire);
         holder.eventLogCardIcon.setBackgroundColor(0xD64545);
     }
 
     @Override
     public int getItemCount(){
-        return mData.length;
+        return EventCardInfo_arrayList.size();
     }
 
 

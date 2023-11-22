@@ -11,9 +11,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianHomeBinding;
-import com.example.fiebasephoneauth.login.GuardianSignUpFormFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
-import com.google.firebase.auth.FirebaseAuth;
 
 /**
  * <h3> Guardian Home Activity </h3>
@@ -45,6 +43,7 @@ public class GuardianHome extends AppCompatActivity {
         Bundle bundle = new Bundle();
         bundle.putString("id",idTxt);
         guardianMenuHomeFragment.setArguments(bundle);
+        guardianMenuEventFragment.setArguments(bundle);
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
         bottomNavigationView.setOnNavigationItemSelectedListener(new ItemSelectedListener());

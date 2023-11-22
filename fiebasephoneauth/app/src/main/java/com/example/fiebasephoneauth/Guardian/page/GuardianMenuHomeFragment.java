@@ -31,7 +31,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -426,25 +425,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
-    }
-
-    private void checkLastActivityTimestamp(DataSnapshot snapshot) {
-        Object timestamp = snapshot.getValue();
-
-        if(timestamp instanceof Long){
-            Date lastActivityTime = new Date((Long)timestamp);
-
-            Date ServerTime = new Date();
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-            long timeDifference = ServerTime.getTime() - lastActivityTime.getTime();
-
-            long hoursDifference = timeDifference /(60*60*1000);
-
-            //정상
-
-        }
     }
 }
 

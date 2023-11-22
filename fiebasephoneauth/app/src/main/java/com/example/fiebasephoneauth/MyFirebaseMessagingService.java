@@ -15,6 +15,7 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.fiebasephoneauth.Guardian.page.GuardianEventLogDetail;
 import com.example.fiebasephoneauth.Guardian.page.GuardianMenuEventFragment;
+import com.example.fiebasephoneauth.login.MainActivity;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -25,10 +26,8 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-
         Log.d("MSG",remoteMessage.getNotification().getBody());
         shownotification(remoteMessage.getNotification());
-
 
     }
     @Override
@@ -54,20 +53,27 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(notificationChannel);
         }
 
+        //푸시를 클릭했을때 이동//
+        Intent intent = new Intent(this, GuardianEventLogDetail.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID);
 
-
-        notificationBuilder.setAutoCancel(true)
+        notificationBuilder
+                .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
                 .setSmallIcon(R.drawable.emer)
                 .setContentTitle(message.getTitle())
                 .setContentText(message.getBody())
-                .setContentInfo("Info");
+                .setContentInfo("Info")
+                .setContentIntent(pendingIntent); // 클릭 시 이동할 인텐트 추가
+
 
         // bulid()메소드를 통해 알림 생성, 생성된 알림을 사용자에게 보여주기 위해 notify() 메소드 사용
         notificationManager.notify(0,notificationBuilder.build());
+
 
     }
 

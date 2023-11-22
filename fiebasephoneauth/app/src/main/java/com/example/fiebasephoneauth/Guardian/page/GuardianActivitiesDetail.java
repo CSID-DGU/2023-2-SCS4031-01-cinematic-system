@@ -30,16 +30,30 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         lineChart = binding.chart;
 
         List<Entry> entries = new ArrayList<Entry>();
-        entries.add(new Entry(1,0));
-        entries.add(new Entry(2,10));
-        entries.add(new Entry(3,5));
-        entries.add(new Entry(4,15));
-        entries.add(new Entry(5,2));
-        entries.add(new Entry(6,20));
-        entries.add(new Entry(7,10));
+        entries.add(new Entry(0,10));
+        entries.add(new Entry(1,25));
+        entries.add(new Entry(2,15));
+        entries.add(new Entry(3,2));
+        entries.add(new Entry(4,20));
+        entries.add(new Entry(5,10));
+        entries.add(new Entry(6,25));
+        entries.add(new Entry(7,74));
         entries.add(new Entry(8,25));
-        entries.add(new Entry(9,15));
-        entries.add(new Entry(10,0));
+        entries.add(new Entry(9,30));
+        entries.add(new Entry(10,40));
+        entries.add(new Entry(11,35));
+        entries.add(new Entry(12,45));
+        entries.add(new Entry(13,50));
+        entries.add(new Entry(14,20));
+        entries.add(new Entry(15,50));
+        entries.add(new Entry(16,35));
+        entries.add(new Entry(17,30));
+        entries.add(new Entry(18,25));
+        entries.add(new Entry(19,10));
+        entries.add(new Entry(20,15));
+        entries.add(new Entry(21,10));
+        entries.add(new Entry(22,5));
+        entries.add(new Entry(23,40));
 
         int startColor = Color.parseColor("#042940");
         int endColor = Color.parseColor("#3FA79D");
@@ -62,10 +76,6 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         lineDataSet.setDrawValues(false);
         lineDataSet.setDrawCircles(false);
         lineDataSet.setDrawCircleHole(false);
-
-
-
-
 
         LineData lineData = new LineData(lineDataSet);
         lineChart.setData(lineData);
@@ -90,18 +100,23 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
 
         XAxis xAxis = lineChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-        xAxis.setDrawGridLines(false);
         xAxis.setDrawAxisLine(false);
-        xAxis.setDrawLabels(false);
+        xAxis.setDrawGridLines(true);
+        xAxis.setDrawLabels(true);
+        xAxis.enableGridDashedLine(10f,10f,0f);
+        xAxis.setLabelCount(8);
+        xAxis.setAxisMinimum(0f);
+        xAxis.setAxisMaximum(23f);
+        xAxis.setTextColor(Color.parseColor("#618FAE"));
 
         YAxis yAxis = lineChart.getAxisLeft();
         yAxis.setPosition(YAxis.YAxisLabelPosition.OUTSIDE_CHART);
+        yAxis.setDrawAxisLine(false);
         yAxis.setDrawGridLines(true);
         yAxis.setGridColor(Color.parseColor("#618FAE"));
         yAxis.enableGridDashedLine(10f,10f,0f);
-        yAxis.setDrawAxisLine(false);
         yAxis.setAxisMinimum(0f);
-        yAxis.setAxisMaximum(50f);
+        yAxis.setAxisMaximum(entries.stream().max((a,b)->(int)(a.getY()-b.getY())).get().getY()+10);
         yAxis.setDrawLabels(true);
         yAxis.setTextColor(Color.parseColor("#618FAE"));
 

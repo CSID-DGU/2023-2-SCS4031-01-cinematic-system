@@ -31,7 +31,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -250,18 +249,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                         }
                     });
-                    docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity");
-                    docRef.child("cnt").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            updateLastActivityTime();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {
@@ -272,7 +259,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                         }
                     },10000);
 
-
+                    docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity");
                     docRef.child("cnt").addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
@@ -329,9 +316,9 @@ public class GuardianMenuHomeFragment extends Fragment {
         home_Activity_cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(getActivity(), GuardianActivitiesDetail.class);
-                //intent.putExtra("id", idTxt);
-                //startActivity(intent);
+                Intent intent = new Intent(getActivity(), GuardianActivitiesDetail.class);
+                intent.putExtra("id", idTxt);
+                startActivity(intent);
             }
         });
 
@@ -426,25 +413,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
-    }
-
-    private void checkLastActivityTimestamp(DataSnapshot snapshot) {
-        Object timestamp = snapshot.getValue();
-
-        if(timestamp instanceof Long){
-            Date lastActivityTime = new Date((Long)timestamp);
-
-            Date ServerTime = new Date();
-
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-            long timeDifference = ServerTime.getTime() - lastActivityTime.getTime();
-
-            long hoursDifference = timeDifference /(60*60*1000);
-
-            //정상
-
-        }
     }
 }
 

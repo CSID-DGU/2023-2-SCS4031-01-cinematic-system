@@ -33,7 +33,6 @@ public class GuardianEventLogDetail extends AppCompatActivity {
 
         emer_type = (TextView) findViewById(R.id.emer_type);
         event_description = (TextView) findViewById(R.id.event_description_text);
-
         emer_type.setText(Title);
         event_description.setText(Description);
 

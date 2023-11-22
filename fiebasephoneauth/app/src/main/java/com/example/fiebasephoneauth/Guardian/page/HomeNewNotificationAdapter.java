@@ -15,9 +15,18 @@ import java.util.ArrayList;
 public class HomeNewNotificationAdapter extends RecyclerView.Adapter<HomeNewNotificationAdapter.viewHolder> {
 
     private ArrayList<NewNotificationData> Notification_arrayList;
+    private ArrayList<NewNotificationData> data;
 
     HomeNewNotificationAdapter(ArrayList<NewNotificationData> arrayList){
         this.Notification_arrayList = arrayList;
+    }
+
+    public void setData(ArrayList<NewNotificationData> data) {
+        this.data = data;
+    }
+
+    public ArrayList<NewNotificationData> getData() {
+        return data;
     }
 
     class viewHolder extends RecyclerView.ViewHolder {
@@ -35,13 +44,13 @@ public class HomeNewNotificationAdapter extends RecyclerView.Adapter<HomeNewNoti
     }
 
     @Override
-    public HomeNewNotificationAdapter.viewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public viewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.home_new_notification_card_view, parent, false);
-        return new HomeNewNotificationAdapter.viewHolder(view);
+        return new viewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(HomeNewNotificationAdapter.viewHolder holder, int position) {
+    public void onBindViewHolder(viewHolder holder, int position) {
         holder.newNotificationCardDate.setText(Notification_arrayList.get(position).getDate());
         holder.newNotificationCardTime.setText(Notification_arrayList.get(position).getTime());
         holder.newNotificationCardDescription.setText(Notification_arrayList.get(position).getDescription());

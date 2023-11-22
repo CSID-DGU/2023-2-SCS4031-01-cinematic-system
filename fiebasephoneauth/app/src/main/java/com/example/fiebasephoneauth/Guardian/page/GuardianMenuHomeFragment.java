@@ -66,7 +66,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
 
     // 외출, 활동 및 새로운 알림 리사이클러뷰
-    private ArrayList<NewNotificationData> Main_dataList;
+    private ArrayList<NewNotificationData> Main_dataList = new ArrayList<>();
     private HomeNewNotificationAdapter Main_adapter;
     private RecyclerView recyclerViewNewNotification;
 
@@ -96,7 +96,6 @@ public class GuardianMenuHomeFragment extends Fragment {
         // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification = (RecyclerView) view.findViewById(R.id.recyclerview_home_new_notification); // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification.setLayoutManager(new LinearLayoutManager(getActivity()));
-        Main_dataList = new ArrayList<>();
         Main_adapter = new HomeNewNotificationAdapter(Main_dataList);
         recyclerViewNewNotification.setAdapter(Main_adapter);
 
@@ -112,7 +111,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                 if(snapshot.hasChild("CareReceiverID")){
                     final String getCareReceiver = snapshot.child("CareReceiverID").getValue(String.class);
 
-                    databaseReference.child("CareReceiver_list").child(getCareReceiver).addListenerForSingleValueEvent(new ValueEventListener() {
+                    databaseReference.child("CareReceiver_list").child(getCareReceiver).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             getName = snapshot.child("name").getValue(String.class);
@@ -127,6 +126,18 @@ public class GuardianMenuHomeFragment extends Fragment {
 //                            homeCareReceiverAddress.setText(getCareReceiverAddress);
                             homeCareReceiverGenderAge.setText("남/72");
                             homeCareReceiverAddress.setText("서울 중구 필동로1길 30");
+                            if(snapshot.hasChild("ActivityData")){
+                                getOuting = snapshot.child("ActivityData").child("outing").getValue(String.class);
+                                if (getOuting.equals("0")){
+                                    home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
+
+                                }
+                                else if (getOuting.equals("1")){
+                                    home_Outing_description.setText(getName+"님은 현재 실내에 있습니다.");
+                                }
+                            }
+
+
                         }
 
                         @Override
@@ -160,8 +171,6 @@ public class GuardianMenuHomeFragment extends Fragment {
                         public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                             if(snapshot.getKey().matches("outing")){
                                 if (snapshot.getValue().equals("0")){
-                                    home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
-
                                     Calendar calendar = Calendar.getInstance();
                                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
                                     SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
@@ -176,7 +185,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                                 }
                                 else if (snapshot.getValue().equals("1")){
-                                    home_Outing_description.setText(getName+"님은 현재 실내에 있습니다.");
 
                                     Calendar calendar = Calendar.getInstance();
                                     SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -260,14 +268,30 @@ public class GuardianMenuHomeFragment extends Fragment {
                         @Override
                         public void run() {
                             compareTimeAndPerformAction();
-                            handler.postDelayed(this,4000);
+                            handler.postDelayed(this,10000);
                         }
-                    },4000);
+                    },10000);
 
-                    docRef.child("cnt").addValueEventListener(new ValueEventListener() {
+
+                    docRef.child("cnt").addChildEventListener(new ChildEventListener() {
                         @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                             updateLastActivityTime();
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
                         }
 
                         @Override
@@ -275,6 +299,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                         }
                     });
+
                 }
             }
 
@@ -312,6 +337,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
 
         return view;
+
     }
 
     private void updateLastActivityTime() {

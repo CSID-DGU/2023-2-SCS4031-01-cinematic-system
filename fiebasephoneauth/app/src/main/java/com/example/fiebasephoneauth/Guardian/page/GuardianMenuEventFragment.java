@@ -1,16 +1,27 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
 import android.os.Bundle;
-
-import androidx.fragment.app.Fragment;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
 import com.example.fiebasephoneauth.R;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 /**
  * <h3> 보호자 이벤트 로그 페이지 </h3>
@@ -19,16 +30,13 @@ import com.example.fiebasephoneauth.R;
  */
 public class GuardianMenuEventFragment extends Fragment {
 
+    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
 
-    // 더미 데이터 (테스트용) -------------------------
-    EventCardInfo[] eventCardInfo = {
-        new EventCardInfo("2020-11-11", "12:00","fire"),
-        new EventCardInfo("2020-11-11", "12:00","fire"),
-    };
-    // ---------------------------------------------
+    String getCareReceiverId;
 
-    RecyclerView recyclerViewEventLog;
-    RecyclerView.Adapter eventLogAdapter;
+    private ArrayList<EventCardInfo> Event_dataList = new ArrayList<>();
+    private HomeEventLogAdapter Event_adapter;
+    private RecyclerView recyclerViewEventLog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -42,9 +50,87 @@ public class GuardianMenuEventFragment extends Fragment {
 
         recyclerViewEventLog = (RecyclerView) view.findViewById(R.id.recent_notification_recycler_view);
         recyclerViewEventLog.setHasFixedSize(true);
-        eventLogAdapter = new HomeEventLogAdapter(eventCardInfo);
-        recyclerViewEventLog.setAdapter(eventLogAdapter);
         recyclerViewEventLog.setLayoutManager(new LinearLayoutManager(getActivity()));
+        Event_adapter = new HomeEventLogAdapter(Event_dataList);
+        recyclerViewEventLog.setAdapter(Event_adapter);
+
+        //로그인 한 보호자 정보
+        Bundle bundle = getArguments();
+        String idTxt = bundle.getString("id");
+
+        databaseReference.child("Guardian_list").child(idTxt).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.hasChild("CareReceiverID")){
+                    getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
+
+                    databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").addChildEventListener(new ChildEventListener() {
+                        @Override
+                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        }
+
+                        @Override
+                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                            if(snapshot.getKey().matches("emergency")){
+                                if (snapshot.getValue().equals("1")) {
+
+                                    Calendar calendar = Calendar.getInstance();
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                                    String currentDate = dateFormat.format(calendar.getTime());
+                                    String currentTime = timeFormat.format(calendar.getTime());
+
+                                    EventCardInfo Data = new EventCardInfo(currentDate, currentTime, "emergency");
+                                    Event_dataList.add(0, Data);
+                                    if (Event_dataList.size() > 4) {
+                                        Event_dataList.remove(Event_dataList.size() - 1);
+                                    }
+                                }
+                            }
+                            else if(snapshot.getKey().matches("fire")){
+
+                                if (snapshot.getValue().equals("1")) {
+
+                                    Calendar calendar = Calendar.getInstance();
+                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                                    String currentDate = dateFormat.format(calendar.getTime());
+                                    String currentTime = timeFormat.format(calendar.getTime());
+
+                                    EventCardInfo Data = new EventCardInfo(currentDate, currentTime, "fire");
+                                    Event_dataList.add(0, Data);
+                                    if (Event_dataList.size() > 4) {
+                                        Event_dataList.remove(Event_dataList.size() - 1);
+                                    }
+                                }
+                            }
+                            Event_adapter.notifyDataSetChanged();
+                        }
+
+                        @Override
+                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                        }
+
+                        @Override
+                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                        }
+
+                        @Override
+                        public void onCancelled(@NonNull DatabaseError error) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
 
         return view;
     }

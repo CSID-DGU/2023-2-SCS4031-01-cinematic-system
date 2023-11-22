@@ -328,9 +328,9 @@ public class GuardianMenuHomeFragment extends Fragment {
         home_Activity_cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Intent intent = new Intent(getActivity(), GuardianActivitiesDetail.class);
-                //intent.putExtra("id", idTxt);
-                //startActivity(intent);
+                Intent intent = new Intent(getActivity(), GuardianActivitiesDetail.class);
+                intent.putExtra("id", idTxt);
+                startActivity(intent);
             }
         });
 

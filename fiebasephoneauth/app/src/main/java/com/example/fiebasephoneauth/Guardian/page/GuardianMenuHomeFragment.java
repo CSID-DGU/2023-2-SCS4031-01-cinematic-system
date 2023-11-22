@@ -249,18 +249,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                         }
                     });
-                    docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity");
-                    docRef.child("cnt").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            updateLastActivityTime();
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
 
                     Handler handler = new Handler();
                     handler.postDelayed(new Runnable() {

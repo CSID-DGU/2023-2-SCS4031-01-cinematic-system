@@ -75,7 +75,7 @@ public class GuardianSignInActivity extends AppCompatActivity {
 
                                 if(getPassword.equals(passwordTxt)){
                                     Toast.makeText(GuardianSignInActivity.this, "로그인 성공 !", Toast.LENGTH_SHORT).show();
-//로그인 성공 시 연동 여부 파악 후 Home화면으로 이동 or 연동 화면으로 이동
+                                    //로그인 성공 시 연동 여부 파악 후 Home화면으로 이동 or 연동 화면으로 이동
                                     databaseReference.child("Guardian_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {

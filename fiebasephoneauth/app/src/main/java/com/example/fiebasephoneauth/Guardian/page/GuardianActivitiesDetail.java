@@ -122,12 +122,15 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
 
         lineChart.getAxisRight().setEnabled(false);
 
-
-
-
         lineChart.invalidate();
+
+        binding.back.setOnClickListener(v->{
+            finish();
+        });
 
         setContentView(binding.getRoot());
 
     }
+
+
 }

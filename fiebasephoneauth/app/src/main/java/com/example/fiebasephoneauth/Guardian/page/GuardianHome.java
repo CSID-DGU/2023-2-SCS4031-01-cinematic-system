@@ -1,6 +1,7 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 
@@ -11,6 +12,7 @@ import androidx.fragment.app.FragmentTransaction;
 
 import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianHomeBinding;
+import com.example.fiebasephoneauth.login.MainActivity;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 /**
@@ -69,7 +71,13 @@ public class GuardianHome extends AppCompatActivity {
             } else if (item.getItemId() == R.id.menu_event) {
                 transaction.replace(R.id.frameLayout, guardianMenuEventFragment).commitAllowingStateLoss();
             } else if (item.getItemId() == R.id.menu_logout) {
-                finish();
+                //자동 로그인 정보 삭제
+                SharedPreferences sharedPreferences = getSharedPreferences("autoLogin", MODE_PRIVATE);
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.clear();
+                editor.commit();
+                Intent intent = new Intent(GuardianHome.this, MainActivity.class);
+                startActivity(intent);
             }
 
             return true;

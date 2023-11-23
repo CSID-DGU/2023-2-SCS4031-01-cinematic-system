@@ -26,10 +26,14 @@ public class GuardianNotConnected extends AppCompatActivity {
         // 연동하기 버튼
         Button getConnectButton = binding.getConnectButton;
 
+        Intent intent = getIntent();
+        String idTxt = intent.getStringExtra("id");
+
 
         getConnectButton.setOnClickListener(v -> {
-            Intent intent = new Intent(GuardianNotConnected.this, GuardianGetConnection.class);
-            startActivity(intent);
+            Intent intent1 = new Intent(GuardianNotConnected.this, GuardianGetConnection.class);
+            intent1.putExtra("id",idTxt);
+            startActivity(intent1);
         });
     }
 }

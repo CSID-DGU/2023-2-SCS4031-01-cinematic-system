@@ -1,8 +1,5 @@
 package com.example.fiebasephoneauth.login;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -12,9 +9,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.fiebasephoneauth.CareReceiver.connection.CareReceiverNotConnected;
 import com.example.fiebasephoneauth.R;
-import com.example.fiebasephoneauth.databinding.ActivityCareReceiverSignInBinding;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianSignInBinding;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -87,7 +86,8 @@ public class CareReceiverSignInActivity extends AppCompatActivity {
                                     editor.putString("type", "CareReceiver");
                                     editor.commit();
 
-                                    startActivity(new Intent(CareReceiverSignInActivity.this, CareReceiverNotConnected.class));
+                                    Intent intent = new Intent(CareReceiverSignInActivity.this, CareReceiverNotConnected.class);
+                                    startActivity(intent);
                                     finish();
                                 }
 

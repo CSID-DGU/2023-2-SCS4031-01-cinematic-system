@@ -22,9 +22,13 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.PhoneAuthCredential;
 import com.google.firebase.auth.PhoneAuthOptions;
 import com.google.firebase.auth.PhoneAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -40,6 +44,8 @@ public class GuardianGetConnection extends AppCompatActivity {
 
     private ActivityGuardianGetConnectionBinding binding;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -48,6 +54,7 @@ public class GuardianGetConnection extends AppCompatActivity {
 
         Intent intent = getIntent();
         String idTxt = intent.getStringExtra("id");
+
 
         // 레이아웃 요소들
         EditText nameForm = binding.nameForm;
@@ -58,6 +65,7 @@ public class GuardianGetConnection extends AppCompatActivity {
         TextView logoutText = binding.logoutText;
         Button singup_button = binding.signupButton;
         mAuth = FirebaseAuth.getInstance();
+
 
         logoutText.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,10 +102,28 @@ public class GuardianGetConnection extends AppCompatActivity {
         singup_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                DatabaseReference docRef = databaseReference.child("Guardian_list").child(idTxt);
+                docRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()){
+                            Map<String, Object> existingData = (Map<String, Object>) snapshot.getValue();
 
+                            existingData.put("CareReceiverID",nameForm.getText().toString());
+
+                            docRef.updateChildren(existingData);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
                 Intent intent = new Intent(GuardianGetConnection.this, GuardianConnected.class);
-
                 intent.putExtra("id",idTxt);
+
+
                 startActivity(intent);
                 finish();
             }

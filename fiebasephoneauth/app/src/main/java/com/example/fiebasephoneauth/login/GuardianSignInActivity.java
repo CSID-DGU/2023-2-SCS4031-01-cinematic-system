@@ -104,6 +104,7 @@ public class GuardianSignInActivity extends AppCompatActivity {
 
                                             else{
                                                 Intent intent = new Intent(GuardianSignInActivity.this, GuardianNotConnected.class);
+                                                intent.putExtra("id",idTxt);
                                                 startActivity(intent);
                                                 finish();
                                             }

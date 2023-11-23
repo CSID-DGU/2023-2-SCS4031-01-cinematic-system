@@ -13,6 +13,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.fiebasephoneauth.CareReceiver.connection.CareReceiverNotConnected;
+import com.example.fiebasephoneauth.CareReceiver.page.CareReceiverEventLog;
 import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianSignInBinding;
 import com.google.firebase.database.DataSnapshot;
@@ -74,21 +75,45 @@ public class CareReceiverSignInActivity extends AppCompatActivity {
 
                                 if(getPassword.equals(passwordTxt)){
                                     Toast.makeText(CareReceiverSignInActivity.this, "로그인 성공 !", Toast.LENGTH_SHORT).show();
-                                    //기존 로그인 정보 삭제
-                                    SharedPreferences sharedPreferences = getSharedPreferences("autoLogin",MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.clear();
-                                    editor.commit();
 
-                                    // 자동 로그인을 위한 로그인 정보 저장
-                                    editor.putString("id",idTxt);
-                                    editor.putString("password",passwordTxt);
-                                    editor.putString("type", "CareReceiver");
-                                    editor.commit();
+                                    databaseReference.child("CareReceiver_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {
+                                        @Override
+                                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                            if(snapshot.hasChild("checkConnection")){
+                                                //기존 로그인 정보 삭제
+                                                SharedPreferences sharedPreferences = getSharedPreferences("autoLogin",MODE_PRIVATE);
+                                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                                editor.clear();
+                                                editor.commit();
 
-                                    Intent intent = new Intent(CareReceiverSignInActivity.this, CareReceiverNotConnected.class);
-                                    startActivity(intent);
-                                    finish();
+                                                //자동 로그인을 위한 로그인 정보 저장
+                                                editor.putString("id",idTxt);
+                                                editor.putString("password",passwordTxt);
+                                                editor.putString("type", "CareReceiver");
+                                                editor.commit();
+
+
+
+                                                //GuardianHome으로 이동
+                                                Intent intent = new Intent(CareReceiverSignInActivity.this, CareReceiverEventLog.class);
+                                                intent.putExtra("id",idTxt);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+
+                                            else{
+                                                Intent intent = new Intent(CareReceiverSignInActivity.this, CareReceiverNotConnected.class);
+                                                intent.putExtra("id",idTxt);
+                                                startActivity(intent);
+                                                finish();
+                                            }
+                                        }
+
+                                        @Override
+                                        public void onCancelled(@NonNull DatabaseError error) {
+
+                                        }
+                                    });
                                 }
 
                                 else{

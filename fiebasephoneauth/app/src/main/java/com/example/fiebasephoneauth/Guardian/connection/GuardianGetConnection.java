@@ -120,6 +120,24 @@ public class GuardianGetConnection extends AppCompatActivity {
 
                     }
                 });
+                DatabaseReference CareRef = databaseReference.child("CareReceiver_list").child(nameForm.getText().toString());
+                CareRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()){
+                            Map<String,Object> loadData = (Map<String, Object>) snapshot.getValue();
+
+                            loadData.put("checkConnection","1");
+
+                            CareRef.updateChildren(loadData);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
                 Intent intent = new Intent(GuardianGetConnection.this, GuardianConnected.class);
                 intent.putExtra("id",idTxt);
 

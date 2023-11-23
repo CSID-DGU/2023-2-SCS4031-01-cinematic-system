@@ -1,11 +1,11 @@
 package com.example.fiebasephoneauth.CareReceiver.page;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.TextView;
 
-import com.example.fiebasephoneauth.R;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.fiebasephoneauth.databinding.ActivityCareReceiverEventLogBinding;
 
 /**
@@ -24,6 +24,6 @@ public class CareReceiverEventLog extends AppCompatActivity {
 
         // 레이아웃 요소들
         Button emerCallButton = binding.emerCallButton;
-        Button signOutText = (Button) binding.signOutText;
+        TextView signOutText = binding.signOutText;
     }
 }

@@ -38,6 +38,7 @@ public class GuardianMenuEventFragment extends Fragment {
     private HomeEventLogAdapter Event_adapter;
     private RecyclerView recyclerViewEventLog;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,16 +48,20 @@ public class GuardianMenuEventFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_guardian_menu_event, container, false);
+        Bundle bundle = getArguments();
+        String idTxt = bundle.getString("id");
 
         recyclerViewEventLog = (RecyclerView) view.findViewById(R.id.recent_notification_recycler_view);
         recyclerViewEventLog.setHasFixedSize(true);
         recyclerViewEventLog.setLayoutManager(new LinearLayoutManager(getActivity()));
-        Event_adapter = new HomeEventLogAdapter(Event_dataList);
+        Event_adapter = new HomeEventLogAdapter(Event_dataList, idTxt);
         recyclerViewEventLog.setAdapter(Event_adapter);
 
         //로그인 한 보호자 정보
-        Bundle bundle = getArguments();
-        String idTxt = bundle.getString("id");
+//        Bundle bundle = getArguments();
+//        String idTxt = bundle.getString("id");
+
+
 
         databaseReference.child("Guardian_list").child(idTxt).addValueEventListener(new ValueEventListener() {
             @Override

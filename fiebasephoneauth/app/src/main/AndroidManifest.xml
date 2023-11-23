@@ -2,7 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <!-- 인터넷 권한 허용 코드 추가 10/21 -->
+    <uses-feature
+        android:name="android.hardware.telephony"
+        android:required="false" />
+
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android:permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
 
     <application
         android:allowBackup="true"
@@ -19,7 +25,7 @@
             android:exported="false" />
         <activity
             android:name=".Guardian.page.GuardianEventLogDetail"
-            android:exported="false">
+            android:exported="true">
         </activity>
         <activity
             android:name=".Guardian.page.GuardianActivitiesDetail"

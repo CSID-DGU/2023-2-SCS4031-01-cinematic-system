@@ -1,0 +1,12 @@
+<component name="libraryTable">
+  <library name="Gradle: com.google.firebase:firebase-appcheck-ktx:17.0.1@aar">
+    <CLASSES>
+      <root url="file://$USER_HOME$/.gradle/caches/transforms-3/7d7c9e4f4b986c521cf18e20dea0255a/transformed/jetified-firebase-appcheck-ktx-17.0.1/AndroidManifest.xml" />
+      <root url="jar://$USER_HOME$/.gradle/caches/transforms-3/7d7c9e4f4b986c521cf18e20dea0255a/transformed/jetified-firebase-appcheck-ktx-17.0.1/jars/classes.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/com.google.firebase/firebase-appcheck-ktx/17.0.1/1f1009fbe16928785e015f84e501349ca7887981/firebase-appcheck-ktx-17.0.1-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

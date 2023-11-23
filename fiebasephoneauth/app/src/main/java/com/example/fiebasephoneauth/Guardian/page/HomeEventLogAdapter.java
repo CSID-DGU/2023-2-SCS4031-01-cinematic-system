@@ -13,16 +13,26 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fiebasephoneauth.R;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 
 public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapter.viewHolder> {
 
     private ArrayList<EventCardInfo> EventCardInfo_arrayList;
     private ArrayList<EventCardInfo> data;
+    private String idTxt;
     String Title;
 
-    public HomeEventLogAdapter(ArrayList<EventCardInfo> arrayList){
+    Calendar calendar = Calendar.getInstance();
+    SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일");
+    SimpleDateFormat timeFormat = new SimpleDateFormat("HH시 mm분");
+    String currentDate = dateFormat.format(calendar.getTime());
+    String currentTime = timeFormat.format(calendar.getTime());
+
+    public HomeEventLogAdapter(ArrayList<EventCardInfo> arrayList,String id){
         this.EventCardInfo_arrayList = arrayList;
+        this.idTxt = id;
     }
 
     public void setData(ArrayList<EventCardInfo> data){
@@ -59,6 +69,10 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
                 Intent intent = new Intent(v.getContext(), GuardianEventLogDetail.class);
                 intent.putExtra("Title",Title);
                 intent.putExtra("Description",Description);
+                intent.putExtra("Date",currentDate);
+                intent.putExtra("Time",currentTime);
+                intent.putExtra("id",idTxt);
+
                 v.getContext().startActivity(intent);
             }
         }

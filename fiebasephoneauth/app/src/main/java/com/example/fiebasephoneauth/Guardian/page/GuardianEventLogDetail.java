@@ -1,12 +1,19 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import static android.Manifest.permission.CALL_PHONE;
+
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.example.fiebasephoneauth.R;
 import com.example.fiebasephoneauth.databinding.ActivityGuardianEventLogDetailBinding;
@@ -28,11 +35,17 @@ public class GuardianEventLogDetail extends AppCompatActivity {
     TextView event_time;
     TextView event_description;
     TextView care_receiver_name;
-    TextView care_receiver_text;
+    TextView care_receiver_Phone;
     TextView care_giver_name;
-    TextView care_giver_text;
+    TextView care_giver_Phone;
     CardView care_receiver_phone_number;
     CardView care_giver_phone_number;
+    Button care_receiver_call;
+    Button care_giver_call;
+
+    String getCareReceiverPhoneNum;
+    String getGiverPhoneNum;
+
 
 
     @Override
@@ -54,12 +67,13 @@ public class GuardianEventLogDetail extends AppCompatActivity {
 
         care_receiver_phone_number = (CardView) findViewById(R.id.care_receiver_phone_number);
         care_receiver_name = care_receiver_phone_number.findViewById(R.id.phone_number_name);
-        care_receiver_text = care_receiver_phone_number.findViewById(R.id.phone_number_text);
+        care_receiver_Phone = care_receiver_phone_number.findViewById(R.id.phone_number_text);
+        care_receiver_call = care_receiver_phone_number.findViewById(R.id.call);
 
         care_giver_phone_number = (CardView) findViewById(R.id.care_giver_phone_number);
         care_giver_name = care_giver_phone_number.findViewById(R.id.phone_number_name);
-        care_giver_text = care_giver_phone_number.findViewById(R.id.phone_number_text);
-
+        care_giver_Phone = care_giver_phone_number.findViewById(R.id.phone_number_text);
+        care_giver_call = care_giver_phone_number.findViewById(R.id.call);
 
         emer_type.setText(Title);
         event_description.setText(Description);
@@ -75,13 +89,13 @@ public class GuardianEventLogDetail extends AppCompatActivity {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             final String getCareReceiverName = snapshot.child("name").getValue(String.class);
-                            final String getCareReceiverPhoneNum = snapshot.child("phoneNum").getValue(String.class);
+                            getCareReceiverPhoneNum = snapshot.child("phoneNum").getValue(String.class);
                             final String getGiverName = snapshot.child("CareGiverName").getValue(String.class);
-                            final String getGiverPhoneNum = snapshot.child("CareGiverPhoneNum").getValue(String.class);
+                            getGiverPhoneNum = snapshot.child("CareGiverPhoneNum").getValue(String.class);
                             care_receiver_name.setText(getCareReceiverName);
-                            care_receiver_text.setText(getCareReceiverPhoneNum);
+                            care_receiver_Phone.setText(getCareReceiverPhoneNum);
                             care_giver_name.setText(getGiverName);
-                            care_giver_text.setText(getGiverPhoneNum);
+                            care_giver_Phone.setText(getGiverPhoneNum);
 
                         }
 
@@ -105,6 +119,38 @@ public class GuardianEventLogDetail extends AppCompatActivity {
             //set bottom bar
             intent1.putExtra("SELECTED_ITEM", R.id.menu_event);
             startActivity(intent1);
+        });
+        //피보호자 전화 연결
+        care_receiver_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String cleanedPhone = getCareReceiverPhoneNum.replace("010","10");
+                String number = ("tel:+82 "+cleanedPhone);
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse(number));
+                if(ContextCompat.checkSelfPermission(getApplicationContext(), CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+                    startActivity(intent);
+                }
+                else{
+                    requestPermissions(new String[]{CALL_PHONE}, 1);
+                }
+            }
+        });
+        //담당자 전화 연결
+        care_giver_call.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String cleanedPhone = getGiverPhoneNum.replace("010","10");
+                String number = ("tel:+82 "+cleanedPhone);
+                Intent intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse(number));
+                if(ContextCompat.checkSelfPermission(getApplicationContext(), CALL_PHONE) == PackageManager.PERMISSION_GRANTED){
+                    startActivity(intent);
+                }
+                else{
+                    requestPermissions(new String[]{CALL_PHONE}, 1);
+                }
+            }
         });
 
     }

@@ -4,7 +4,7 @@ const admin = require("firebase-admin");
 admin.initializeApp();
 
 exports.checkEmergency =
-functions.database.ref("/CareReceiver_list/abcd/ActivityData/emergency")
+functions.database.ref(`/CareReceiver_list/abcd/ActivityData/emergency`)
     .onUpdate((snapshot, context) => {
       const emergencyNewValue = snapshot.after.val();
 

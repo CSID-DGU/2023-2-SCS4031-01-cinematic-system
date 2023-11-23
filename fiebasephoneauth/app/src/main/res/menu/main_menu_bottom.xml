@@ -11,8 +11,8 @@
         android:enabled="true"
         android:title="@string/event" />
 
-    <item android:id="@+id/menu_profile"
-        android:icon="@drawable/ic_profile"
+    <item android:id="@+id/menu_logout"
+        android:icon="@drawable/ic_logout"
         android:enabled="true"
-        android:title="@string/profile" />
+        android:title="@string/sign_out" />
 </menu>

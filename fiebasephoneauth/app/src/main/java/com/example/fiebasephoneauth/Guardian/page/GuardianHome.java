@@ -68,8 +68,8 @@ public class GuardianHome extends AppCompatActivity {
                 transaction.replace(R.id.frameLayout, guardianMenuHomeFragment).commitAllowingStateLoss();
             } else if (item.getItemId() == R.id.menu_event) {
                 transaction.replace(R.id.frameLayout, guardianMenuEventFragment).commitAllowingStateLoss();
-            } else if (item.getItemId() == R.id.menu_profile) {
-                transaction.replace(R.id.frameLayout, guardianMenuProfileFragment).commitAllowingStateLoss();
+            } else if (item.getItemId() == R.id.menu_logout) {
+                finish();
             }
 
             return true;

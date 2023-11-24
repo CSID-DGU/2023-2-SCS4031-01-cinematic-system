@@ -125,7 +125,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                             homeCareReceiverGenderAge.setText("남/72");
                             homeCareReceiverAddress.setText("서울 중구 필동로1길 30");
                             if(snapshot.hasChild("ActivityData")){
-                                getOuting = snapshot.child("ActivityData").child("outing").getValue(String.class);
+                                getOuting = snapshot.child("ActivityData").child("door").child("outing").getValue(String.class);
                                 if (getOuting.equals("0")){
                                     home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
 
@@ -151,53 +151,89 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
+        //외출 상태 체크
+        databaseReference.child("Guardian_list").child(idTxt).addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
 
-        // 외출, 활동 조회
+                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("door").addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                        if(snapshot.getKey().matches("outing")){
+                            if (snapshot.getValue().equals("1")){
+                                Calendar calendar = Calendar.getInstance();
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                                String currentDate = dateFormat.format(calendar.getTime());
+                                String currentTime = timeFormat.format(calendar.getTime());
+
+                                NewNotificationData Data = new NewNotificationData(currentDate, currentTime, getName + "님이 외출을 시작하였습니다.");
+                                Main_dataList.add(0,Data);
+                                if (Main_dataList.size() > 4) {
+                                    Main_dataList.remove(Main_dataList.size() - 1);
+                                }
+
+                            }
+                            else if (snapshot.getValue().equals("0")){
+
+                                Calendar calendar = Calendar.getInstance();
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+                                SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+                                String currentDate = dateFormat.format(calendar.getTime());
+                                String currentTime = timeFormat.format(calendar.getTime());
+
+                                NewNotificationData Data = new NewNotificationData(currentDate, currentTime,getName+"님이 외출을 마쳤습니다.");
+                                Main_dataList.add(0,Data);
+                                if (Main_dataList.size() > 4) {
+                                    Main_dataList.remove(Main_dataList.size() - 1);
+                                }
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+        //활동 조회
         databaseReference.child("Guardian_list").child(idTxt).addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.hasChild("CareReceiverID")){
-                    getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
+//                    getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
 
                     databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").addChildEventListener(new ChildEventListener() {
                         @Override
                         public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
                         }
-
                         @Override
                         public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                            if(snapshot.getKey().matches("outing")){
-                                if (snapshot.getValue().equals("0")){
-                                    Calendar calendar = Calendar.getInstance();
-                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                                    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-                                    String currentDate = dateFormat.format(calendar.getTime());
-                                    String currentTime = timeFormat.format(calendar.getTime());
-
-                                    NewNotificationData Data = new NewNotificationData(currentDate, currentTime, getName + "님이 외출을 시작하였습니다.");
-                                    Main_dataList.add(0,Data);
-                                    if (Main_dataList.size() > 4) {
-                                        Main_dataList.remove(Main_dataList.size() - 1);
-                                    }
-
-                                }
-                                else if (snapshot.getValue().equals("1")){
-
-                                    Calendar calendar = Calendar.getInstance();
-                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                                    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-                                    String currentDate = dateFormat.format(calendar.getTime());
-                                    String currentTime = timeFormat.format(calendar.getTime());
-
-                                    NewNotificationData Data = new NewNotificationData(currentDate, currentTime,getName+"님이 외출을 마쳤습니다.");
-                                    Main_dataList.add(0,Data);
-                                    if (Main_dataList.size() > 4) {
-                                        Main_dataList.remove(Main_dataList.size() - 1);
-                                    }
-                                }
-                            }
-                            else if(snapshot.getKey().matches("emergency")){
+                            if(snapshot.getKey().matches("emergency")){
                                 if (snapshot.getValue().equals("1")) {
 
                                     Calendar calendar = Calendar.getInstance();

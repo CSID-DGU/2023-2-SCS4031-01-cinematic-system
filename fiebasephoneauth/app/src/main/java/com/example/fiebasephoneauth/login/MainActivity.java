@@ -4,11 +4,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.Button;
 
 import com.example.fiebasephoneauth.databinding.ActivityMainBinding;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -40,17 +38,5 @@ public class MainActivity extends AppCompatActivity {
             Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
             startActivity(intent);
         });
-
-        getFCMToken();
     }
-
-    void getFCMToken() {
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if(task.isSuccessful()){
-                String token = task.getResult();
-                Log.i("My token", token);
-            }
-        });
-    }
-
 }

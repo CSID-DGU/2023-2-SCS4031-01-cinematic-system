@@ -13,8 +13,6 @@ import com.example.fiebasephoneauth.CareReceiver.connection.CareReceiverNotConne
 import com.example.fiebasephoneauth.Guardian.connection.GuardianNotConnected;
 import com.example.fiebasephoneauth.Guardian.page.GuardianHome;
 import com.example.fiebasephoneauth.databinding.ActivityCheckLoginServiceBinding;
-import com.example.fiebasephoneauth.login.CareReceiverSignInActivity;
-import com.example.fiebasephoneauth.login.GuardianSignInActivity;
 import com.example.fiebasephoneauth.login.MainActivity;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -32,6 +30,7 @@ public class CheckLoginService extends AppCompatActivity {
 
     private ActivityCheckLoginServiceBinding binding;
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -72,10 +72,14 @@ public class GuardianHome extends AppCompatActivity {
                 transaction.replace(R.id.frameLayout, guardianMenuEventFragment).commitAllowingStateLoss();
             } else if (item.getItemId() == R.id.menu_logout) {
                 //자동 로그인 정보 삭제
-                SharedPreferences sharedPreferences = getSharedPreferences("autoLogin", MODE_PRIVATE);
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.clear();
-                editor.commit();
+                SharedPreferences AutoLoginsharedPreferences = getSharedPreferences("autoLogin", MODE_PRIVATE);
+                SharedPreferences AppTokenSharedPreferences = getSharedPreferences("AppToken", MODE_PRIVATE);
+                SharedPreferences.Editor AutoLoginEditor = AutoLoginsharedPreferences.edit();
+                SharedPreferences.Editor AppTokenEditor = AppTokenSharedPreferences.edit();
+                AutoLoginEditor.clear();
+                AutoLoginEditor.commit();
+                AppTokenEditor.clear();
+                AppTokenEditor.commit();
                 Intent intent = new Intent(GuardianHome.this, MainActivity.class);
                 startActivity(intent);
             }

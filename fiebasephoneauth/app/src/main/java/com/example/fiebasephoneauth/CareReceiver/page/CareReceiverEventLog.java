@@ -2,6 +2,7 @@ package com.example.fiebasephoneauth.CareReceiver.page;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -41,51 +42,20 @@ public class CareReceiverEventLog extends AppCompatActivity {
         Button emerCallButton = binding.emerCallButton;
         TextView signOutText = binding.signOutText;
 
-//        checkOuting.child(idTxt).child("ActivityData").child("door").addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                checkOutingValue = snapshot.child("checkouting").getValue(String.class);
-//                outingValue = snapshot.child("outing").getValue(String.class);
-//
-//                if(checkOutingValue.equals("1")){
-//                    Intent intent1 = new Intent(CareReceiverEventLog.this, CareReceiverIsOutdoorQuery.class);
-//                    intent1.putExtra("id",idTxt);
-//                    startActivity(intent1);
-//                }
-//                else if(outingValue.equals("1")){
-//                    checkOuting.child(idTxt).child("ActivityData").child("door").child("checkouting").setValue("0");
-//                    checkOuting.child(idTxt).child("ActivityData").child("door").child("outing").setValue("0");
-//                }
-//
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
 
-//        checkOuting.child(idTxt).child("ActivityData").child("door").addChildEventListener(new ChildEventListener() {
-//                    @Override
-//                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                    }
-//                    @Override
-//                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                        checkOutingValue = snapshot.child("door").child("checkouting").getValue(String.class);
-//                        outingValue = snapshot.child("door").child("outing").getValue(String.class);
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//                    }
-//                    @Override
-//                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                    }
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//                    }
-//                });
+        signOutText.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
+        emerCallButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
 
         checkOuting.child(idTxt).child("ActivityData").child("door").addValueEventListener(new ValueEventListener() {
             @Override

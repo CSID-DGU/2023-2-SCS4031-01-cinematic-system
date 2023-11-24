@@ -126,11 +126,11 @@ public class GuardianMenuHomeFragment extends Fragment {
                             homeCareReceiverAddress.setText("서울 중구 필동로1길 30");
                             if(snapshot.hasChild("ActivityData")){
                                 getOuting = snapshot.child("ActivityData").child("door").child("outing").getValue(String.class);
-                                if (getOuting.equals("0")){
+                                if (getOuting.equals("1")){
                                     home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
 
                                 }
-                                else if (getOuting.equals("1")){
+                                else if (getOuting.equals("0")){
                                     home_Outing_description.setText(getName+"님은 현재 실내에 있습니다.");
                                 }
                             }

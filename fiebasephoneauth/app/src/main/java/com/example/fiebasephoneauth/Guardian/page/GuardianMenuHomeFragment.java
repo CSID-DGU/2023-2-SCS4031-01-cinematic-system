@@ -1,6 +1,6 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
-import static android.content.ContentValues.TAG;
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -31,8 +31,6 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <h3> 보호자의 홈 메인 페이지 </h3>
@@ -217,7 +215,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
-
         //활동 조회
         databaseReference.child("Guardian_list").child(idTxt).addValueEventListener(new ValueEventListener() {
             @Override
@@ -296,20 +293,40 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                         }
                     });
+
                     docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity");
 
-                    docRef.child("cnt").addValueEventListener(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            updateLastActivityTime();
-                        }
+                    databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity")
+                            .addChildEventListener(new ChildEventListener() {
+                                @Override
+                                public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
+                                }
 
-                        }
-                    });
+                                @Override
+                                public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                                    if("cnt".equals(snapshot.getKey())){
+                                        String cntValue = snapshot.getValue(String.class);
+                                        Log.d(TAG, "onChildChanged: "+cntValue);
+                                        updateLastActivityTime();
+                                    }
+                                }
 
+                                @Override
+                                public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+
+                                }
+
+                                @Override
+                                public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+
+                                }
+
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+
+                                }
+                            });
                 }
             }
 
@@ -360,17 +377,14 @@ public class GuardianMenuHomeFragment extends Fragment {
     }
 
     private void updateLastActivityTime() {
-        Map<String,Object> updateData = new HashMap<>();
-        updateData.put("time", ServerValue.TIMESTAMP);
-        docRef.child("time").setValue(ServerValue.TIMESTAMP);
-
-        Log.d(TAG, "updateLastActivityTime: Updating time...");
-
-        docRef.updateChildren(updateData);
+        docRef.child("time").setValue(ServerValue.TIMESTAMP, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(@Nullable DatabaseError error, @NonNull DatabaseReference ref) {
+            }
+        });
     }
 
     private void compareTimeAndPerformAction() {
-        Log.d(TAG, "compareTimeAndPerformAction: Comparing time...");
         docRef.child("time").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {

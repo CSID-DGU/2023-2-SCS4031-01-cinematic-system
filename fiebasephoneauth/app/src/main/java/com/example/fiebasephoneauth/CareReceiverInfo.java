@@ -12,18 +12,24 @@ public class CareReceiverInfo {
     public String name;
     public String phoneNum;
     public String careGiverName;
-    public String  careGiverPhoneNum;
+    public String careGiverPhoneNum;
     public String ID;
     public String password;
-    public String passwordConfirm;
+    public String Age;
+    public String Address;
+    public String gender;
 
-    public CareReceiverInfo(String name, String phoneNum, String ID, String password, String careGiverName, String careGiverPhoneNum){
+
+    public CareReceiverInfo(String name, String phoneNum, String ID, String password, String careGiverName, String careGiverPhoneNum, String Age, String Address, String gender){
         this.name = name;
         this.phoneNum = phoneNum;
         this.careGiverName = careGiverName;
         this.careGiverPhoneNum = careGiverPhoneNum;
         this.ID = ID;
         this.password = password;
+        this.Age = Age;
+        this.Address = Address;
+        this.gender = gender;
     }
     @Exclude
     public Map<String, Object> toMap(){
@@ -34,6 +40,9 @@ public class CareReceiverInfo {
         result.put("CareGiverName", careGiverName);
         result.put("CareGiverPhoneNum", careGiverPhoneNum);
         result.put("password", password);
+        result.put("Age", Age);
+        result.put("Address",Address);
+        result.put("gender",gender);
 
         return result;
     }

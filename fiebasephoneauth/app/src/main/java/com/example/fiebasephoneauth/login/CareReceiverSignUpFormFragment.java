@@ -211,7 +211,7 @@ public class CareReceiverSignUpFormFragment extends Fragment implements View.OnC
 
                         Map<String, Object> childUpates = new HashMap<>();
                         Map<String, Object> postValues = null;
-                        CareReceiverInfo post = new CareReceiverInfo(name,phoneNum,ID,password, careGiverName, careGiverPhoneNum);
+                        CareReceiverInfo post = new CareReceiverInfo(name,phoneNum,ID,password, careGiverName, careGiverPhoneNum, age, address+""+addressDetail, gender);
                         postValues = post.toMap();
                         childUpates.put("/CareReceiver_list/" + ID, postValues);
                         mPostreference.updateChildren(childUpates);

@@ -7,9 +7,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.fiebasephoneauth.databinding.ActivityCareReceiverEventLogBinding;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -21,7 +23,7 @@ import com.google.firebase.database.ValueEventListener;
  *
  */
 public class CareReceiverEventLog extends AppCompatActivity {
-    DatabaseReference checkOuting = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/")
+    DatabaseReference docRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/")
             .child("CareReceiver_list");
     private ActivityCareReceiverEventLogBinding binding;
 
@@ -53,11 +55,11 @@ public class CareReceiverEventLog extends AppCompatActivity {
         emerCallButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                docRef.child(idTxt).child("ActivityData").child("emergency").setValue("1");
             }
         });
 
-        checkOuting.child(idTxt).child("ActivityData").child("door").addValueEventListener(new ValueEventListener() {
+        docRef.child(idTxt).child("ActivityData").child("door").addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 checkOutingValue = snapshot.child("checkouting").getValue(String.class);
@@ -68,8 +70,8 @@ public class CareReceiverEventLog extends AppCompatActivity {
                     startActivity(intent1);
                 }
                 else if("1".equals(checkOutingValue) && "1".equals(outingValue)){
-                    checkOuting.child(idTxt).child("ActivityData").child("door").child("checkouting").setValue("0");
-                    checkOuting.child(idTxt).child("ActivityData").child("door").child("outing").setValue("0");
+                    docRef.child(idTxt).child("ActivityData").child("door").child("checkouting").setValue("0");
+                    docRef.child(idTxt).child("ActivityData").child("door").child("outing").setValue("0");
                 }
 
 
@@ -78,6 +80,31 @@ public class CareReceiverEventLog extends AppCompatActivity {
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+
+        docRef.child(idTxt).child("ActivityData").addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+            @Override
+            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                if(snapshot.getKey().matches("emergency")){
+                    if(snapshot.getValue().equals("1")){
+                        Intent intent1 = new Intent(CareReceiverEventLog.this, CareReceiverIsEmerQuery.class);
+                        intent1.putExtra("id",idTxt);
+                        startActivity(intent1);
+                    }
+                }
+            }
+            @Override
+            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+            }
+            @Override
+            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+            }
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
             }
         });
     }

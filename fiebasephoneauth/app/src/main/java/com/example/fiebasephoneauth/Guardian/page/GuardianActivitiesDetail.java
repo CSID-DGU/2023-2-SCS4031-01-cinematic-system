@@ -1,11 +1,11 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.fiebasephoneauth.databinding.ActivityGuardianActivitiesDetailBinding;
 import com.github.mikephil.charting.charts.LineChart;
@@ -23,13 +23,14 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
     ActivityGuardianActivitiesDetailBinding binding;
     LineChart lineChart;
 
+    List<Entry> entries = new ArrayList<Entry>();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityGuardianActivitiesDetailBinding.inflate(getLayoutInflater());
         lineChart = binding.chart;
 
-        List<Entry> entries = new ArrayList<Entry>();
         entries.add(new Entry(0,10));
         entries.add(new Entry(1,25));
         entries.add(new Entry(2,15));

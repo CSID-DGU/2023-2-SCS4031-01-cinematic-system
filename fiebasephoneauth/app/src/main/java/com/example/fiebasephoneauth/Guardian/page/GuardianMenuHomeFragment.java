@@ -1,8 +1,12 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,11 +51,12 @@ public class GuardianMenuHomeFragment extends Fragment {
     Button homeSeeDetailButton;
     String getName;
     String getOuting;
-    String getActivity_cnt;
+    String getActivity = "정상 입니다.";
     String getCareReceiverId;
 
     boolean isHandlerRunning = false;
     Handler handler = new Handler();
+    Handler handler1 = new Handler(Looper.getMainLooper());
 
 
     Calendar calendar = Calendar.getInstance();
@@ -107,6 +112,9 @@ public class GuardianMenuHomeFragment extends Fragment {
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.hasChild("CareReceiverID")){
                     getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
+
+                    docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity");
+
                     databaseReference.child("CareReceiver_list").child(getCareReceiverId).addValueEventListener(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -120,6 +128,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                             String getCareReceiverAddress = snapshot.child("Address").getValue(String.class);
                             homeCareReceiverAddress.setText(getCareReceiverAddress);
+
 
                             if(snapshot.hasChild("ActivityData")){
                                 getOuting = snapshot.child("ActivityData").child("door").child("outing").getValue(String.class);
@@ -327,7 +336,10 @@ public class GuardianMenuHomeFragment extends Fragment {
             }
         });
 
+//        Log.d(TAG, "onCreateView: "+getCareReceiverId);
+//        handler1.post(updataRunnable);
         startHandler();
+        startHandler_log();
 
         homeSeeDetailButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -356,9 +368,57 @@ public class GuardianMenuHomeFragment extends Fragment {
         });
 
 
-        return view;
 
+        return view;
     }
+    private void startHandler_log(){
+        handler1.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                fetchAndCompareTime();
+                Log.d(TAG, "run: ");
+
+                startHandler_log();
+            }
+        }, 1000);
+    }
+    private void fetchAndCompareTime(){
+        docRef.child("time").addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(snapshot.exists()){
+                    long lastActivityTime = snapshot.getValue(Long.class);
+                    long currentTime = System.currentTimeMillis();
+
+                    long timeDifference = currentTime - lastActivityTime;
+
+                    long hoursDifference = timeDifference / 1000;
+
+                    if(hoursDifference > 0 &&hoursDifference < 8){
+                        home_Activity_description.setText("정상 입니다.");
+                    }
+                    //주의
+                    else if (hoursDifference >= 8 && hoursDifference < 12) {
+                        home_Activity_description.setText("8시간 동안 활동이 없습니다.");
+                    }
+                    //경고
+                    else if(hoursDifference >= 12 && hoursDifference < 24){
+                        home_Activity_description.setText("12시간 동안 활동이 없습니다.");
+                    }
+                    //응급
+                    else if (hoursDifference >= 24) {
+                        home_Activity_description.setText("24시간 동안 활동이 없습니다.");
+                    }
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+
     private void startHandler(){
         if(!isHandlerRunning){
             handler.postDelayed(new Runnable() {
@@ -396,6 +456,7 @@ public class GuardianMenuHomeFragment extends Fragment {
         });
     }
 
+
     private void compareTimeAndPerformAction() {
         docRef.child("time").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -409,52 +470,22 @@ public class GuardianMenuHomeFragment extends Fragment {
                     long hoursDifference = timeDifference / 1000;
 
                     if(hoursDifference > 0 &&hoursDifference < 8){
-                        home_Activity_description.setText("정상 상태입니다.");
+                        getActivity = getName + "님이 활동 중 입니다.";
                     }
                     //주의
                     else if (hoursDifference >= 8 && hoursDifference < 12) {
-                        home_Activity_description.setText("주의 상태입니다.");
-                        Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-                        String currentDate = dateFormat.format(calendar.getTime());
-                        String ServerTime = timeFormat.format(calendar.getTime());
-
-                        NewNotificationData Data = new NewNotificationData(currentDate, ServerTime, getName + "님이 8시간 이상 활동이 없습니다.");
-                        Main_dataList.add(0, Data);
-                        if (Main_dataList.size() > 4) {
-                            Main_dataList.remove(Main_dataList.size() - 1);
-                        }
+                        getActivity = getName + "님이 8시간 이상 활동이 없습니다.";
+                        newRecyclerView(getActivity);
                     }
                     //경고
                     else if(hoursDifference >= 12 && hoursDifference < 24){
-                        home_Activity_description.setText("경고 상태입니다.");
-                        Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-                        String currentDate = dateFormat.format(calendar.getTime());
-                        String ServerTime = timeFormat.format(calendar.getTime());
-
-                        NewNotificationData Data = new NewNotificationData(currentDate, ServerTime, getName + "님이 12시간 이상 활동이 없습니다.");
-                        Main_dataList.add(0, Data);
-                        if (Main_dataList.size() > 4) {
-                            Main_dataList.remove(Main_dataList.size() - 1);
-                        }
+                        getActivity = getName + "님이 12시간 이상 활동이 없습니다.";
+                        newRecyclerView(getActivity);
                     }
                     //응급
                     else if (hoursDifference >= 24) {
-                        home_Activity_description.setText("응급 상태입니다.");
-                        Calendar calendar = Calendar.getInstance();
-                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-                        String currentDate = dateFormat.format(calendar.getTime());
-                        String ServerTime = timeFormat.format(calendar.getTime());
-
-                        NewNotificationData Data = new NewNotificationData(currentDate, ServerTime, getName + "님이 24시간 이상 활동이 없습니다.");
-                        Main_dataList.add(0, Data);
-                        if (Main_dataList.size() > 4) {
-                            Main_dataList.remove(Main_dataList.size() - 1);
-                        }
+                        getActivity = getName + "님이 24시간 이상 활동이 없습니다.";
+                        newRecyclerView(getActivity);
 
                     }Main_adapter.notifyDataSetChanged();
                 }

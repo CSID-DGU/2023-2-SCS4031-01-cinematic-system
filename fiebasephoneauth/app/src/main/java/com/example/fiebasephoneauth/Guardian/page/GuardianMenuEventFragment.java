@@ -57,13 +57,10 @@ public class GuardianMenuEventFragment extends Fragment {
         Event_adapter = new HomeEventLogAdapter(Event_dataList, idTxt);
         recyclerViewEventLog.setAdapter(Event_adapter);
 
-        //로그인 한 보호자 정보
-//        Bundle bundle = getArguments();
-//        String idTxt = bundle.getString("id");
 
 
 
-        databaseReference.child("Guardian_list").child(idTxt).addValueEventListener(new ValueEventListener() {
+        databaseReference.child("Guardian_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.hasChild("CareReceiverID")){
@@ -79,35 +76,16 @@ public class GuardianMenuEventFragment extends Fragment {
                         public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                             if(snapshot.getKey().matches("emergency")){
                                 if (snapshot.getValue().equals("1")) {
+                                    String status = "emergency";
 
-                                    Calendar calendar = Calendar.getInstance();
-                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                                    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-                                    String currentDate = dateFormat.format(calendar.getTime());
-                                    String currentTime = timeFormat.format(calendar.getTime());
-
-                                    EventCardInfo Data = new EventCardInfo(currentDate, currentTime, "emergency");
-                                    Event_dataList.add(0, Data);
-                                    if (Event_dataList.size() > 4) {
-                                        Event_dataList.remove(Event_dataList.size() - 1);
-                                    }
+                                    newRecyclerView(status);
                                 }
                             }
                             else if(snapshot.getKey().matches("fire")){
 
                                 if (snapshot.getValue().equals("1")) {
-
-                                    Calendar calendar = Calendar.getInstance();
-                                    SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-                                    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-                                    String currentDate = dateFormat.format(calendar.getTime());
-                                    String currentTime = timeFormat.format(calendar.getTime());
-
-                                    EventCardInfo Data = new EventCardInfo(currentDate, currentTime, "fire");
-                                    Event_dataList.add(0, Data);
-                                    if (Event_dataList.size() > 4) {
-                                        Event_dataList.remove(Event_dataList.size() - 1);
-                                    }
+                                    String status = "fire";
+                                    newRecyclerView(status);
                                 }
                             }
                             Event_adapter.notifyDataSetChanged();
@@ -138,6 +116,21 @@ public class GuardianMenuEventFragment extends Fragment {
         });
 
         return view;
+    }
+
+
+    private void newRecyclerView(String status){
+        Calendar calendar = Calendar.getInstance();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+        String currentDate = dateFormat.format(calendar.getTime());
+        String currentTime = timeFormat.format(calendar.getTime());
+
+        EventCardInfo Data = new EventCardInfo(currentDate, currentTime, status);
+        Event_dataList.add(0,Data);
+        if (Event_dataList.size() > 4) {
+            Event_dataList.remove(Event_dataList.size() - 1);
+        }
     }
 }
 

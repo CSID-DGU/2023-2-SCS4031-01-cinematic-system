@@ -3,6 +3,7 @@ package com.example.fiebasephoneauth.login;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GuardianSignInActivity extends AppCompatActivity {
 
@@ -92,6 +98,30 @@ public class GuardianSignInActivity extends AppCompatActivity {
                                                 editor.putString("password",passwordTxt);
                                                 editor.putString("type", "Guardian");
                                                 editor.commit();
+
+                                                //파이어베이스에 deviceToken 저장
+                                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+                                                    if (task.isSuccessful()) {
+                                                        ArrayList<String> deviceToken = new ArrayList<>();
+                                                        String token = task.getResult();
+                                                        Log.i("token", token);
+
+                                                        Map<String, Object> childUpdates = new HashMap<>();
+                                                        childUpdates.put("deviceToken", token);
+                                                        deviceToken.add(token);
+
+                                                        if(snapshot.hasChild("deviceToken")){
+                                                            databaseReference.child("Guardian_list").child(idTxt).child("deviceToken").push().setValue(token);
+                                                            Log.i("deviceToken", "deviceToken Push 저장 완료");
+                                                        } else {
+                                                            databaseReference.child("Guardian_list").child(idTxt).updateChildren(childUpdates);
+                                                            Log.i("deviceToken", "deviceToken Update 저장 완료");
+                                                        }
+
+
+                                                    }
+                                                });
+
 
 
 

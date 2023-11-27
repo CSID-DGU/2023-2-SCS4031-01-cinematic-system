@@ -74,7 +74,7 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
         const guardianDataRef = admin.database().ref("/Guardian_list/");
 
         return guardianDataRef.once("value").then((guardianListSnapshot) => {
-          const promises = []; // To hold all promises
+          const promises = [];
 
           guardianListSnapshot.forEach((guardianSnapshot) => {
             const guardianData = guardianSnapshot.val();
@@ -82,7 +82,6 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
 
             if (carereceiverId === userId) {
               if (guardianData.deviceToken === undefined) {
-                promises.push(snapshot.after.ref.set("0"));
                 console.log("guardianData.deviceToken is undefined");
               } else {
                 // eslint-disable-next-line max-len
@@ -106,7 +105,6 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
                   promises.push(
                       admin.messaging().send(message).then((response) => {
                         console.log("Message sent successfully:", response);
-                        return snapshot.after.ref.set("0");
                       })
                           .catch((error) => {
                             console.log("Error sending message: ", error);

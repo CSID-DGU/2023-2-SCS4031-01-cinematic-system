@@ -1,11 +1,9 @@
 package com.example.fiebasephoneauth.login;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,11 +23,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * <h3>보호자 회원가입 입력 폼</h3>
@@ -168,16 +164,11 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
                         Map<String, Object> childUpates = new HashMap<>();
                         Map<String, Object> postValues = null;
 
-                        getFCMToken(new TokenCallback() {
-                            @Override
-                            public void onTokenReceived(String token) {
-                                // Now you have the token, save the data to Firebase
-                                GuardianInfo post = new GuardianInfo(name, phoneNum, ID, password, token);
-                                Map<String, Object> postValues = post.toMap();
-                                childUpates.put("/Guardian_list/" + ID, postValues);
-                                mPostreference.updateChildren(childUpates);
-                            }
-                        });
+
+                        GuardianInfo post = new GuardianInfo(name, phoneNum, ID, password);
+                        postValues = post.toMap();
+                        childUpates.put("/Guardian_list/" + ID, postValues);
+                        mPostreference.updateChildren(childUpates);
 
                         setSignupMode();
                         Toast.makeText(getActivity(), "회원가입이 완료되었습니다!", Toast.LENGTH_SHORT).show();
@@ -191,19 +182,6 @@ public class GuardianSignUpFormFragment extends Fragment implements View.OnClick
                 }
             });
         }
-    }
-
-    public interface TokenCallback {
-        void onTokenReceived(String token);
-    }
-
-    public void getFCMToken(TokenCallback callback) {
-        FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
-            if (task.isSuccessful()) {
-                String token = task.getResult();
-                callback.onTokenReceived(token);
-            }
-        });
     }
 
     private void isFilled() {

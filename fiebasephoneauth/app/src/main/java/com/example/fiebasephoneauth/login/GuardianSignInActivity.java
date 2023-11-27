@@ -102,27 +102,33 @@ public class GuardianSignInActivity extends AppCompatActivity {
                                                 //파이어베이스에 deviceToken 저장
                                                 FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
                                                     if (task.isSuccessful()) {
-                                                        ArrayList<String> deviceToken = new ArrayList<>();
                                                         String token = task.getResult();
                                                         Log.i("token", token);
 
-                                                        Map<String, Object> childUpdates = new HashMap<>();
-                                                        childUpdates.put("deviceToken", token);
-                                                        deviceToken.add(token);
+                                                        DatabaseReference ref = databaseReference.child("Guardian_list").child(idTxt);
+                                                        ref.child("deviceToken").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                ArrayList<String> deviceToken = (ArrayList<String>) dataSnapshot.getValue();
+                                                                if (deviceToken == null) {
+                                                                    deviceToken = new ArrayList<>();
+                                                                }
+                                                                if(deviceToken.contains(token)){
+                                                                    Log.i("deviceToken", "이미 등록된 deviceToken");
+                                                                    return;
+                                                                }
+                                                                deviceToken.add(token);
+                                                                ref.child("deviceToken").setValue(deviceToken);
+                                                                Log.i("deviceToken", "deviceToken 저장 완료");
+                                                            }
 
-                                                        if(snapshot.hasChild("deviceToken")){
-                                                            databaseReference.child("Guardian_list").child(idTxt).child("deviceToken").push().setValue(token);
-                                                            Log.i("deviceToken", "deviceToken Push 저장 완료");
-                                                        } else {
-                                                            databaseReference.child("Guardian_list").child(idTxt).updateChildren(childUpdates);
-                                                            Log.i("deviceToken", "deviceToken Update 저장 완료");
-                                                        }
-
-
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
+                                                                // Handle error
+                                                            }
+                                                        });
                                                     }
                                                 });
-
-
 
 
                                                 //GuardianHome으로 이동

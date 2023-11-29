@@ -3,12 +3,22 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
+/** 응급상황 발생 Trigger
+ *
+ * 1. 피보호자 db를 찾아 응급상황 발생 여부를 확인
+ * 2. 응급상황 발생 시 피보호자에게 푸시 알림을 보냄
+ * 3. 15초 이내 응답이 없을 시 응급상황 발생으로 판단하고 보호자에게 푸시 알림을 보냄
+ */
 // eslint-disable-next-line max-len
 exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/emergency")
     .onUpdate((snapshot, context) => {
       const emergencyNewValue = snapshot.after.val();
       const userId = context.params.userId;
       console.log("userId: ", userId);
+
+      setTimeout(() => {
+
+      });
 
       if (emergencyNewValue === "1") {
         const guardianDataRef = admin.database().ref("/Guardian_list/");
@@ -63,6 +73,7 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
       }
     });
 
+// 화재상황 발생 시 Trigger
 // eslint-disable-next-line max-len
 exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/fire")
     .onUpdate((snapshot, context) => {
@@ -123,6 +134,7 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
       }
     });
 
+// 문 열림 상황 발생 시 Trigger
 // eslint-disable-next-line max-len
 exports.checkOuting = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/door")
     .onUpdate((snapshot, context) => {

@@ -28,7 +28,6 @@ public class GuardianHome extends AppCompatActivity {
     GuardianMenuHomeFragment guardianMenuHomeFragment = new GuardianMenuHomeFragment();
     GuardianMenuEventFragment guardianMenuEventFragment = new GuardianMenuEventFragment();
     GuardianMenuProfileFragment guardianMenuProfileFragment = new GuardianMenuProfileFragment();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

@@ -1,12 +1,9 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -67,9 +64,10 @@ public class GuardianMenuHomeFragment extends Fragment {
 
 
     // 외출, 활동 및 새로운 알림 리사이클러뷰
-    private ArrayList<NewNotificationData> Main_dataList = new ArrayList<>();
-    private HomeNewNotificationAdapter Main_adapter;
+    private ArrayList<Object> items = new ArrayList<>();
+    private MultiViewAdapter MultiAdapter;
     private RecyclerView recyclerViewNewNotification;
+
 
 
     @Override
@@ -96,8 +94,8 @@ public class GuardianMenuHomeFragment extends Fragment {
         // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification = (RecyclerView) view.findViewById(R.id.recyclerview_home_new_notification); // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification.setLayoutManager(new LinearLayoutManager(getActivity()));
-        Main_adapter = new HomeNewNotificationAdapter(Main_dataList);
-        recyclerViewNewNotification.setAdapter(Main_adapter);
+        MultiAdapter = new MultiViewAdapter(items);
+        recyclerViewNewNotification.setAdapter(MultiAdapter);
 
 
         //로그인 한 보호자 정보
@@ -138,6 +136,9 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 }
                                 else if (getOuting.equals("0")){
                                     home_Outing_description.setText(getName+"님은 현재 실내에 있습니다.");
+                                }
+                                else{
+                                    home_Outing_description.setText(getName+"님 반갑습니다.");
                                 }
                             }
 
@@ -180,7 +181,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 String status = getName+"님이 외출을 마쳤습니다.";
                                 newRecyclerView(status);
                             }
-                        }Main_adapter.notifyDataSetChanged();
+                        }MultiAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -222,7 +223,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 String status = getName + "님이 화재가 발생했습니다.";
                                 newRecyclerView(status);
                             }
-                        }Main_adapter.notifyDataSetChanged();
+                        }MultiAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -268,7 +269,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 newRecyclerView(status);
                             }
                         }
-                        Main_adapter.notifyDataSetChanged();
+                        MultiAdapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -376,7 +377,6 @@ public class GuardianMenuHomeFragment extends Fragment {
             @Override
             public void run() {
                 fetchAndCompareTime();
-                Log.d(TAG, "run: ");
 
                 startHandler_log();
             }
@@ -442,9 +442,9 @@ public class GuardianMenuHomeFragment extends Fragment {
         String currentTime = timeFormat.format(calendar.getTime());
 
         NewNotificationData Data = new NewNotificationData(currentDate, currentTime, status);
-        Main_dataList.add(0,Data);
-        if (Main_dataList.size() > 4) {
-            Main_dataList.remove(Main_dataList.size() - 1);
+        items.add(0,Data);
+        if (items.size() > 4) {
+            items.remove(items.size() - 1);
         }
     }
 
@@ -487,7 +487,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                         getActivity = getName + "님이 24시간 이상 활동이 없습니다.";
                         newRecyclerView(getActivity);
 
-                    }Main_adapter.notifyDataSetChanged();
+                    }MultiAdapter.notifyDataSetChanged();
                 }
             }
 

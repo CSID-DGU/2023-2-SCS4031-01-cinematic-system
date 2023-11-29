@@ -34,9 +34,13 @@ public class GuardianMenuEventFragment extends Fragment {
 
     String getCareReceiverId;
 
-    private ArrayList<EventCardInfo> Event_dataList = new ArrayList<>();
-    private HomeEventLogAdapter Event_adapter;
+    private ArrayList<Object> Event_dataList = new ArrayList<>();
+    private MultiViewAdapter Event_adapter;
     private RecyclerView recyclerViewEventLog;
+
+    public void onAttachFragment(Fragment GuardianMenuEventFragment){
+
+    }
 
 
     @Override
@@ -54,10 +58,8 @@ public class GuardianMenuEventFragment extends Fragment {
         recyclerViewEventLog = (RecyclerView) view.findViewById(R.id.recent_notification_recycler_view);
         recyclerViewEventLog.setHasFixedSize(true);
         recyclerViewEventLog.setLayoutManager(new LinearLayoutManager(getActivity()));
-        Event_adapter = new HomeEventLogAdapter(Event_dataList, idTxt);
+        Event_adapter = new MultiViewAdapter(Event_dataList, idTxt);
         recyclerViewEventLog.setAdapter(Event_adapter);
-
-
 
 
         databaseReference.child("Guardian_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {

@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.widget.Toast;
 
 import com.example.fiebasephoneauth.CareReceiver.connection.CareReceiverNotConnected;
+import com.example.fiebasephoneauth.CareReceiver.page.CareReceiverEventLog;
 import com.example.fiebasephoneauth.Guardian.connection.GuardianNotConnected;
 import com.example.fiebasephoneauth.Guardian.page.GuardianHome;
 import com.example.fiebasephoneauth.databinding.ActivityCheckLoginServiceBinding;
@@ -118,10 +119,21 @@ public class CheckLoginService extends AppCompatActivity {
                         final String getPassword = snapshot.child(id).child("password").getValue(String.class);
 
                         if(getPassword.equals(pw)){
-                            Toast.makeText(CheckLoginService.this, "로그인 성공 !", Toast.LENGTH_SHORT).show();
+                            if (snapshot.child(id).hasChild("checkConnection") && snapshot.child(id).child("checkConnection").getValue(String.class).equals("1")){
+                                Toast.makeText(CheckLoginService.this, "로그인 성공 !", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(CheckLoginService.this, CareReceiverEventLog.class);
+                                intent.putExtra("id", id);
+                                startActivity(intent);
+                                finish();
+                            } else {
+                                Toast.makeText(CheckLoginService.this, "보호자 계정을 통해 연동을 진행해주세요", Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(CheckLoginService.this, CareReceiverNotConnected.class);
+                                intent.putExtra("id", id);
+                                startActivity(intent);
+                                finish();
+                            }
 
-                            startActivity(new Intent(CheckLoginService.this, CareReceiverNotConnected.class));
-                            finish();
+
                         }
                     }
 

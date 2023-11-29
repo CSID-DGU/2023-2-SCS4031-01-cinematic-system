@@ -3,6 +3,7 @@ package com.example.fiebasephoneauth.login;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class GuardianSignInActivity extends AppCompatActivity {
 
@@ -93,6 +99,36 @@ public class GuardianSignInActivity extends AppCompatActivity {
                                                 editor.putString("type", "Guardian");
                                                 editor.commit();
 
+                                                //파이어베이스에 deviceToken 저장
+                                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+                                                    if (task.isSuccessful()) {
+                                                        String token = task.getResult();
+                                                        Log.i("token", token);
+
+                                                        DatabaseReference ref = databaseReference.child("Guardian_list").child(idTxt);
+                                                        ref.child("deviceToken").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                ArrayList<String> deviceToken = (ArrayList<String>) dataSnapshot.getValue();
+                                                                if (deviceToken == null) {
+                                                                    deviceToken = new ArrayList<>();
+                                                                }
+                                                                if(deviceToken.contains(token)){
+                                                                    Log.i("deviceToken", "이미 등록된 deviceToken");
+                                                                    return;
+                                                                }
+                                                                deviceToken.add(token);
+                                                                ref.child("deviceToken").setValue(deviceToken);
+                                                                Log.i("deviceToken", "deviceToken 저장 완료");
+                                                            }
+
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
+                                                                // Handle error
+                                                            }
+                                                        });
+                                                    }
+                                                });
 
 
                                                 //GuardianHome으로 이동

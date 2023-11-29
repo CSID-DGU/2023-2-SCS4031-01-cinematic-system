@@ -3,6 +3,7 @@ package com.example.fiebasephoneauth.login;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -21,6 +22,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.ArrayList;
 
 public class CareReceiverSignInActivity extends AppCompatActivity {
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
@@ -79,7 +83,7 @@ public class CareReceiverSignInActivity extends AppCompatActivity {
                                     databaseReference.child("CareReceiver_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {
                                         @Override
                                         public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                            if(snapshot.hasChild("checkConnection")){
+                                            if(snapshot.hasChild("checkConnection") &&  snapshot.child("checkConnection").getValue(String.class).equals("1")){
                                                 //기존 로그인 정보 삭제
                                                 SharedPreferences sharedPreferences = getSharedPreferences("autoLogin",MODE_PRIVATE);
                                                 SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -92,9 +96,38 @@ public class CareReceiverSignInActivity extends AppCompatActivity {
                                                 editor.putString("type", "CareReceiver");
                                                 editor.commit();
 
+                                                //파이어베이스에 deviceToken 저장
+                                                FirebaseMessaging.getInstance().getToken().addOnCompleteListener(task -> {
+                                                    if (task.isSuccessful()) {
+                                                        String token = task.getResult();
+                                                        Log.i("token", token);
 
+                                                        DatabaseReference ref = databaseReference.child("CareReceiver_list").child(idTxt);
+                                                        ref.child("deviceToken").addListenerForSingleValueEvent(new ValueEventListener() {
+                                                            @Override
+                                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                                ArrayList<String> deviceToken = (ArrayList<String>) dataSnapshot.getValue();
+                                                                if (deviceToken == null) {
+                                                                    deviceToken = new ArrayList<>();
+                                                                }
+                                                                if(deviceToken.contains(token)){
+                                                                    Log.i("deviceToken", "이미 등록된 deviceToken");
+                                                                    return;
+                                                                }
+                                                                deviceToken.add(token);
+                                                                ref.child("deviceToken").setValue(deviceToken);
+                                                                Log.i("deviceToken", "deviceToken 저장 완료");
+                                                            }
 
-                                                //GuardianHome으로 이동
+                                                            @Override
+                                                            public void onCancelled(DatabaseError databaseError) {
+                                                                // Handle error
+                                                            }
+                                                        });
+                                                    }
+                                                });
+
+                                                // CareReceiverEventLog로 이동
                                                 Intent intent = new Intent(CareReceiverSignInActivity.this, CareReceiverEventLog.class);
                                                 intent.putExtra("id",idTxt);
                                                 startActivity(intent);

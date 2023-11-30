@@ -1,6 +1,9 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,40 +32,58 @@ import java.util.Calendar;
  * 보호자가 피보호자의 이벤트 로그를 확인할 수 있는 페이지
  */
 public class GuardianMenuEventFragment extends Fragment {
-
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
 
     String getCareReceiverId;
-
-    private ArrayList<Object> Event_dataList = new ArrayList<>();
-    private MultiViewAdapter Event_adapter;
+    private ArrayList<String> receivedDataList = new ArrayList<>();
+    private String receivedId;
+    private ArrayList<EventCardInfo> Event_dataList = new ArrayList<>();
+    private HomeEventLogAdapter Event_adapter;
     private RecyclerView recyclerViewEventLog;
 
-    public void onAttachFragment(Fragment GuardianMenuEventFragment){
-
+    public static GuardianMenuEventFragment newInstance(String idTxt, ArrayList<String> dataList) {
+        GuardianMenuEventFragment fragment = new GuardianMenuEventFragment();
+        Bundle args = new Bundle();
+        args.putString("id",idTxt);
+        args.putStringArrayList("data_list",dataList);
+        fragment.setArguments(args);
+        return fragment;
     }
+
+
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle bundle = getArguments();
+        receivedId = bundle.getString("id");
+
+        if(getArguments() != null){
+            receivedDataList = getArguments().getStringArrayList("data_list");
+
+
+            for(String i : receivedDataList){
+                newRecyclerView(i);
+            }
+        }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_guardian_menu_event, container, false);
-        Bundle bundle = getArguments();
-        String idTxt = bundle.getString("id");
 
         recyclerViewEventLog = (RecyclerView) view.findViewById(R.id.recent_notification_recycler_view);
         recyclerViewEventLog.setHasFixedSize(true);
         recyclerViewEventLog.setLayoutManager(new LinearLayoutManager(getActivity()));
-        Event_adapter = new MultiViewAdapter(Event_dataList, idTxt);
+        Event_adapter = new HomeEventLogAdapter(Event_dataList, receivedId);
         recyclerViewEventLog.setAdapter(Event_adapter);
 
+        Log.d(TAG, "onCreateView: "+receivedId);
 
-        databaseReference.child("Guardian_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {
+
+        databaseReference.child("Guardian_list").child(receivedId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.hasChild("CareReceiverID")){

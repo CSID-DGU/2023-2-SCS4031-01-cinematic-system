@@ -5,6 +5,8 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -29,6 +31,8 @@ import java.util.List;
 
 public class GuardianActivitiesDetail extends AppCompatActivity {
 
+    TextView average_activity, most_activity, least_activity;
+
     ActivityGuardianActivitiesDetailBinding binding;
     LineChart lineChart;
 
@@ -39,6 +43,11 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityGuardianActivitiesDetailBinding.inflate(getLayoutInflater());
         lineChart = binding.chart;
+
+        // onCreate 메서드 안에 TextView 선언 부분에 아래 코드를 추가합니다.
+        average_activity = binding.averageActivity;
+        most_activity = binding.mostActivity;
+        least_activity = binding.leastActivity;
 
         // Firebase에서 데이터 가져오기
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("CareReceiver_list/abcd/ActivityData/activity");
@@ -64,6 +73,10 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
                         entries.add(new Entry(i, cnt));
                     }
                 }
+                // onDataChange 메서드에서 데이터를 처리한 후에 아래 코드를 추가하여 텍스트 뷰를 업데이트합니다.
+                average_activity.setText(String.valueOf(calculateAverage(entries)));
+                most_activity.setText(getMostActiveHour(entries));
+                least_activity.setText(getLeastActiveHour(entries));
 
                 // 그래프 그리기
                 drawGraph(entries);
@@ -163,8 +176,61 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         xAxis.setLabelCount(24, true);
         xAxis.setValueFormatter(new IndexAxisValueFormatter(new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22", "23"}));
 
-        // 그래프 업데이트
+        // 시간별 데이터 변경이 있을때마다 그래프 업데이트
         lineChart.invalidate();
     }
+
+    // calculateAverage 메서드 수정
+    private int calculateAverage(List<Entry> entries) {
+        if (entries.isEmpty()) {
+            return 0;
+        }
+
+        float total = 0;
+        for (Entry entry : entries) {
+            total += entry.getY();
+        }
+
+        float average = total / entries.size();
+        return Math.round(average); // 정수로 반올림하여 반환
+    }
+
+    // getMostActiveHour 메서드 수정
+    private String getMostActiveHour(List<Entry> entries) {
+        if (entries.isEmpty()) {
+            return "데이터 없음"; // 빈 리스트일 경우 메시지 반환
+        }
+
+        Entry mostActiveEntry = entries.stream().max((a, b) -> (int) (a.getY() - b.getY())).orElse(null);
+
+        if (mostActiveEntry != null) {
+            int hour = (int) mostActiveEntry.getX();
+            int activity = Math.round(mostActiveEntry.getY());
+            return " 시간: " + hour + "시, 활동량: " + activity;
+        } else {
+            return "데이터 없음";
+        }
+    }
+
+    // getLeastActiveHour 메서드 수정
+    private String getLeastActiveHour(List<Entry> entries) {
+        if (entries.isEmpty()) {
+            return "데이터 없음"; // 빈 리스트일 경우 메시지 반환
+        }
+
+        Entry leastActiveEntry = entries.stream().min((a, b) -> (int) (a.getY() - b.getY())).orElse(null);
+
+        if (leastActiveEntry != null) {
+            int hour = (int) leastActiveEntry.getX();
+            int activity = Math.round(leastActiveEntry.getY());
+            return " 시간: " + hour + "시, 활동량: " + activity;
+        } else {
+            return "데이터 없음";
+        }
+    }
+
+
+
+
 }
 

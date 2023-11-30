@@ -28,10 +28,13 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class GuardianActivitiesDetail extends AppCompatActivity {
 
-    TextView average_activity, most_activity, least_activity;
+    TextView activity_info, average_activity, most_activity, least_activity;
 
     ActivityGuardianActivitiesDetailBinding binding;
     LineChart lineChart;
@@ -45,9 +48,17 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         lineChart = binding.chart;
 
         // onCreate 메서드 안에 TextView 선언 부분에 아래 코드를 추가합니다.
+        activity_info = binding.activityInfo;
         average_activity = binding.averageActivity;
         most_activity = binding.mostActivity;
         least_activity = binding.leastActivity;
+
+        // 현재 날짜 가져오기
+        String currentDate = getCurrentDate();
+
+        // 가져온 현재 날짜와 "활동 정보"를 합쳐서 TextView에 설정
+        String combinedText = currentDate + " 활동 정보";
+        activity_info.setText(combinedText);
 
         // Firebase에서 데이터 가져오기
         DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("CareReceiver_list/abcd/ActivityData/activity");
@@ -180,6 +191,12 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         lineChart.invalidate();
     }
 
+    // getCurrentDate 메서드 추가
+    private String getCurrentDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
+        return sdf.format(new Date());
+    }
+
     // calculateAverage 메서드 수정
     private int calculateAverage(List<Entry> entries) {
         if (entries.isEmpty()) {
@@ -206,7 +223,7 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         if (mostActiveEntry != null) {
             int hour = (int) mostActiveEntry.getX();
             int activity = Math.round(mostActiveEntry.getY());
-            return " 시간: " + hour + "시, 활동량: " + activity;
+            return " 시간: " + hour + "시, 활동량 수치: " + activity;
         } else {
             return "데이터 없음";
         }
@@ -223,7 +240,7 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         if (leastActiveEntry != null) {
             int hour = (int) leastActiveEntry.getX();
             int activity = Math.round(leastActiveEntry.getY());
-            return " 시간: " + hour + "시, 활동량: " + activity;
+            return " 시간: " + hour + "시, 활동량 수치: " + activity;
         } else {
             return "데이터 없음";
         }

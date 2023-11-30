@@ -1,5 +1,7 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -42,7 +44,6 @@ public class GuardianHome extends AppCompatActivity {
     GuardianMenuHomeFragment guardianMenuHomeFragment = new GuardianMenuHomeFragment();
     GuardianMenuEventFragment guardianMenuEventFragment = new GuardianMenuEventFragment();
     GuardianMenuProfileFragment guardianMenuProfileFragment = new GuardianMenuProfileFragment();
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,6 +59,7 @@ public class GuardianHome extends AppCompatActivity {
 
         Bundle bundle = new Bundle();
         bundle.putString("id",idTxt);
+        Log.d(TAG, "onCreate: "+idTxt);
         guardianMenuHomeFragment.setArguments(bundle);
         guardianMenuEventFragment.setArguments(bundle);
 
@@ -83,7 +85,8 @@ public class GuardianHome extends AppCompatActivity {
             if (item.getItemId() == R.id.menu_home) {
                 transaction.replace(R.id.frameLayout, guardianMenuHomeFragment).commit();
             } else if (item.getItemId() == R.id.menu_event) {
-                transaction.replace(R.id.frameLayout, guardianMenuEventFragment).commit();
+                ArrayList<String> dataList = guardianMenuHomeFragment.getDataList();
+                transaction.replace(R.id.frameLayout, guardianMenuEventFragment.newInstance(idTxt,dataList)).commit();
             } else if (item.getItemId() == R.id.menu_logout) {
                 //자동 로그인 정보 삭제
                 SharedPreferences AutoLoginsharedPreferences = getSharedPreferences("autoLogin", MODE_PRIVATE);

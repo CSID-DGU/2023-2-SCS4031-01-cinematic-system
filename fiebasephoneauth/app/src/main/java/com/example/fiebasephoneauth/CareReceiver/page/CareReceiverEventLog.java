@@ -116,8 +116,6 @@ public class CareReceiverEventLog extends AppCompatActivity {
                     docRef.child(idTxt).child("ActivityData").child("door").child("checkouting").setValue("0");
                     docRef.child(idTxt).child("ActivityData").child("door").child("outing").setValue("0");
                 }
-
-
             }
 
             @Override

@@ -53,7 +53,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
             notificationManager.createNotificationChannel(notificationChannel);
         }
 
-        //푸시를 클릭했을때 이동// -,
+        //푸시를 클릭했을때 이동//
         Intent intent = new Intent(this, GuardianEventLogDetail.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0 , intent, PendingIntent.FLAG_MUTABLE | PendingIntent.FLAG_UPDATE_CURRENT);

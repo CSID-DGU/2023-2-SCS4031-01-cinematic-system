@@ -65,15 +65,27 @@ public class GuardianMenuHomeFragment extends Fragment {
     String current_Date = dateFormat.format(calendar.getTime());
     String current_Time = timeFormat.format(calendar.getTime());
 
+    private static final int MAX_SIZE = 4;
+    private ArrayList<String> dataList = new ArrayList<>();
+    String idTxt;
+
+    public GuardianMenuHomeFragment(){
+    }
+
+    public static GuardianMenuHomeFragment newInstance(){
+        return new GuardianMenuHomeFragment();
+    }
 
     // 외출, 활동 및 새로운 알림 리사이클러뷰
-    private ArrayList<NewNotificationData> Main_dataList = new ArrayList<>();
-    private HomeNewNotificationAdapter Main_adapter;
+    private ArrayList<NewNotificationData> items = new ArrayList<>();
+    private HomeNewNotificationAdapter Adapter;
     private RecyclerView recyclerViewNewNotification;
+
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {super.onCreate(savedInstanceState);
+
     }
 
     @Override
@@ -96,13 +108,13 @@ public class GuardianMenuHomeFragment extends Fragment {
         // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification = (RecyclerView) view.findViewById(R.id.recyclerview_home_new_notification); // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification.setLayoutManager(new LinearLayoutManager(getActivity()));
-        Main_adapter = new HomeNewNotificationAdapter(Main_dataList);
-        recyclerViewNewNotification.setAdapter(Main_adapter);
+        Adapter = new HomeNewNotificationAdapter(items);
+        recyclerViewNewNotification.setAdapter(Adapter);
 
 
         //로그인 한 보호자 정보
         Bundle bundle = getArguments();
-        String idTxt = bundle.getString("id");
+        idTxt = bundle.getString("id");
 
         Gaurdian_Ref = databaseReference.child("Guardian_list").child(idTxt);
 
@@ -138,6 +150,9 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 }
                                 else if (getOuting.equals("0")){
                                     home_Outing_description.setText(getName+"님은 현재 실내에 있습니다.");
+                                }
+                                else{
+                                    home_Outing_description.setText(getName+"님 반갑습니다.");
                                 }
                             }
 
@@ -180,7 +195,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 String status = getName+"님이 외출을 마쳤습니다.";
                                 newRecyclerView(status);
                             }
-                        }Main_adapter.notifyDataSetChanged();
+                        }
                     }
 
                     @Override
@@ -220,9 +235,10 @@ public class GuardianMenuHomeFragment extends Fragment {
                         if(snapshot.getKey().matches("fire")){
                             if (snapshot.getValue().equals("1")) {
                                 String status = getName + "님이 화재가 발생했습니다.";
+                                addData("fire");
                                 newRecyclerView(status);
                             }
-                        }Main_adapter.notifyDataSetChanged();
+                        }
                     }
 
                     @Override
@@ -261,6 +277,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                         if(snapshot.getKey().matches("emergency")){
                             if (snapshot.getValue().equals("1")) {
                                 String status = getName + "님이 응급버튼을 눌렀습니다.";
+                                addData("emergency");
                                 newRecyclerView(status);
                             }
                             else if(snapshot.getValue().equals("0")){
@@ -268,7 +285,6 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 newRecyclerView(status);
                             }
                         }
-                        Main_adapter.notifyDataSetChanged();
                     }
 
                     @Override
@@ -371,12 +387,23 @@ public class GuardianMenuHomeFragment extends Fragment {
 
         return view;
     }
+
+    private void addData(String data){
+        dataList.add(data);
+
+        if(dataList.size() > MAX_SIZE){
+            dataList.remove(0);
+        }
+    }
+
+    public ArrayList<String> getDataList(){
+        return dataList;
+    }
     private void startHandler_log(){
         handler1.postDelayed(new Runnable() {
             @Override
             public void run() {
                 fetchAndCompareTime();
-                Log.d(TAG, "run: ");
 
                 startHandler_log();
             }
@@ -442,10 +469,12 @@ public class GuardianMenuHomeFragment extends Fragment {
         String currentTime = timeFormat.format(calendar.getTime());
 
         NewNotificationData Data = new NewNotificationData(currentDate, currentTime, status);
-        Main_dataList.add(0,Data);
-        if (Main_dataList.size() > 4) {
-            Main_dataList.remove(Main_dataList.size() - 1);
+        items.add(0,Data);
+        if (items.size() > 4) {
+            items.remove(items.size() - 1);
         }
+        Adapter.notifyDataSetChanged();
+        Log.d(TAG, "newRecyclerView: "+Data.getDescription());
     }
 
     private void updateLastActivityTime() {
@@ -483,11 +512,11 @@ public class GuardianMenuHomeFragment extends Fragment {
                         newRecyclerView(getActivity);
                     }
                     //응급
-                    else if (hoursDifference >= 24) {
+                    else if (hoursDifference >= 24 && hoursDifference < 25) {
                         getActivity = getName + "님이 24시간 이상 활동이 없습니다.";
                         newRecyclerView(getActivity);
 
-                    }Main_adapter.notifyDataSetChanged();
+                    }
                 }
             }
 

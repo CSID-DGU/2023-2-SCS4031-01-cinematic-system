@@ -50,7 +50,7 @@
             android:exported="false" />
         <activity
             android:name=".Guardian.page.GuardianHome"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".Guardian.connection.GuardianGetConnection"
             android:exported="false" />

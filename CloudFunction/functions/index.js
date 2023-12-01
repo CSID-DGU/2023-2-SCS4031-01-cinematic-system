@@ -1,9 +1,13 @@
 const functions = require("firebase-functions");
-
 const admin = require("firebase-admin");
 admin.initializeApp();
 
-// eslint-disable-next-line max-len
+/** 응급상황 발생 Trigger
+ *
+ * 1. 피보호자 db를 찾아 응급상황 발생 여부를 확인
+ * 2. 응급상황 발생 시 피보호자에게 푸시 알림을 보냄
+ * 3. 15초 이내 응답이 없을 시 응급상황 발생으로 판단하고 보호자에게 푸시 알림을 보냄
+ */
 exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/emergency")
     .onUpdate((snapshot, context) => {
       const emergencyNewValue = snapshot.after.val();
@@ -11,7 +15,35 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
       console.log("userId: ", userId);
 
       if (emergencyNewValue === "1") {
+        const careReceiverDataRef = admin.database().ref(`/CareReceiver_list/${userId}`);
         const guardianDataRef = admin.database().ref("/Guardian_list/");
+
+        // 피보호자에게 푸시 알림을 보냄
+        careReceiverDataRef.once("value").then((careReceiverSnapshot) => {
+          const careReceiverData = careReceiverSnapshot.val();
+          const tokenObject = careReceiverData.deviceToken;
+          console.log("tokenObject: ", tokenObject);
+
+          for (const key in tokenObject) {
+            if (Object.prototype.hasOwnProperty.call(tokenObject, key)) {
+              const token = tokenObject[key];
+              const message = {
+                notification: {
+                  title: "응급 상황 발생",
+                  body: "응급 버튼을 누른 것이 아니라면 15초 내에 응답해주세요",
+                },
+                token: token,
+              };
+              admin.messaging().send(message).then((response) => {
+                console.log("Message sent successfully:", response, "token: ", token);
+              })
+                  .catch((error) => {
+                    console.log("Error sending message: ", error);
+                  });
+            }
+          }
+        });
+
 
         // 피보호자의 보호자를 찾아서 푸시 알림을 보냄
         return guardianDataRef.once("value").then((guardianListSnapshot) => {
@@ -22,7 +54,6 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
             const carereceiverId = guardianData.CareReceiverID;
 
             if (carereceiverId === userId && guardianData.deviceToken) {
-              // eslint-disable-next-line max-len
               const userNameRef = admin.database().ref(`/CareReceiver_list/${userId}/name`);
 
               // Read the data
@@ -44,7 +75,6 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
                     };
                     promises.push(
                         admin.messaging().send(message).then((response) => {
-                          // eslint-disable-next-line max-len
                           console.log("Message sent successfully:", response, "token: ", token);
                         })
                             .catch((error) => {
@@ -63,6 +93,7 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
       }
     });
 
+// 화재상황 발생 시 Trigger
 // eslint-disable-next-line max-len
 exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/fire")
     .onUpdate((snapshot, context) => {
@@ -123,6 +154,7 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
       }
     });
 
+// 문 열림 상황 발생 시 Trigger
 // eslint-disable-next-line max-len
 exports.checkOuting = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/door")
     .onUpdate((snapshot, context) => {

@@ -117,9 +117,9 @@ public class GuardianEventLogDetail extends AppCompatActivity {
         binding.back.setOnClickListener(v -> {
             Intent intent1 = new Intent(GuardianEventLogDetail.this, GuardianHome.class);
             //set bottom bar
-            intent1.putExtra("SELECTED_ITEM", R.id.menu_event);
-            intent1.putExtra("id",idTxt);
-            startActivity(intent1);
+            //intent1.putExtra("SELECTED_ITEM", R.id.menu_event);
+            //startActivity(intent1);
+            finish();
         });
         //피보호자 전화 연결
         care_receiver_call.setOnClickListener(new View.OnClickListener() {

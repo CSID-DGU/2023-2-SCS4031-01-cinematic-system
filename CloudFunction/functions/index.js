@@ -10,11 +10,12 @@ admin.initializeApp();
  */
 exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/emergency")
     .onUpdate((snapshot, context) => {
-      const emergencyNewValue = snapshot.after.val();
+      const emergencyValue = snapshot.after.val();
       const userId = context.params.userId;
       console.log("userId: ", userId);
 
-      if (emergencyNewValue === "1") {
+      // emergencyValue가 1이면 응급상황 발생
+      if (emergencyValue === "1") {
         const careReceiverDataRef = admin.database().ref(`/CareReceiver_list/${userId}`);
         const guardianDataRef = admin.database().ref("/Guardian_list/");
 
@@ -44,52 +45,77 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
           }
         });
 
+        setTimeout(() => {
+            // 15초 이내에 응답이 없으면 응급상황 발생으로 판단하고 보호자에게 푸시 알림을 보냄
+            careReceiverDataRef.child("ActivityData").child("emergency").once("value").then((emergencySnapshot) => {
+                const emergencyValue = emergencySnapshot.val();
+                console.log("emergencyValue: ", emergencyValue);
 
-        // 피보호자의 보호자를 찾아서 푸시 알림을 보냄
-        return guardianDataRef.once("value").then((guardianListSnapshot) => {
-          const promises = []; // To hold all promises
+                if (emergencyValue === "1") {
 
-          guardianListSnapshot.forEach((guardianSnapshot) => {
-            const guardianData = guardianSnapshot.val();
-            const carereceiverId = guardianData.CareReceiverID;
+                    // 피보호자의 보호자를 찾아서 푸시 알림을 보냄
+                    guardianDataRef.once("value").then((guardianListSnapshot) => {
+                        guardianListSnapshot.forEach((guardianSnapshot) => {
+                            const guardianData = guardianSnapshot.val();
+                            const carereceiverId = guardianData.CareReceiverID;
 
-            if (carereceiverId === userId && guardianData.deviceToken) {
-              const userNameRef = admin.database().ref(`/CareReceiver_list/${userId}/name`);
+                            if (carereceiverId === userId && guardianData.deviceToken) {
+                                const userNameRef = admin.database().ref(`/CareReceiver_list/${userId}/name`);
 
-              // Read the data
-              userNameRef.once("value").then((userNameSnapshot) => {
-                const name = userNameSnapshot.val();
+                                // Read the data
+                                userNameRef.once("value").then((userNameSnapshot) => {
+                                    const name = userNameSnapshot.val();
 
-                const tokenObject = guardianData.deviceToken;
-                console.log("tokenObject: ", tokenObject);
+                                    const tokenObject = guardianData.deviceToken;
+                                    console.log("tokenObject: ", tokenObject);
 
-                for (const key in tokenObject) {
-                  if (Object.prototype.hasOwnProperty.call(tokenObject, key)) {
-                    const token = tokenObject[key];
-                    const message = {
-                      notification: {
-                        title: "응급 상황 발생",
-                        body: `${name} 님이 응급 버튼을 눌렀습니다`,
-                      },
-                      token: token,
-                    };
-                    promises.push(
-                        admin.messaging().send(message).then((response) => {
-                          console.log("Message sent successfully:", response, "token: ", token);
-                        })
-                            .catch((error) => {
-                              console.log("Error sending message: ", error);
-                            }),
+                                    for (const key in tokenObject) {
+                                        if (Object.prototype.hasOwnProperty.call(tokenObject, key)) {
+                                            const token = tokenObject[key];
+                                            const message = {
+                                                notification: {
+                                                    title: "응급 상황 발생",
+                                                    body: `${name} 님이 응급 버튼을 눌렀습니다`,
+                                                },
+                                                token: token,
+                                            };
+                                            admin.messaging().send(message).then((response) => {
+                                                console.log("Message sent successfully:", response, "token: ", token);
+                                            })
+                                                .catch((error) => {
+                                                    console.log("Error sending message: ", error);
+                                                });
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    });
+
+                    // 응급상황 기록
+                    careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot) => {
+                        const latestEvent = latestEventSnapshot.val();
+                        const keys = Object.keys(latestEvent);
+                        const numChildren = Object.keys(latestEvent).length;
+                        console.log("numChildren: ", numChildren);
+                        // 최근 4개의 기록만 남기고 나머지는 삭제
+                        if (numChildren > 4) {
+                            keys.sort();
+                            const oldestKey = keys[0];
+                            careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();
+                        }
+                    });
+                    const emergencyTimeStamp = Date.now();
+                    const latestEvent = admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/latestEvent`);
+                    latestEvent.push(
+                        {
+                            time : emergencyTimeStamp,
+                            type : "emergency"
+                        }
                     );
-                  }
                 }
-              });
-            }
-          });
-          return Promise.all(promises);
-        });
-      } else {
-        return Promise.resolve();
+            });
+        }, 15000);
       }
     });
 

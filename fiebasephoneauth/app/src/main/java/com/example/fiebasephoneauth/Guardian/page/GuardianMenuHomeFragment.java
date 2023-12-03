@@ -323,9 +323,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                             for(DataSnapshot table : snapshot.getChildren()){
                                 long time = table.child("time").getValue(Long.class);
                                 String type = table.child("type").getValue(String.class);
-                                if(!type.equals("outing")){
-                                    addData(type);
-                                }
+                                addData(type);
                                 nonActivityRecyclerView(time,type);
                             }
                         }
@@ -343,6 +341,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
+
         // 활동 조회
         Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -554,17 +553,17 @@ public class GuardianMenuHomeFragment extends Fragment {
                     }
                     //주의
                     else if (hoursDifference >= 8 && hoursDifference < 12) {
-                        getActivity = getName + "님이 8시간 이상 활동이 없습니다.";
+                        getActivity = "8시간";
                         newRecyclerView(getActivity);
                     }
                     //경고
                     else if(hoursDifference >= 12 && hoursDifference < 24){
-                        getActivity = getName + "님이 12시간 이상 활동이 없습니다.";
+                        getActivity = "12시간";
                         newRecyclerView(getActivity);
                     }
                     //응급
                     else if (hoursDifference >= 24 && hoursDifference < 25) {
-                        getActivity = getName + "님이 24시간 이상 활동이 없습니다.";
+                        getActivity = "24시간";
                         newRecyclerView(getActivity);
 
                     }
@@ -600,6 +599,15 @@ class NewNotificationData {
                 break;
             case "emergency":
                 description = "응급 호출";
+                break;
+            case "8시간":
+                description = "8시간 이상 활동이 없습니다";
+                break;
+            case "12시간":
+                description = "12시간 이상 활동이 없습니다";
+                break;
+            case "24시간":
+                description = "24시간 이상 활동이 없습니다";
                 break;
         }
     }

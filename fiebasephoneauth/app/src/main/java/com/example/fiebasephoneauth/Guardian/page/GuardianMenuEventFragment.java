@@ -64,7 +64,9 @@ public class GuardianMenuEventFragment extends Fragment {
 
 
             for(String i : receivedDataList){
-                newRecyclerView(i);
+                if(!i.equals("outing")){
+                    newRecyclerView(i);
+                }
             }
         }
     }

@@ -347,18 +347,14 @@ public class GuardianMenuHomeFragment extends Fragment {
     }
 
     private void startHandler(){
-        if(!isHandlerRunning){
-            handler.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    compareTimeAndPerformAction();
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                compareTimeAndPerformAction();
 
-                    isHandlerRunning = false;
-                    startHandler();
-                }
-            }, 4000);
-            isHandlerRunning = true;
-        }
+                startHandler();
+            }
+            }, 12000);
     }
 
     private void nonActivityRecyclerView(long time, String status){
@@ -412,20 +408,14 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                     long hoursDifference = timeDifference / 1000;
 
-                    if(hoursDifference > 0 &&hoursDifference < 8){
-                        getActivity = getName + "님이 활동 중 입니다.";
-                    }
-                    //주의
-                    else if (hoursDifference >= 8 && hoursDifference < 12) {
-                        getActivity = "8시간";
-                    }
+
                     //경고
-                    else if(hoursDifference >= 12 && hoursDifference < 24){
+                    if(hoursDifference >= 12 && hoursDifference < 24){
                         getActivity = "no_movement_detected_1";
                         updateLatestEvent(currentTime, getActivity);
                     }
                     //응급
-                    else if (hoursDifference >= 24 && hoursDifference < 26) {
+                    else if (hoursDifference >= 24 && hoursDifference < 30) {
                         getActivity = "no_movement_detected_2";
                         updateLatestEvent(currentTime, getActivity);
 

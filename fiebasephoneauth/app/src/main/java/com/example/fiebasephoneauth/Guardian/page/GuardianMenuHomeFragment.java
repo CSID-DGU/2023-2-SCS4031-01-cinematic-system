@@ -1,12 +1,9 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -149,6 +146,8 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 getOuting = snapshot.child("ActivityData").child("door").child("outing").getValue(String.class);
                                 if (getOuting.equals("1")){
                                     home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
+                                    docRef.child("time").removeValue();
+                                    home_Activity_description.setText(getName+"님은 현재 외출 중 입니다.");
 
                                 }
                                 else if (getOuting.equals("0")){
@@ -175,142 +174,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
-        //외출 상태 체크
-//        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
-//
-//                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("door").addChildEventListener(new ChildEventListener() {
-//                    @Override
-//                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                        if(snapshot.getKey().matches("outing")){
-//                            if (snapshot.getValue().equals("1")){
-//                                String status = getName + "님이 외출을 시작하였습니다.";
-//                                newRecyclerView(status);
-//                            }
-//                            else if (snapshot.getValue().equals("0")){
-//                                String status = getName+"님이 외출을 마쳤습니다.";
-//                                newRecyclerView(status);
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-        //화재 감지 조회
-//        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").addChildEventListener(new ChildEventListener() {
-//                    @Override
-//                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                        if(snapshot.getKey().matches("fire")){
-//                            if (snapshot.getValue().equals("1")) {
-//                                String status = getName + "님이 화재가 발생했습니다.";
-//                                addData("fire");
-//                                newRecyclerView(status);
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
-        //응급 버튼 조회
-//        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//
-//                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").addChildEventListener(new ChildEventListener() {
-//                    @Override
-//                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                    }
-//                    @Override
-//                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//                        if(snapshot.getKey().matches("emergency")){
-//                            if (snapshot.getValue().equals("1")) {
-//                                String status = getName + "님이 응급버튼을 눌렀습니다.";
-//                                addData("emergency");
-//                                newRecyclerView(status);
-//                            }
-//                            else if(snapshot.getValue().equals("0")){
-//                                String status = getName + "님 응급상황이 처리 되었습니다.";
-//                                newRecyclerView(status);
-//                            }
-//                        }
-//                    }
-//
-//                    @Override
-//                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-//
-//                    }
-//
-//                    @Override
-//                    public void onCancelled(@NonNull DatabaseError error) {
-//
-//                    }
-//                });
-//            }
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//
-//            }
-//        });
         //latestEvent를 사용해 RecyclerView 생성
 
         Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -385,9 +248,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
-
-//        Log.d(TAG, "onCreateView: "+getCareReceiverId);
-//        handler1.post(updataRunnable);
         startHandler();
         startHandler_log();
 
@@ -509,7 +369,6 @@ public class GuardianMenuHomeFragment extends Fragment {
             items.remove(items.size() - 1);
         }
         Adapter.notifyDataSetChanged();
-        Log.d(TAG, "newRecyclerView: "+Data.getDescription());
     }
     private void newRecyclerView(String status){
         Calendar calendar = Calendar.getInstance();
@@ -524,7 +383,6 @@ public class GuardianMenuHomeFragment extends Fragment {
             items.remove(items.size() - 1);
         }
         Adapter.notifyDataSetChanged();
-        Log.d(TAG, "newRecyclerView: "+Data.getDescription());
     }
 
     private void updateLastActivityTime() {

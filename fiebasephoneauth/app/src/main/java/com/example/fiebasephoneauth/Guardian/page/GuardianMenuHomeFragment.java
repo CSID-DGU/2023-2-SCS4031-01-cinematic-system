@@ -29,7 +29,11 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * <h3> 보호자의 홈 메인 페이지 </h3>
@@ -66,7 +70,7 @@ public class GuardianMenuHomeFragment extends Fragment {
     String current_Time = timeFormat.format(calendar.getTime());
 
     private static final int MAX_SIZE = 4;
-    private ArrayList<String> dataList = new ArrayList<>();
+    private ArrayList<String> dataList;
     String idTxt;
 
     public GuardianMenuHomeFragment(){
@@ -77,7 +81,7 @@ public class GuardianMenuHomeFragment extends Fragment {
     }
 
     // 외출, 활동 및 새로운 알림 리사이클러뷰
-    private ArrayList<NewNotificationData> items = new ArrayList<>();
+    private ArrayList<NewNotificationData> items;
     private HomeNewNotificationAdapter Adapter;
     private RecyclerView recyclerViewNewNotification;
 
@@ -108,10 +112,12 @@ public class GuardianMenuHomeFragment extends Fragment {
         // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification = (RecyclerView) view.findViewById(R.id.recyclerview_home_new_notification); // 새로운 알림 리사이클러뷰
         recyclerViewNewNotification.setLayoutManager(new LinearLayoutManager(getActivity()));
+        items = new ArrayList<>();
         Adapter = new HomeNewNotificationAdapter(items);
         recyclerViewNewNotification.setAdapter(Adapter);
 
 
+        dataList = new ArrayList<>();
         //로그인 한 보호자 정보
         Bundle bundle = getArguments();
         idTxt = bundle.getString("id");
@@ -350,7 +356,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                     isHandlerRunning = false;
                     startHandler();
                 }
-            }, 10000);
+            }, 4000);
             isHandlerRunning = true;
         }
     }
@@ -412,20 +418,59 @@ public class GuardianMenuHomeFragment extends Fragment {
                     //주의
                     else if (hoursDifference >= 8 && hoursDifference < 12) {
                         getActivity = "8시간";
-                        newRecyclerView(getActivity);
                     }
                     //경고
                     else if(hoursDifference >= 12 && hoursDifference < 24){
-                        getActivity = "12시간";
-                        newRecyclerView(getActivity);
+                        getActivity = "no_movement_detected_1";
+                        updateLatestEvent(currentTime, getActivity);
                     }
                     //응급
-                    else if (hoursDifference >= 24 && hoursDifference < 25) {
-                        getActivity = "24시간";
-                        newRecyclerView(getActivity);
+                    else if (hoursDifference >= 24 && hoursDifference < 26) {
+                        getActivity = "no_movement_detected_2";
+                        updateLatestEvent(currentTime, getActivity);
 
                     }
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+    }
+    private void updateLatestEvent(long time, String type){
+        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                DatabaseReference ref = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("latestEvent");
+                ref.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        Map<String,Object> latestEvent = (Map<String, Object>) snapshot.getValue();
+                        if (latestEvent != null) {
+                            int numChildren = latestEvent.size();
+
+                            if(numChildren >= 4){
+                                List<String> keys = new ArrayList<>(latestEvent.keySet());
+                                Collections.sort(keys);
+
+                                String oldestKey = keys.get(0);
+                                ref.child(oldestKey).removeValue();
+                            }
+                        }
+                        Map<String, Object> newData = new HashMap<>();
+                        newData.put("time",time);
+                        newData.put("type",type);
+                        ref.push().updateChildren(newData);
+
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
             }
 
             @Override
@@ -458,13 +503,10 @@ class NewNotificationData {
             case "emergency":
                 description = "응급 호출";
                 break;
-            case "8시간":
-                description = "8시간 이상 활동이 없습니다";
-                break;
-            case "12시간":
+            case "no_movement_detected_1":
                 description = "12시간 이상 활동이 없습니다";
                 break;
-            case "24시간":
+            case "no_movement_detected_2":
                 description = "24시간 이상 활동이 없습니다";
                 break;
         }

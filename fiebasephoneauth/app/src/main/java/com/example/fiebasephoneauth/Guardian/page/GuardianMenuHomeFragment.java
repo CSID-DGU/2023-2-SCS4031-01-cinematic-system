@@ -32,6 +32,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * <h3> 보호자의 홈 메인 페이지 </h3>
@@ -53,6 +54,8 @@ public class GuardianMenuHomeFragment extends Fragment {
     String getOuting;
     String getActivity = "정상 입니다.";
     String getCareReceiverId;
+    long time;
+    String status;
 
     boolean isHandlerRunning = false;
     Handler handler = new Handler();
@@ -173,128 +176,159 @@ public class GuardianMenuHomeFragment extends Fragment {
             }
         });
         //외출 상태 체크
-        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
-
-                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("door").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        if(snapshot.getKey().matches("outing")){
-                            if (snapshot.getValue().equals("1")){
-                                String status = getName + "님이 외출을 시작하였습니다.";
-                                newRecyclerView(status);
-                            }
-                            else if (snapshot.getValue().equals("0")){
-                                String status = getName+"님이 외출을 마쳤습니다.";
-                                newRecyclerView(status);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+//        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
+//
+//                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("door").addChildEventListener(new ChildEventListener() {
+//                    @Override
+//                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                        if(snapshot.getKey().matches("outing")){
+//                            if (snapshot.getValue().equals("1")){
+//                                String status = getName + "님이 외출을 시작하였습니다.";
+//                                newRecyclerView(status);
+//                            }
+//                            else if (snapshot.getValue().equals("0")){
+//                                String status = getName+"님이 외출을 마쳤습니다.";
+//                                newRecyclerView(status);
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
         //화재 감지 조회
-        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        if(snapshot.getKey().matches("fire")){
-                            if (snapshot.getValue().equals("1")) {
-                                String status = getName + "님이 화재가 발생했습니다.";
-                                addData("fire");
-                                newRecyclerView(status);
-                            }
-                        }
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+//        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").addChildEventListener(new ChildEventListener() {
+//                    @Override
+//                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                        if(snapshot.getKey().matches("fire")){
+//                            if (snapshot.getValue().equals("1")) {
+//                                String status = getName + "님이 화재가 발생했습니다.";
+//                                addData("fire");
+//                                newRecyclerView(status);
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
         //응급 버튼 조회
+//        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").addChildEventListener(new ChildEventListener() {
+//                    @Override
+//                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                    }
+//                    @Override
+//                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//                        if(snapshot.getKey().matches("emergency")){
+//                            if (snapshot.getValue().equals("1")) {
+//                                String status = getName + "님이 응급버튼을 눌렀습니다.";
+//                                addData("emergency");
+//                                newRecyclerView(status);
+//                            }
+//                            else if(snapshot.getValue().equals("0")){
+//                                String status = getName + "님 응급상황이 처리 되었습니다.";
+//                                newRecyclerView(status);
+//                            }
+//                        }
+//                    }
+//
+//                    @Override
+//                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+//
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//
+//                    }
+//                });
+//            }
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+        //latestEvent를 사용해 RecyclerView 생성
+
         Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-
-                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").addChildEventListener(new ChildEventListener() {
+                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("latestEvent").addValueEventListener(new ValueEventListener() {
                     @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    }
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        if(snapshot.getKey().matches("emergency")){
-                            if (snapshot.getValue().equals("1")) {
-                                String status = getName + "님이 응급버튼을 눌렀습니다.";
-                                addData("emergency");
-                                newRecyclerView(status);
-                            }
-                            else if(snapshot.getValue().equals("0")){
-                                String status = getName + "님 응급상황이 처리 되었습니다.";
-                                newRecyclerView(status);
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.exists()){
+                            for(DataSnapshot table : snapshot.getChildren()){
+                                long time = table.child("time").getValue(Long.class);
+                                String type = table.child("type").getValue(String.class);
+                                if(!type.equals("outing")){
+                                    addData(type);
+                                }
+                                nonActivityRecyclerView(time,type);
                             }
                         }
-                    }
-
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
                     }
 
                     @Override
@@ -303,6 +337,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                     }
                 });
             }
+
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
@@ -461,6 +496,22 @@ public class GuardianMenuHomeFragment extends Fragment {
         }
     }
 
+    private void nonActivityRecyclerView(long time, String status){
+        Date date = new Date(time);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+
+        String formattedDate = dateFormat.format(date);
+        String formattedTime = timeFormat.format(date);
+
+        NewNotificationData Data = new NewNotificationData(formattedDate, formattedTime, status);
+        items.add(0,Data);
+        if (items.size() > 4) {
+            items.remove(items.size() - 1);
+        }
+        Adapter.notifyDataSetChanged();
+        Log.d(TAG, "newRecyclerView: "+Data.getDescription());
+    }
     private void newRecyclerView(String status){
         Calendar calendar = Calendar.getInstance();
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -530,14 +581,27 @@ public class GuardianMenuHomeFragment extends Fragment {
 
 class NewNotificationData {
 
-    private String date;
-    private String time;
-    private String description;
+    String date;
+    String time;
+    String description;
+    String type;
 
-    public NewNotificationData(String date ,String time, String description) {
+    public NewNotificationData(String date ,String time, String typeCode) {
         this.date = date;
         this.time = time;
-        this.description = description;
+        type = typeCode;
+
+        switch (typeCode){
+            case "fire":
+                description = "화재가 발생했습니다";
+                break;
+            case "outing":
+                description = "외출을 시작했습니다";
+                break;
+            case "emergency":
+                description = "응급 호출";
+                break;
+        }
     }
 
     public String getDate() {

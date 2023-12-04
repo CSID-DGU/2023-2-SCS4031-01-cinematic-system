@@ -13,8 +13,8 @@ int motionCount = 0;
 
 unsigned long lastUploadTime = 0;  // 마지막 업로드 시간을 저장하는 변수
 unsigned long lastResetTime = 0;   // 마지막 초기화 시간을 저장하는 변수
-#define UPLOAD_INTERVAL 600000       // 10분에 한 번 업로드 (10분 = 600000 밀리초)
-#define RESET_INTERVAL 3600000       // 1시간에 한 번 초기화 (1시간 = 3600000 밀리초)
+#define UPLOAD_INTERVAL 6000       // 10분에 한 번 업로드 (10분 = 600000 밀리초)
+#define RESET_INTERVAL 36000       // 1시간에 한 번 초기화 (1시간 = 3600000 밀리초)
 
 void setup() {
   Serial.begin(9600);
@@ -64,6 +64,7 @@ void loop() {
         Serial.print("Setting /motionCount failed:");
         Serial.println(Firebase.error());
         return;
+
       }
 
       motionCount = 0; // 움직임 횟수 초기화

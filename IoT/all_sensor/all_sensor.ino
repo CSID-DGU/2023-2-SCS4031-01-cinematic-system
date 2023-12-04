@@ -11,6 +11,7 @@
 #define BUTTON_PIN 33 // ESP32 pin GPIO18, which is connected to the button
 #define LED_PIN 27 // ESP32 pin GPIO21, which is connected to the LED
 #define DOOR_SENSOR_PIN 19 // ESP32 pin GPIO19 connected to door sensor's pin
+#define Buzzer 21
 
 int flameState = 0;
 int statusPIR = 0;
@@ -24,8 +25,8 @@ bool doorOpen = false; // Flag to indicate if the door was opened
 
 unsigned long lastUploadTime = 0;
 unsigned long lastResetTime = 0;
-#define UPLOAD_INTERVAL 600000 // 10 minutes in milliseconds
-#define RESET_INTERVAL 3600000 // 1 hour in milliseconds
+#define UPLOAD_INTERVAL 10000 // 10 minutes in milliseconds
+#define RESET_INTERVAL 60000 // 1 hour in milliseconds
 
 void setup() {
   Serial.begin(9600);
@@ -44,6 +45,7 @@ void setup() {
   Firebase.begin(FIREBASE_HOST, FIREBASE_AUTH);
 
   pinMode(D0_PIN, INPUT);
+  pinMode(Buzzer, OUTPUT);
   pinMode(PIR_PIN, INPUT);
   pinMode(BUTTON_PIN, INPUT_PULLUP);
   pinMode(LED_PIN, OUTPUT);
@@ -55,10 +57,12 @@ void loop() {
   flameState = digitalRead(D0_PIN);
 
   if (flameState == HIGH) {
-    fireValue = "0";
+    fireValue = "1";
+    digitalWrite(Buzzer, LOW);
     //Serial.println("No Flame detected => The fire is NOT detected");
   } else {
-    fireValue = "1";
+    fireValue = "0";
+    digitalWrite(Buzzer,HIGH);
     //Serial.println("Flame detected => The fire is detected");
   }
 
@@ -72,7 +76,7 @@ void loop() {
     return;
   }
 
-  // PIR motion sensor
+ // PIR motion sensor
   valueRead = digitalRead(PIR_PIN);
 
   if ((valueRead == HIGH) && (statusPIR == LOW)) {
@@ -87,7 +91,7 @@ void loop() {
     }
   }
 
-  // 1시간마다 초기화 및 업로드
+  // 1분마다 초기화 및 업로드
   if (millis() - lastResetTime >= RESET_INTERVAL) {
     if (motionCount > 0) {
       // motionCount를 문자열로 변환
@@ -109,7 +113,7 @@ void loop() {
     lastResetTime = millis(); // 현재 시간을 저장
   }
 
-  // 10분마다 Firebase에 업로드
+  // 10초마다 Firebase에 업로드
   if (millis() - lastUploadTime >= UPLOAD_INTERVAL) {
     if (motionCount > 0) { // 움직임이 감지된 경우에만 업로드
       // motionCount를 문자열로 변환
@@ -128,6 +132,7 @@ void loop() {
 
     lastUploadTime = millis(); // 현재 시간을 저장
   }
+
   // Button and LED control
   static int lastButtonState = HIGH;
   int buttonState = digitalRead(BUTTON_PIN);

@@ -72,9 +72,6 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
                         // 해당 시간의 cnt 값을 가져오기
                         String cntAsString = String.valueOf(dataSnapshot.child("cnt_list").child(String.valueOf(i)).getValue());
 
-                        // 디버그 로그 출력
-                        Log.d("FirebaseData", "Value for " + i + ": " + cntAsString);
-
                         // 문자열이 비어있는지 체크하고, 비어있으면 0으로 처리
                         int cnt = cntAsString.isEmpty() ? 0 : Integer.parseInt(cntAsString);
 
@@ -173,7 +170,6 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
     }
 
     private void drawGraph(List<Entry> entries) {
-        Log.d("GraphData", "Number of entries: " + entries.size());
         LineDataSet dataSet = new LineDataSet(entries, "Hourly Activity"); // 그래프 라벨 설정
         LineData lineData = new LineData(dataSet);
 

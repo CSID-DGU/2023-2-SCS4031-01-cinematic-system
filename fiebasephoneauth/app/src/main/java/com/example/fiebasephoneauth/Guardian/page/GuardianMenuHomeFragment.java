@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -346,6 +347,9 @@ public class GuardianMenuHomeFragment extends Fragment {
         });
     }
 
+    private long lastWarningTime = 0;  // 최초의 경고 범위에 들어온 시간을 저장
+    private long lastEmergencyTime = 0;  // 최초의 응급 범위에 들어온 시간을 저장
+
     private void startHandler(){
         handler.postDelayed(new Runnable() {
             @Override
@@ -354,7 +358,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                 startHandler();
             }
-            }, 12000);
+            }, 1000);
     }
 
     private void nonActivityRecyclerView(long time, String status){
@@ -400,7 +404,7 @@ public class GuardianMenuHomeFragment extends Fragment {
         docRef.child("time").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
+                if (snapshot.exists()) {
                     long lastActivityTime = snapshot.getValue(Long.class);
                     long currentTime = System.currentTimeMillis();
 
@@ -408,17 +412,27 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                     long hoursDifference = timeDifference / 1000;
 
-
-                    //경고
-                    if(hoursDifference >= 12 && hoursDifference < 24){
-                        getActivity = "no_movement_detected_1";
-                        updateLatestEvent(currentTime, getActivity);
+                    // 경고
+                    if (hoursDifference >= 12 && hoursDifference < 24) {
+                        if (lastWarningTime == 0) {
+                            // 최초의 경고 범위에 들어온 경우
+                            lastWarningTime = currentTime;
+                            getActivity = "no_movement_detected_1";
+                            updateLatestEvent(currentTime, getActivity);
+                        }
                     }
-                    //응급
+                    // 응급
                     else if (hoursDifference >= 24 && hoursDifference < 30) {
-                        getActivity = "no_movement_detected_2";
-                        updateLatestEvent(currentTime, getActivity);
-
+                        if (lastEmergencyTime == 0) {
+                            // 최초의 응급 범위에 들어온 경우
+                            lastEmergencyTime = currentTime;
+                            getActivity = "no_movement_detected_2";
+                            updateLatestEvent(currentTime, getActivity);
+                        }
+                    } else {
+                        // 범위를 벗어난 경우
+                        lastWarningTime = 0;
+                        lastEmergencyTime = 0;
                     }
                 }
             }

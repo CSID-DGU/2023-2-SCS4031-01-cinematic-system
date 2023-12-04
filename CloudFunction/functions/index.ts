@@ -1,10 +1,15 @@
+import {database} from "firebase-admin";
+import DataSnapshot = database.DataSnapshot;
+import {Change, EventContext, } from "firebase-functions";
+import { ParamsOf } from "firebase-functions/lib/common/params";
+
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
 // 응급상황 발생 트리거
 exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/emergency")
-    .onUpdate((snapshot, context) => {
+    .onUpdate((snapshot : Change<DataSnapshot>, context : EventContext<ParamsOf<string>>) => {
         const emergencyValue = snapshot.after.val();
         const userId = context.params.userId;
         console.log("userId: ", userId);
@@ -15,7 +20,7 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
             const guardianDataRef = admin.database().ref("/Guardian_list/");
 
             // 피보호자에게 푸시 알림을 보냄
-            careReceiverDataRef.once("value").then((careReceiverSnapshot) => {
+            careReceiverDataRef.once("value").then((careReceiverSnapshot : DataSnapshot) => {
                 const careReceiverData = careReceiverSnapshot.val();
                 const tokenObject = careReceiverData.deviceToken;
                 console.log("tokenObject: ", tokenObject);
@@ -30,10 +35,10 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
                             },
                             token: token,
                         };
-                        admin.messaging().send(message).then((response) => {
+                        admin.messaging().send(message).then((response : string) => {
                             console.log("Message sent successfully:", response, "token: ", token);
                         })
-                            .catch((error) => {
+                            .catch((error : string) => {
                                 console.log("Error sending message: ", error);
                             });
                     }
@@ -42,15 +47,15 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
 
             setTimeout(() => {
                 // 15초 이내에 응답이 없으면 응급상황 발생으로 판단하고 보호자에게 푸시 알림을 보냄
-                careReceiverDataRef.child("ActivityData").child("emergency").once("value").then((emergencySnapshot) => {
+                careReceiverDataRef.child("ActivityData").child("emergency").once("value").then((emergencySnapshot : DataSnapshot) => {
                     const emergencyValue = emergencySnapshot.val();
                     console.log("emergencyValue: ", emergencyValue);
 
                     if (emergencyValue === "1") {
 
                         // 피보호자의 보호자를 찾아서 푸시 알림을 보냄
-                        guardianDataRef.once("value").then((guardianListSnapshot) => {
-                            guardianListSnapshot.forEach((guardianSnapshot) => {
+                        guardianDataRef.once("value").then((guardianListSnapshot : DataSnapshot) => {
+                            guardianListSnapshot.forEach((guardianSnapshot : DataSnapshot) => {
                                 const guardianData = guardianSnapshot.val();
                                 const carereceiverId = guardianData.CareReceiverID;
 
@@ -58,7 +63,7 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
                                     const userNameRef = admin.database().ref(`/CareReceiver_list/${userId}/name`);
 
                                     // Read the data
-                                    userNameRef.once("value").then((userNameSnapshot) => {
+                                    userNameRef.once("value").then((userNameSnapshot : DataSnapshot) => {
                                         const name = userNameSnapshot.val();
 
                                         const tokenObject = guardianData.deviceToken;
@@ -74,10 +79,10 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
                                                     },
                                                     token: token,
                                                 };
-                                                admin.messaging().send(message).then((response) => {
+                                                admin.messaging().send(message).then((response : string) => {
                                                     console.log("Message sent successfully:", response, "token: ", token);
                                                 })
-                                                    .catch((error) => {
+                                                    .catch((error : string) => {
                                                         console.log("Error sending message: ", error);
                                                     });
                                             }
@@ -88,7 +93,7 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
                         });
 
                         // 응급상황 기록
-                        careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot) => {
+                        careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot : DataSnapshot) => {
                             const latestEvent = latestEventSnapshot.val();
                             const keys = Object.keys(latestEvent);
                             const numChildren = Object.keys(latestEvent).length;
@@ -116,7 +121,7 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
 
 // 화재상황 발생 시 트리거
 exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/fire")
-    .onUpdate((snapshot, context) => {
+    .onUpdate((snapshot : Change<DataSnapshot>, context : EventContext<ParamsOf<string>>) => {
         const fireValue = snapshot.after.val();
         const userId = context.params.userId;
         console.log("userId: ", userId);
@@ -126,7 +131,7 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
             const guardianDataRef = admin.database().ref("/Guardian_list/");
 
             // 피보호자에게 푸시 알림을 보냄
-            careReceiverDataRef.once("value").then((careReceiverSnapshot) => {
+            careReceiverDataRef.once("value").then((careReceiverSnapshot : DataSnapshot) => {
                 const careReceiverData = careReceiverSnapshot.val();
                 const tokenObject = careReceiverData.deviceToken;
                 console.log("tokenObject: ", tokenObject);
@@ -141,10 +146,10 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
                             },
                             token: token,
                         };
-                        admin.messaging().send(message).then((response) => {
+                        admin.messaging().send(message).then((response : string) => {
                             console.log("Message sent successfully:", response, "token: ", token);
                         })
-                            .catch((error) => {
+                            .catch((error : string) => {
                                 console.log("Error sending message: ", error);
                             });
                     }
@@ -152,9 +157,9 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
             });
 
             // 피보호자의 보호자를 찾아서 푸시 알림을 보냄
-            guardianDataRef.once("value").then((guardianListSnapshot) => {
+            guardianDataRef.once("value").then((guardianListSnapshot : DataSnapshot) => {
 
-                guardianListSnapshot.forEach((guardianSnapshot) => {
+                guardianListSnapshot.forEach((guardianSnapshot : DataSnapshot) => {
                     const guardianData = guardianSnapshot.val();
                     const carereceiverId = guardianData.CareReceiverID;
 
@@ -162,7 +167,7 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
                         // eslint-disable-next-line max-len
                         const userNameRef = admin.database().ref(`/CareReceiver_list/${userId}/name`);
 
-                        userNameRef.once("value").then((userNameSnapshot) => {
+                        userNameRef.once("value").then((userNameSnapshot : DataSnapshot) => {
                             const name = userNameSnapshot.val();
 
                             const tokenObject = guardianData.deviceToken;
@@ -178,11 +183,11 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
                                         },
                                         token: token,
                                     };
-                                    admin.messaging().send(message).then((response) => {
+                                    admin.messaging().send(message).then((response : string) => {
                                         // eslint-disable-next-line max-len
                                         console.log("Message sent successfully:", response, "token: ", token);
                                     })
-                                        .catch((error) => {
+                                        .catch((error : string) => {
                                                 console.log("Error sending message: ", error);
                                             }
                                         );
@@ -193,7 +198,7 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
                 });
             });
             // 화재상황 기록
-            careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot) => {
+            careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot : DataSnapshot) => {
                 const latestEvent = latestEventSnapshot.val();
                 const keys = Object.keys(latestEvent);
                 const numChildren = Object.keys(latestEvent).length;
@@ -221,7 +226,7 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
 
 // 도어 센서 문 열림 감지 시 트리거
 exports.checkOuting = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/door/checkouting")
-    .onUpdate((snapshot, context) => {
+    .onUpdate((snapshot : Change<DataSnapshot>, context : EventContext<ParamsOf<string>>) => {
         const doorValue = snapshot.after.val();
         const userId = context.params.userId;
         console.log("userId: ", userId);
@@ -231,7 +236,7 @@ exports.checkOuting = functions.database.ref("/CareReceiver_list/{userId}/Activi
             const guardianDataRef = admin.database().ref("/Guardian_list/");
 
             // 피보호자에게 푸시 알림을 보냄
-            careReceiverDataRef.once("value").then((careReceiverSnapshot) => {
+            careReceiverDataRef.once("value").then((careReceiverSnapshot : DataSnapshot) => {
                 const careReceiverData = careReceiverSnapshot.val();
                 const tokenObject = careReceiverData.deviceToken;
                 console.log("tokenObject: ", tokenObject);
@@ -246,10 +251,10 @@ exports.checkOuting = functions.database.ref("/CareReceiver_list/{userId}/Activi
                             },
                             token: token,
                         };
-                        admin.messaging().send(message).then((response) => {
+                        admin.messaging().send(message).then((response : string) => {
                             console.log("Message sent successfully:", response, "token: ", token);
                         })
-                            .catch((error) => {
+                            .catch((error : string) => {
                                 console.log("Error sending message: ", error);
                             });
                     }
@@ -259,13 +264,13 @@ exports.checkOuting = functions.database.ref("/CareReceiver_list/{userId}/Activi
             // 30분마다 외출 상태를 확인하고 외출 상태를 변경하지 않으면 푸시 알림을 보냄
             function checkOutingStatusEvery30min() {
                 setTimeout(() => {
-                    careReceiverDataRef.child("ActivityData").child("door").child("checkouting").once("value").then((outingSnapshot) => {
+                    careReceiverDataRef.child("ActivityData").child("door").child("checkouting").once("value").then((outingSnapshot : DataSnapshot) => {
                         const outingValue = outingSnapshot.val();
                         console.log("outingValue: ", outingValue);
 
                         if (outingValue === "1") {
                             // 피보호자에게 푸시 알림을 보냄
-                            careReceiverDataRef.once("value").then((careReceiverSnapshot) => {
+                            careReceiverDataRef.once("value").then((careReceiverSnapshot : DataSnapshot) => {
                                 const careReceiverData = careReceiverSnapshot.val();
                                 const tokenObject = careReceiverData.deviceToken;
                                 console.log("tokenObject: ", tokenObject);
@@ -280,10 +285,10 @@ exports.checkOuting = functions.database.ref("/CareReceiver_list/{userId}/Activi
                                             },
                                             token: token,
                                         };
-                                        admin.messaging().send(message).then((response) => {
+                                        admin.messaging().send(message).then((response : string) => {
                                             console.log("Message sent successfully:", response, "token: ", token);
                                         })
-                                            .catch((error) => {
+                                            .catch((error : string) => {
                                                 console.log("Error sending message: ", error);
                                             });
                                     }
@@ -301,7 +306,7 @@ exports.checkOuting = functions.database.ref("/CareReceiver_list/{userId}/Activi
 
 // 도어 센서 문 열림 확인 시 트리거
 exports.confirmOuting = functions.database.ref("/CareReceiver_list/{userId}/ActivityData/door/outing")
-    .onUpdate((snapshot, context) => {
+    .onUpdate((snapshot : Change<DataSnapshot> , context : EventContext<ParamsOf<string>> ) => {
         const doorValue = snapshot.after.val();
         const userId = context.params.userId;
         console.log("userId: ", userId);
@@ -311,15 +316,15 @@ exports.confirmOuting = functions.database.ref("/CareReceiver_list/{userId}/Acti
             const guardianDataRef = admin.database().ref("/Guardian_list/");
 
             // 보호자에게 푸시 알림을 보냄
-            guardianDataRef.once("value").then((guardianListSnapshot) => {
-                guardianListSnapshot.forEach((guardianSnapshot) => {
+            guardianDataRef.once("value").then((guardianListSnapshot : DataSnapshot) => {
+                guardianListSnapshot.forEach((guardianSnapshot : DataSnapshot) => {
                     const guardianData = guardianSnapshot.val();
                     const carereceiverId = guardianData.CareReceiverID;
 
                     if (carereceiverId === userId && guardianData.deviceToken) {
                         const userNameRef = admin.database().ref(`/CareReceiver_list/${userId}/name`);
 
-                        userNameRef.once("value").then((userNameSnapshot) => {
+                        userNameRef.once("value").then((userNameSnapshot : DataSnapshot) => {
                             const name = userNameSnapshot.val();
 
                             const tokenObject = guardianData.deviceToken;
@@ -335,10 +340,10 @@ exports.confirmOuting = functions.database.ref("/CareReceiver_list/{userId}/Acti
                                         },
                                         token: token,
                                     };
-                                    admin.messaging().send(message).then((response) => {
+                                    admin.messaging().send(message).then((response : string) => {
                                         console.log("Message sent successfully:", response, "token: ", token);
                                     })
-                                        .catch((error) => {
+                                        .catch((error : string) => {
                                                 console.log("Error sending message: ", error);
                                             }
                                         );
@@ -350,7 +355,7 @@ exports.confirmOuting = functions.database.ref("/CareReceiver_list/{userId}/Acti
             });
 
             // 외출상황 기록
-            careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot) => {
+            careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot : DataSnapshot) => {
                 const latestEvent = latestEventSnapshot.val();
                 const keys = Object.keys(latestEvent);
                 const numChildren = Object.keys(latestEvent).length;

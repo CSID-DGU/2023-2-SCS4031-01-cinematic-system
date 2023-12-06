@@ -43,7 +43,6 @@ public class GuardianHome extends AppCompatActivity {
     FragmentManager fragmentManager = getSupportFragmentManager();
     GuardianMenuHomeFragment guardianMenuHomeFragment = new GuardianMenuHomeFragment();
     GuardianMenuEventFragment guardianMenuEventFragment = new GuardianMenuEventFragment();
-    GuardianMenuProfileFragment guardianMenuProfileFragment = new GuardianMenuProfileFragment();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +54,7 @@ public class GuardianHome extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.frameLayout, guardianMenuHomeFragment).commitAllowingStateLoss();
+        fragmentTransaction.add(R.id.frameLayout, guardianMenuHomeFragment).commit();
 
         Bundle bundle = new Bundle();
         bundle.putString("id",idTxt);
@@ -123,6 +122,7 @@ public class GuardianHome extends AppCompatActivity {
 
                 Intent intent = new Intent(GuardianHome.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
 
             return true;

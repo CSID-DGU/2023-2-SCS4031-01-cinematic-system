@@ -34,6 +34,7 @@ public class GuardianNotConnected extends AppCompatActivity {
             Intent intent1 = new Intent(GuardianNotConnected.this, GuardianGetConnection.class);
             intent1.putExtra("id",idTxt);
             startActivity(intent1);
+            finish();
         });
     }
 }

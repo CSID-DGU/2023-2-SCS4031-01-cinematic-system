@@ -27,16 +27,19 @@ public class MainActivity extends AppCompatActivity {
         btnLoginAsCareReceiver.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, CareReceiverSignInActivity.class);
             startActivity(intent);
+            finish();
         });
 
         btnLoginAsGuardian.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, GuardianSignInActivity.class);
             startActivity(intent);
+            finish();
         });
 
         btnCreateAccount.setOnClickListener(v -> {
             Intent intent = new Intent(MainActivity.this, SignUpActivity.class);
             startActivity(intent);
+            finish();
         });
     }
 }

@@ -83,10 +83,10 @@ public class GuardianHome extends AppCompatActivity {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
 
             if (item.getItemId() == R.id.menu_home) {
-                transaction.replace(R.id.frameLayout, guardianMenuHomeFragment).commit();
+                transaction.replace(R.id.frameLayout, guardianMenuHomeFragment).commitAllowingStateLoss();
             } else if (item.getItemId() == R.id.menu_event) {
                 ArrayList<String> dataList = guardianMenuHomeFragment.getDataList();
-                transaction.replace(R.id.frameLayout, guardianMenuEventFragment.newInstance(idTxt,dataList)).commit();
+                transaction.replace(R.id.frameLayout, guardianMenuEventFragment.newInstance(idTxt,dataList)).commitAllowingStateLoss();
             } else if (item.getItemId() == R.id.menu_logout) {
                 //자동 로그인 정보 삭제
                 SharedPreferences AutoLoginsharedPreferences = getSharedPreferences("autoLogin", MODE_PRIVATE);
@@ -123,6 +123,7 @@ public class GuardianHome extends AppCompatActivity {
 
                 Intent intent = new Intent(GuardianHome.this, MainActivity.class);
                 startActivity(intent);
+                finish();
             }
 
             return true;

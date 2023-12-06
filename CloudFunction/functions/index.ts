@@ -378,3 +378,8 @@ exports.confirmOuting = functions.database.ref("/CareReceiver_list/{userId}/Acti
             );
         }
     });
+
+exports.checkActivities = functions.database.ref("CareReceiver_list/{userId}/ActivityData/activity/cnt")
+  .onUpdate((snapshot : Change<DataSnapshot>, context : EventContext<ParamsOf<string>>) => {
+    const cnt = snapshot.after.val();
+  });

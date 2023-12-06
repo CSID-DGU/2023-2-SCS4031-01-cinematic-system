@@ -63,6 +63,7 @@ public class CheckLoginService extends AppCompatActivity {
         if (id == null || pw == null || type == null) {
             Toast.makeText(CheckLoginService.this, "로그인 정보 없음", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(CheckLoginService.this, MainActivity.class));
+            finish();
             return;
         }
 

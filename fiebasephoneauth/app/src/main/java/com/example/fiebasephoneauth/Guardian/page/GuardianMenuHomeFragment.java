@@ -305,6 +305,7 @@ public class GuardianMenuHomeFragment extends Fragment {
             public void onClick(View v) {
                 Intent intent = new Intent(getActivity(), GuardianActivitiesDetail.class);
                 intent.putExtra("id", idTxt);
+                intent.putExtra("receiverId", getCareReceiverId);
                 startActivity(intent);
             }
         });

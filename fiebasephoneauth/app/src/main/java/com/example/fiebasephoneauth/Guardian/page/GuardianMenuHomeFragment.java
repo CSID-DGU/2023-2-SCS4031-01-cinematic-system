@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -190,6 +189,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if(snapshot.exists()){
+                            clearData();
                             for(DataSnapshot table : snapshot.getChildren()){
                                 long time = table.child("time").getValue(Long.class);
                                 String type = table.child("type").getValue(String.class);
@@ -359,6 +359,11 @@ public class GuardianMenuHomeFragment extends Fragment {
                 startHandler();
             }
             }, 1000);
+    }
+
+    private void clearData(){
+        items.clear();
+        dataList.clear();
     }
 
     private void nonActivityRecyclerView(long time, String status){

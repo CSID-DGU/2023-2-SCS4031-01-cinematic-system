@@ -81,6 +81,8 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
                 intent.putExtra("Date",currentDate);
                 intent.putExtra("Time",currentTime);
                 intent.putExtra("id",idTxt);
+
+                // 모든 이벤트에 대해 자세히 보기 버튼 클릭했을때 동작이 됨 -> 활동량 응급상황에 대해서만 수행되도록 변경 필요함
                 docRef.child("Guardian_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {

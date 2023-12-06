@@ -358,7 +358,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                 startHandler();
             }
-            }, 1000);
+            }, 2000);
     }
 
     private void clearData(){

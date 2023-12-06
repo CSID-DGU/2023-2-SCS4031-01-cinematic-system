@@ -1,5 +1,6 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
@@ -51,6 +52,8 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         most_activity = binding.mostActivity;
         least_activity = binding.leastActivity;
 
+        Intent intent = getIntent();
+        String idTxt = intent.getStringExtra("receiverId");
         // 현재 날짜 가져오기
         String currentDate = getCurrentDate();
 
@@ -58,8 +61,9 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         String combinedText = currentDate + " 활동 정보";
         activity_info.setText(combinedText);
 
+
         // Firebase에서 데이터 가져오기
-        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("CareReceiver_list/abcd/ActivityData/activity");
+        DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReference("CareReceiver_list/" + idTxt + "/ActivityData/activity");
 
         databaseReference.addValueEventListener(new ValueEventListener() {
             @Override

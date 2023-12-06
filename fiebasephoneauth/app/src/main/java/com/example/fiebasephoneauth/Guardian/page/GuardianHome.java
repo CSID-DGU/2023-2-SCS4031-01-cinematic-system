@@ -43,7 +43,6 @@ public class GuardianHome extends AppCompatActivity {
     FragmentManager fragmentManager = getSupportFragmentManager();
     GuardianMenuHomeFragment guardianMenuHomeFragment = new GuardianMenuHomeFragment();
     GuardianMenuEventFragment guardianMenuEventFragment = new GuardianMenuEventFragment();
-    GuardianMenuProfileFragment guardianMenuProfileFragment = new GuardianMenuProfileFragment();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -55,7 +54,7 @@ public class GuardianHome extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-        fragmentTransaction.add(R.id.frameLayout, guardianMenuHomeFragment).commitAllowingStateLoss();
+        fragmentTransaction.add(R.id.frameLayout, guardianMenuHomeFragment).commit();
 
         Bundle bundle = new Bundle();
         bundle.putString("id",idTxt);
@@ -83,10 +82,10 @@ public class GuardianHome extends AppCompatActivity {
             FragmentTransaction transaction = fragmentManager.beginTransaction();
 
             if (item.getItemId() == R.id.menu_home) {
-                transaction.replace(R.id.frameLayout, guardianMenuHomeFragment).commitAllowingStateLoss();
+                transaction.replace(R.id.frameLayout, guardianMenuHomeFragment).commit();
             } else if (item.getItemId() == R.id.menu_event) {
                 ArrayList<String> dataList = guardianMenuHomeFragment.getDataList();
-                transaction.replace(R.id.frameLayout, guardianMenuEventFragment.newInstance(idTxt,dataList)).commitAllowingStateLoss();
+                transaction.replace(R.id.frameLayout, guardianMenuEventFragment.newInstance(idTxt,dataList)).commit();
             } else if (item.getItemId() == R.id.menu_logout) {
                 //자동 로그인 정보 삭제
                 SharedPreferences AutoLoginsharedPreferences = getSharedPreferences("autoLogin", MODE_PRIVATE);

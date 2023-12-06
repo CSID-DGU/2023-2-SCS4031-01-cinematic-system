@@ -1,6 +1,9 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,17 +11,23 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fiebasephoneauth.R;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
 public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapter.viewHolder> {
-
+    DatabaseReference docRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
     private ArrayList<EventCardInfo> EventCardInfo_arrayList;
     private ArrayList<EventCardInfo> data;
     private String idTxt;
@@ -72,7 +81,21 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
                 intent.putExtra("Date",currentDate);
                 intent.putExtra("Time",currentTime);
                 intent.putExtra("id",idTxt);
+                docRef.child("Guardian_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if(snapshot.hasChild("CareReceiverID")) {
+                            String getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
+                            docRef.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity").child("time").removeValue();
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+                Log.d(TAG, "onClick: "+idTxt);
                 v.getContext().startActivity(intent);
             }
         }

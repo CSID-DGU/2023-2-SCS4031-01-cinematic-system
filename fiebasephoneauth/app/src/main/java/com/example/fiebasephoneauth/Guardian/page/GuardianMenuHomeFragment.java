@@ -180,6 +180,31 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
+        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("door")
+                        .child("outing").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                String outingValue = snapshot.getValue(String.class);
+                                if(outingValue.equals("0")){
+                                    home_Activity_description.setText("정상 입니다.");
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
         //latestEvent를 사용해 RecyclerView 생성
 
         Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -358,7 +383,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                 startHandler();
             }
-            }, 2000);
+            }, 1000);
     }
 
     private void clearData(){

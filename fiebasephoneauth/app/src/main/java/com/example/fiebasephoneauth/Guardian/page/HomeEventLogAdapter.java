@@ -31,7 +31,8 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
     private ArrayList<EventCardInfo> EventCardInfo_arrayList;
     private ArrayList<EventCardInfo> data;
     private String idTxt;
-    String Title;
+    private String title;
+    private String[] imgSrc;
 
     Calendar calendar = Calendar.getInstance();
     SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일");
@@ -42,6 +43,7 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
     public HomeEventLogAdapter(ArrayList<EventCardInfo> arrayList,String id){
         this.EventCardInfo_arrayList = arrayList;
         this.idTxt = id;
+        imgSrc = new String[EventCardInfo_arrayList.size()];
     }
 
     public void setData(ArrayList<EventCardInfo> data){
@@ -77,6 +79,7 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
                 String Description = eventLogCardDescription.getText().toString();
                 Intent intent = new Intent(v.getContext(), GuardianEventLogDetail.class);
                 intent.putExtra("Title",Title);
+                intent.putExtra("ImgSrc", imgSrc[getAdapterPosition()]);
                 intent.putExtra("Description",Description);
                 intent.putExtra("Date",currentDate);
                 intent.putExtra("Time",currentTime);
@@ -111,11 +114,12 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
 
     @Override
     public void onBindViewHolder(HomeEventLogAdapter.viewHolder holder, int position){
-        holder.eventLogCardTitle.setText(EventCardInfo_arrayList.get(position).getTitle());
-        Title = EventCardInfo_arrayList.get(position).getTitle();
+        title = EventCardInfo_arrayList.get(position).getTitle();
+        imgSrc[position] = EventCardInfo_arrayList.get(position).getImgSrc();
+        int imgResId = holder.itemView.getContext().getResources().getIdentifier(imgSrc[position], "drawable", holder.itemView.getContext().getPackageName());
+        holder.eventLogCardTitle.setText(title);
         holder.eventLogCardDescription.setText(EventCardInfo_arrayList.get(position).getDescription_short());
-        holder.eventLogCardIcon.setImageResource(R.drawable.fire);
-        holder.eventLogCardIcon.setBackgroundColor(0xD64545);
+        holder.eventLogCardIcon.setImageResource(imgResId);
     }
 
     @Override

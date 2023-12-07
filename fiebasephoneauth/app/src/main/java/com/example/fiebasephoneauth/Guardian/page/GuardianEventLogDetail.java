@@ -6,8 +6,10 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -32,6 +34,7 @@ public class GuardianEventLogDetail extends AppCompatActivity {
     ActivityGuardianEventLogDetailBinding binding;
 
     TextView emer_type;
+    ImageView emer_type_icon;
     TextView event_time;
     TextView event_description;
     TextView care_receiver_name;
@@ -56,12 +59,14 @@ public class GuardianEventLogDetail extends AppCompatActivity {
 
         Intent intent = getIntent();
         String Title = intent.getStringExtra("Title");
+        String ImgSrc = intent.getStringExtra("ImgSrc");
         String Description = intent.getStringExtra("Description");
         String Date = intent.getStringExtra("Date");
         String Time = intent.getStringExtra("Time");
         String idTxt = intent.getStringExtra("id");
 
         emer_type = (TextView) findViewById(R.id.emer_type);
+        emer_type_icon = (ImageView) findViewById(R.id.emer_type_icon);
         event_description = (TextView) findViewById(R.id.event_description_text);
         event_time = (TextView) findViewById(R.id.event_date_time_text);
 
@@ -76,6 +81,8 @@ public class GuardianEventLogDetail extends AppCompatActivity {
         care_giver_call = care_giver_phone_number.findViewById(R.id.call);
 
         emer_type.setText(Title);
+        int imgSrc = getResources().getIdentifier(ImgSrc,"drawable",getPackageName());
+        emer_type_icon.setImageResource(imgSrc);
         event_description.setText(Description);
         event_time.setText(Date + " " +Time);
 
@@ -117,10 +124,6 @@ public class GuardianEventLogDetail extends AppCompatActivity {
 
 
         binding.back.setOnClickListener(v -> {
-            Intent intent1 = new Intent(GuardianEventLogDetail.this, GuardianHome.class);
-            //set bottom bar
-            //intent1.putExtra("SELECTED_ITEM", R.id.menu_event);
-            //startActivity(intent1);
             finish();
         });
         //피보호자 전화 연결

@@ -189,21 +189,21 @@ class EventCardInfo {
                 description_long = "응급 버튼이 눌렀습니다.\n" +
                         "담당자에게 응급 상황이 전달되었으며,\n" +
                         "아래 연락처를 통해 상황을 파악하시길 바랍니다.";
-                imgSrc = "emergency";
+                imgSrc = "emer";
                 break;
             case "no_movement_detected_1" :
                 title = "장기 미활동 감지";
                 description_short = "12시간 내의 활동이 감지되지 않았어요!";
                 description_long = "12시간 동안 활동이 감지되지 않았습니다. \n" +
                         "아래 번호에 연락하여 안부를 여쭈어보세요.";
-                imgSrc = "no_movement";
+                imgSrc = "secu1";
                 break;
             case "no_movement_detected_2" :
                 title = "장기 미활동 신고";
                 description_short = "장기 미활동 판단으로 신고처리되었습니다";
                 description_long = "24시간 활동이 감지되지 않아,\n" +
                         "자동신고 접수가 되었습니다. ";
-                imgSrc = "no_movement";
+                imgSrc = "secu2";
                 break;
         }
 

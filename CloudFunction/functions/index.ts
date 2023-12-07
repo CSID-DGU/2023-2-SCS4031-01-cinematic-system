@@ -45,8 +45,36 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
                 }
             });
 
-            setTimeout(() => {
-                // 15초 이내에 응답이 없으면 응급상황 발생으로 판단하고 보호자에게 푸시 알림을 보냄
+            // DB의 ActivityData에서 1초에 한번씩 타이머 업데이트
+            let emergencyTimer : number = 15;
+            const interval = setInterval(() => {
+                emergencyTimer--;
+                careReceiverDataRef.child("ActivityData").child("emergencyTimer").set(emergencyTimer.toString());
+
+
+                // emergencyValue가 0이면 타이머를 멈춤
+                careReceiverDataRef.child("ActivityData").child("emergency").once("value").then((emergencySnapshot : DataSnapshot) => {
+                    const emergencyValue = emergencySnapshot.val();
+
+                    if (emergencyValue === "0") {
+                        clearInterval(interval);
+                        careReceiverDataRef.child("ActivityData").child("emergencyTimer").remove();
+                    }
+                });
+
+                // timer가 0이면 타이머를 멈춤
+                if (emergencyTimer === 0) {
+                    clearInterval(interval);
+                    executeAfter15sec();
+                    careReceiverDataRef.child("ActivityData").child("emergencyTimer").remove();
+                }
+
+            }, 1000);
+
+
+
+            // 15초가 지나면 응급상황 발생으로 판단하고 보호자에게 푸시 알림을 보냄
+            function executeAfter15sec() : void {
                 careReceiverDataRef.child("ActivityData").child("emergency").once("value").then((emergencySnapshot : DataSnapshot) => {
                     const emergencyValue = emergencySnapshot.val();
                     console.log("emergencyValue: ", emergencyValue);
@@ -115,7 +143,9 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
                         );
                     }
                 });
-            }, 15000);
+            }
+
+
         }
     });
 
@@ -380,6 +410,32 @@ exports.confirmOuting = functions.database.ref("/CareReceiver_list/{userId}/Acti
     });
 
 exports.checkActivities = functions.database.ref("CareReceiver_list/{userId}/ActivityData/activity/cnt")
-  .onUpdate((snapshot : Change<DataSnapshot>, context : EventContext<ParamsOf<string>>) => {
-    const cnt = snapshot.after.val();
+    .onUpdate((snapshot : Change<DataSnapshot>, context : EventContext<ParamsOf<string>>) => {
+        const cnt : number = parseInt(snapshot.after.val());
+        const userId : string = context.params.userId;
+        console.log("userId :", userId);
+
+        //서울 시간 조회
+        const date : Date = new Date();
+        const SEOUL_TIME_DIFF: number = 9;
+        let hour: number = new Date(date).getHours() + SEOUL_TIME_DIFF;
+        if(hour >= 24) hour -= 24;
+        console.log("hour: ", hour);
+
+        // 데이터베이스 참조
+        const careReceiverDataRef = admin.database().ref(`/CareReceiver_list/${userId}`);
+        const guardianDataRef = admin.database().ref("/Guardian_list/");
+
+        // cnt_list 업데이트
+        careReceiverDataRef.child("ActivityData").child("activity").child("cnt_list").child(hour.toString()).once("value").then((cntSnapshot : DataSnapshot) => {
+            let cntValue : number = parseInt(cntSnapshot.val());
+            console.log("cntValue: ", cntValue);
+            if (cntValue === null) {
+                cntValue = 0;
+            }
+            cntValue += cnt;
+            careReceiverDataRef.child("ActivityData").child("activity").child("cnt_list").child(hour.toString()).set(cntValue.toString());
+        });
+
+
   });

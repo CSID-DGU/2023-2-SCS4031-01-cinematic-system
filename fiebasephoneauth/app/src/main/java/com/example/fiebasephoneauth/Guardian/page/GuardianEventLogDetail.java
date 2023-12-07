@@ -90,8 +90,10 @@ public class GuardianEventLogDetail extends AppCompatActivity {
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
                             final String getCareReceiverName = snapshot.child("name").getValue(String.class);
                             getCareReceiverPhoneNum = snapshot.child("phoneNum").getValue(String.class);
+                            getCareReceiverPhoneNum = getCareReceiverPhoneNum.substring(0,3) + "-" + getCareReceiverPhoneNum.substring(3,7) + "-" + getCareReceiverPhoneNum.substring(7,11);
                             final String getGiverName = snapshot.child("CareGiverName").getValue(String.class);
                             getGiverPhoneNum = snapshot.child("CareGiverPhoneNum").getValue(String.class);
+                            getGiverPhoneNum = getGiverPhoneNum.substring(0,3) + "-" + getGiverPhoneNum.substring(3,7) + "-" + getGiverPhoneNum.substring(7,11);
                             care_receiver_name.setText(getCareReceiverName);
                             care_receiver_Phone.setText(getCareReceiverPhoneNum);
                             care_giver_name.setText(getGiverName);

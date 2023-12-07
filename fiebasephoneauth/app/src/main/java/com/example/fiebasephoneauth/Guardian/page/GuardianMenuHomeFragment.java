@@ -205,8 +205,9 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
-        //latestEvent를 사용해 RecyclerView 생성
 
+
+        //latestEvent를 사용해 RecyclerView 생성
         Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -286,20 +287,14 @@ public class GuardianMenuHomeFragment extends Fragment {
         homeSeeDetailButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-            }
-        });
-
-        // 외출, 활동 상세 정보 보기
-        home_Outing_cardView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(getActivity(), GuardianActivitiesDetail.class);
+                Intent intent = new Intent(getActivity(), GuardianSeeCareReceiversDetail.class);
                 intent.putExtra("id", idTxt);
+                intent.putExtra("receiverId", getCareReceiverId);
                 startActivity(intent);
             }
         });
 
+        //활동 정보 상세보기
         home_Activity_cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

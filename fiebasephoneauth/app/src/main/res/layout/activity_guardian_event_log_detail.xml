@@ -19,9 +19,9 @@
         >
 
     <ImageView
+        android:id="@+id/emer_type_icon"
         android:layout_width="32dp"
         android:layout_height="32dp"
-        android:src="@drawable/emer"
         />
 
     <TextView
@@ -29,8 +29,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text="EmerType"
-        android:fontFamily="@font/interextrabold"
+        android:text=""
+        android:fontFamily="@font/intersemibold"
         android:textColor="@color/black_2"
         android:textSize="26dp"
         android:layout_marginStart="12dp"
@@ -42,8 +42,8 @@
         android:id="@+id/event_date_time_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="DatenTime"
-        android:fontFamily="@font/interextrabold"
+        android:text=""
+        android:fontFamily="@font/intersemibold"
         android:textColor="@color/black_1"
         android:textSize="14dp"
         android:layout_marginTop="10dp"
@@ -56,7 +56,7 @@
         android:id="@+id/event_description_text"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="EventDescription"
+        android:text=""
         android:fontFamily="@font/interextrabold"
         android:textColor="@color/black_1"
         android:textSize="14dp"

@@ -41,10 +41,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         />
     <TextView
+        android:id="@+id/time_set"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="100dp"
-        android:text="60초 이내 클릭"
+        android:text=""
         android:textColor="@color/white_0"
         android:textFontWeight="900"
         android:textSize="20dp"

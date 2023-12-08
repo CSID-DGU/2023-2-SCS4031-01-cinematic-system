@@ -414,35 +414,37 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
                 const activityData = activitySnapshot.val();
                 const time = activityData.time;
                 const currentTime = Date.now();
-                const timeDiffHours = Math.floor((currentTime - time) / 1000 / 60 / 60);
+                //const timeDiffHours : number = Math.floor((currentTime - time) / 1000 / 60 / 60);
+                // 임시 수정 코드
+                const timeDiffHours = Math.floor((currentTime - time) / 1000);
                 // ACTIVITY_CODE 필드가 없는 경우 0으로 초기화
                 if (activityData.ACTIVITY_CODE === undefined) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.activityDetected);
                 }
                 // 8시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 8 && timeDiffHours < 12 && activityData.ACTIVITY_CODE !== 1) {
+                if (timeDiffHours >= 50 && timeDiffHours < 110 && activityData.ACTIVITY_CODE !== 1) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastEightHours);
                 }
                 // 12시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 12 && timeDiffHours < 24 && activityData.ACTIVITY_CODE !== 2) {
+                if (timeDiffHours >= 110 && timeDiffHours < 170 && activityData.ACTIVITY_CODE !== 2) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
                     // 피보호자의 보호자에게 푸시 알림을 보냄 && 활동량 미감지 기록
                     sendPushNotificationToGuardian(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
                     updateLatestEvent(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
                 }
                 // 24시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 24 && timeDiffHours < 30 && activityData.ACTIVITY_CODE !== 3) {
+                if (timeDiffHours >= 170 && timeDiffHours < 230 && activityData.ACTIVITY_CODE !== 3) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
                     // 피보호자의 보호자에게 푸시 알림을 보냄 && 활동량 미감지 기록
                     sendPushNotificationToGuardian(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
                     updateLatestEvent(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
                 }
                 // 30시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 30 && activityData.ACTIVITY_CODE !== 4) {
+                if (timeDiffHours >= 230 && activityData.ACTIVITY_CODE !== 4) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.outOfBound);
                 }
                 // 다시 활동을 감지했을 때 ACTIVITY_CODE를 0으로 초기화
-                if (timeDiffHours < 8 && activityData.ACTIVITY_CODE !== 0) {
+                if (timeDiffHours < 50 && activityData.ACTIVITY_CODE !== 0) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.activityDetected);
                 }
             });

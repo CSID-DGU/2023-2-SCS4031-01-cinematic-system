@@ -154,7 +154,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 if (getOuting.equals("1")){
                                     home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
                                     //docRef.child("time").removeValue();
-                                    home_Activity_description.setText(getName+"님은 현재 외출 중 입니다.");
+                                    //home_Activity_description.setText(getName+"님은 현재 외출 중 입니다.");
 
                                 }
                                 else if (getOuting.equals("0")){

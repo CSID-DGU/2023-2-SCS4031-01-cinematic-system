@@ -158,7 +158,7 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         yAxis.setGridColor(Color.parseColor("#618FAE"));
         yAxis.enableGridDashedLine(10f, 10f, 0f);
         yAxis.setAxisMinimum(0f);
-        yAxis.setAxisMaximum(entries.stream().max((a, b) -> (int) (a.getY() - b.getY())).map(Entry::getY).orElse(80f) + 10);
+        yAxis.setAxisMaximum(entries.stream().max((a, b) -> (int) (a.getY() - b.getY())).map(Entry::getY).orElse(200f) + 10);
         yAxis.setDrawLabels(true);
         yAxis.setTextColor(Color.parseColor("#618FAE"));
 

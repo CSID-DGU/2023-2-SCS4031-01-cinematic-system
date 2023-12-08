@@ -504,11 +504,17 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
                 // 12시간 이상 활동량이 감지되지 않았을 때
                 if (timeDiffHours >= 12 && timeDiffHours < 24 && activityData.ACTIVITY_CODE !== 2 ) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
+                    // 피보호자의 보호자에게 푸시 알림을 보냄 && 활동량 미감지 기록
+                    sendPushNotificationToGuardian(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
+                    updateLatestEvent(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
                 }
 
                 // 24시간 이상 활동량이 감지되지 않았을 때
                 if (timeDiffHours >= 24 && timeDiffHours < 30 && activityData.ACTIVITY_CODE !== 3) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
+                    // 피보호자의 보호자에게 푸시 알림을 보냄 && 활동량 미감지 기록
+                    sendPushNotificationToGuardian(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
+                    updateLatestEvent(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
                 }
 
                 // 30시간 이상 활동량이 감지되지 않았을 때
@@ -522,6 +528,77 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
                 }
 
             });
+
+            // 피보호자의 보호자를 찾아서 푸시 알림을 보내는 함수
+            function sendPushNotificationToGuardian(cases : ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours | ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours) {
+                let HOUR :number = 0;
+                cases === ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours ? HOUR = 12 : HOUR = 24;
+
+                guardianDataRef.once("value").then((guardianListSnapshot : DataSnapshot) => {
+                    guardianListSnapshot.forEach((guardianSnapshot : DataSnapshot) => {
+                        const guardianData = guardianSnapshot.val();
+                        const carereceiverId = guardianData.CareReceiverID;
+
+                        if (carereceiverId === userId && guardianData.deviceToken) {
+                            const userNameRef = admin.database().ref(`/CareReceiver_list/${userId}/name`);
+
+                            userNameRef.once("value").then((userNameSnapshot : DataSnapshot) => {
+                                const name = userNameSnapshot.val();
+
+                                const tokenObject = guardianData.deviceToken;
+                                console.log("tokenObject: ", tokenObject);
+
+                                for (const key in tokenObject) {
+                                    if (Object.prototype.hasOwnProperty.call(tokenObject, key)) {
+                                        const token = tokenObject[key];
+                                        const message = {
+                                            notification: {
+                                                title: "활동 미감지 알림",
+                                                body: `${name} 님의 활동이 ${HOUR} 시간 동안 감지되지 않습니다`,
+                                            },
+                                            token: token,
+                                        };
+                                        admin.messaging().send(message).then((response : string) => {
+                                            console.log("Message sent successfully:", response, "token: ", token);
+                                        })
+                                            .catch((error : string) => {
+                                                console.log("Error sending message: ", error);
+                                            });
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
+            }
+
+            // latestEvent 업데이트하는 함수
+            function updateLatestEvent(cases : ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours | ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours) {
+                let type : string = "";
+                cases === ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours ? type = "no_movement_detected_1" : type = "no_movement_detected_2";
+
+                careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot : DataSnapshot) => {
+                    const latestEvent = latestEventSnapshot.val();
+                    const keys = Object.keys(latestEvent);
+                    const numChildren = Object.keys(latestEvent).length;
+                    console.log("numChildren: ", numChildren);
+                    // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
+                    if (numChildren > 4) {
+                        keys.sort();
+                        const oldestKey = keys[0];
+                        careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();
+                    }
+                });
+                const timeStamp = Date.now();
+                const latestEvent = admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/latestEvent`);
+                latestEvent.push(
+                    {
+                        time: timeStamp,
+                        type: type
+                    }
+                );
+            }
+
         });
     });
 });

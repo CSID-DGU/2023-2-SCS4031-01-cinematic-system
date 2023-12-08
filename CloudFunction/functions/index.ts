@@ -384,6 +384,9 @@ exports.confirmOuting = functions.database.ref("/CareReceiver_list/{userId}/Acti
                 });
             });
 
+            // activity/time 삭제
+            careReceiverDataRef.child("ActivityData").child("activity").child("time").remove();
+
             // 외출상황 기록
             careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot : DataSnapshot) => {
                 const latestEvent = latestEventSnapshot.val();
@@ -466,9 +469,11 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
 
     // 활동량 미감지 코드 매핑
     enum ACTIVITY_CODE {
+        "activityDetected" = 0,
         "noActivitiesDetectedLastEightHours" = 1,
         "noActivitiesDetectedLastTwelveHours" = 2,
         "noActivitiesDetectedLastTwentyFourHours" = 3,
+        "outOfBound" = 4,
     }
 
     // 모든 피보호자에 대해 활동량을 확인
@@ -488,24 +493,33 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
 
                 // ACTIVITY_CODE 필드가 없는 경우 0으로 초기화
                 if (activityData.ACTIVITY_CODE === undefined) {
-                    careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set("0");
+                    careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.activityDetected);
                 }
 
                 // 8시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 8) {
+                if (timeDiffHours >= 8 && timeDiffHours < 12 && activityData.ACTIVITY_CODE !== 1) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastEightHours);
                 }
 
                 // 12시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 12) {
+                if (timeDiffHours >= 12 && timeDiffHours < 24 && activityData.ACTIVITY_CODE !== 2 ) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
                 }
 
                 // 24시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 24) {
+                if (timeDiffHours >= 24 && timeDiffHours < 30 && activityData.ACTIVITY_CODE !== 3) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
                 }
 
+                // 30시간 이상 활동량이 감지되지 않았을 때
+                if (timeDiffHours >= 30 && activityData.ACTIVITY_CODE !== 4) {
+                    careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.outOfBound);
+                }
+
+                // 다시 활동을 감지했을 때 ACTIVITY_CODE를 0으로 초기화
+                if (timeDiffHours < 8 && activityData.ACTIVITY_CODE !== 0) {
+                    careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.activityDetected);
+                }
 
             });
         });
@@ -513,7 +527,7 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
 });
 
 // 매 자정마다 피보호자의 활동량을 초기화 및 하루 활동 로그를 저장
-exports.onResetActivity = functions.pubsub.schedule("0 0 * * *").onRun((context : any) => {
+exports.onResetActivity = functions.pubsub.schedule("0 3 * * *").onRun((context : any) => {
     console.log("활동 로그 초기화가 ", Date.now(), "에 실행되었습니다.");
     const careReceiverDataRef = admin.database().ref(`/CareReceiver_list/`);
     const guardianDataRef = admin.database().ref("/Guardian_list/");
@@ -525,20 +539,17 @@ exports.onResetActivity = functions.pubsub.schedule("0 0 * * *").onRun((context 
             const userId : string | null = careReceiverSnapshot.key;
 
             // 피보호자의 cnt_list를 초기화
-            careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("cnt_list").set("0");
+            for(let i = 0; i < 24; i++) {
+                careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("cnt_list").child(i.toString()).set("0");
+            }
 
             // 피보호자의 활동량 로그를 저장
             careReceiverDataRef.child(`${userId}/ActivityData/activity`).once("value").then((activitySnapshot: DataSnapshot) => {
                 const activityData = activitySnapshot.val();
+                const date : number = new Date().getDate() - 1 ;
                 const cnt_list = activityData.cnt_list;
 
-                const activityLog = admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/activityLog`);
-                activityLog.push(
-                    {
-                        time: new Date(),
-                        cnt_list: cnt_list,
-                    }
-                );
+                admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/activityLog`).child(date.toString()).set(cnt_list);
             });
         });
     });

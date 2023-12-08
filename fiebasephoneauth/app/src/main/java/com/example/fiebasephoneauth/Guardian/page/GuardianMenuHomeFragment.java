@@ -34,6 +34,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * <h3> 보호자의 홈 메인 페이지 </h3>
@@ -332,30 +333,25 @@ public class GuardianMenuHomeFragment extends Fragment {
         }, 1000);
     }
     private void fetchAndCompareTime(){
-        docRef.child("time").addListenerForSingleValueEvent(new ValueEventListener() {
+        docRef.child("ACTIVITY_CODE").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if(snapshot.exists()){
-                    long lastActivityTime = snapshot.getValue(Long.class);
-                    long currentTime = System.currentTimeMillis();
+                    Long activityCode = snapshot.getValue(Long.class);
 
-                    long timeDifference = currentTime - lastActivityTime;
-
-                    long hoursDifference = timeDifference / 1000;
-
-                    if(hoursDifference > 0 &&hoursDifference < 8){
+                    if(activityCode == 0){
                         home_Activity_description.setText("정상 입니다.");
                     }
                     //주의
-                    else if (hoursDifference >= 8 && hoursDifference < 12) {
+                    else if(activityCode == 1){
                         home_Activity_description.setText("8시간 동안 활동이 없습니다.");
                     }
                     //경고
-                    else if(hoursDifference >= 12 && hoursDifference < 24){
+                    else if(activityCode == 2){
                         home_Activity_description.setText("12시간 동안 활동이 없습니다.");
                     }
                     //응급
-                    else if (hoursDifference >= 24) {
+                    else if(activityCode == 3 || activityCode == 4){
                         home_Activity_description.setText("24시간 동안 활동이 없습니다.");
                     }
                 }
@@ -427,19 +423,16 @@ public class GuardianMenuHomeFragment extends Fragment {
 
 
     private void compareTimeAndPerformAction() {
-        docRef.child("time").addListenerForSingleValueEvent(new ValueEventListener() {
+        docRef.child("ACTIVITY_CODE").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
                 if (snapshot.exists()) {
-                    long lastActivityTime = snapshot.getValue(Long.class);
+                    Long activityCode = snapshot.getValue(Long.class);
                     long currentTime = System.currentTimeMillis();
 
-                    long timeDifference = currentTime - lastActivityTime;
-
-                    long hoursDifference = timeDifference / 1000;
 
                     // 경고
-                    if (hoursDifference >= 12 && hoursDifference < 24) {
+                    if (activityCode == 2) {
                         if (lastWarningTime == 0) {
                             // 최초의 경고 범위에 들어온 경우
                             lastWarningTime = currentTime;
@@ -448,14 +441,14 @@ public class GuardianMenuHomeFragment extends Fragment {
                         }
                     }
                     // 응급
-                    else if (hoursDifference >= 24 && hoursDifference < 30) {
+                    else if (activityCode == 3) {
                         if (lastEmergencyTime == 0) {
                             // 최초의 응급 범위에 들어온 경우
                             lastEmergencyTime = currentTime;
                             getActivity = "no_movement_detected_2";
                             updateLatestEvent(currentTime, getActivity);
                         }
-                    } else {
+                    } else if (activityCode == 4) {
                         // 범위를 벗어난 경우
                         lastWarningTime = 0;
                         lastEmergencyTime = 0;

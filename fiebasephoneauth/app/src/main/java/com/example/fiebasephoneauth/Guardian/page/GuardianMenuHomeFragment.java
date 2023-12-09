@@ -142,7 +142,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 getOuting = snapshot.child("ActivityData").child("door").child("outing").getValue(String.class);
                                 if (getOuting.equals("1")){
                                     home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
-                                    docRef.child("time").removeValue();
+                                    //docRef.child("time").removeValue();
                                     home_Activity_description.setText(getName+"님은 현재 외출 중 입니다.");
 
                                 }
@@ -248,7 +248,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                             @Override
                             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                                 if("cnt".equals(snapshot.getKey())){
-                                    updateLastActivityTime();
+                                    //updateLastActivityTime();
                                 }
                             }
 
@@ -415,7 +415,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                             // 최초의 경고 범위에 들어온 경우
                             lastWarningTime = currentTime;
                             getActivity = "no_movement_detected_1";
-                            updateLatestEvent(currentTime, getActivity);
+                            //updateLatestEvent(currentTime, getActivity);
                         }
                     }
                     // 응급
@@ -424,7 +424,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                             // 최초의 응급 범위에 들어온 경우
                             lastEmergencyTime = currentTime;
                             getActivity = "no_movement_detected_2";
-                            updateLatestEvent(currentTime, getActivity);
+                            //updateLatestEvent(currentTime, getActivity);
                         }
                     } else if (activityCode == 4) {
                         // 범위를 벗어난 경우

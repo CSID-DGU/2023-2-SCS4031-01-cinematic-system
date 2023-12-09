@@ -6,6 +6,7 @@ import android.graphics.drawable.Drawable;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -37,6 +38,7 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
 
     ActivityGuardianActivitiesDetailBinding binding;
     LineChart lineChart;
+    Spinner spinner;
 
     List<Entry> entries = new ArrayList<>();
 
@@ -45,6 +47,7 @@ public class GuardianActivitiesDetail extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityGuardianActivitiesDetailBinding.inflate(getLayoutInflater());
         lineChart = binding.chart;
+        spinner = binding.activitySpinner;
 
         // onCreate 메서드 안에 TextView 선언 부분에 아래 코드를 추가합니다.
         activity_info = binding.activityInfo;

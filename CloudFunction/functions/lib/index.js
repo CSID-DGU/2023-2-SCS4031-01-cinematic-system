@@ -512,7 +512,7 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
     });
 });
 // 매 자정마다 피보호자의 활동량을 초기화 및 하루 활동 로그를 저장
-exports.onResetActivity = functions.pubsub.schedule("0 3 * * *").onRun((context) => {
+exports.onResetActivity = functions.pubsub.schedule("0 7 * * *").onRun((context) => {
     console.log("활동 로그 초기화가 ", Date.now(), "에 실행되었습니다.");
     const careReceiverDataRef = admin.database().ref(`/CareReceiver_list/`);
     const guardianDataRef = admin.database().ref("/Guardian_list/");
@@ -521,16 +521,29 @@ exports.onResetActivity = functions.pubsub.schedule("0 3 * * *").onRun((context)
         careReceiverListSnapshot.forEach((careReceiverSnapshot) => {
             const careReceiverData = careReceiverSnapshot.val();
             const userId = careReceiverSnapshot.key;
-            // 피보호자의 cnt_list를 초기화
-            for (let i = 0; i < 24; i++) {
-                careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("cnt_list").child(i.toString()).set("0");
-            }
             // 피보호자의 활동량 로그를 저장
             careReceiverDataRef.child(`${userId}/ActivityData/activity`).once("value").then((activitySnapshot) => {
                 const activityData = activitySnapshot.val();
-                const date = new Date().getDate() - 1;
+                const date = new Date().getDate();
                 const cnt_list = activityData.cnt_list;
                 admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/activityLog`).child(date.toString()).set(cnt_list);
+                // 피보호자의 cnt_list를 초기화
+                for (let i = 0; i < 24; i++) {
+                    careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("cnt_list").child(i.toString()).set("0");
+                }
+            });
+            // 활동량 로그가 7개가 넘는 경우 가장 오래된 로그를 삭제
+            careReceiverDataRef.child(`${userId}/ActivityData/activityLog`).once("value").then((activityLogSnapshot) => {
+                const activityLog = activityLogSnapshot.val();
+                const keys = Object.keys(activityLog);
+                const numChildren = Object.keys(activityLog).length;
+                console.log("numChildren: ", numChildren);
+                // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
+                if (numChildren > 7) {
+                    keys.sort();
+                    const oldestKey = keys[0];
+                    careReceiverDataRef.child(`${userId}/ActivityData/activityLog`).child(oldestKey).remove();
+                }
             });
         });
     });

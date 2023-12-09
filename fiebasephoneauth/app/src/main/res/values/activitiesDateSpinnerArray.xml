@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="activitiesDateSpinnerArray">
+        <item>오늘</item>
+        <item>1일 전</item>
+        <item>2일 전</item>
+        <item>3일 전</item>
+        <item>4일 전</item>
+        <item>5일 전</item>
+        <item>6일 전</item>
+        <item>7일 전</item>
+    </string-array>
+</resources>

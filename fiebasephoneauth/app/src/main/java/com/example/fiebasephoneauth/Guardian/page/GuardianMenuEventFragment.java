@@ -1,30 +1,22 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fiebasephoneauth.R;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Date;
+import java.util.Map;
 
 /**
  * <h3> 보호자 이벤트 로그 페이지 </h3>
@@ -35,17 +27,17 @@ public class GuardianMenuEventFragment extends Fragment {
     DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
 
     String getCareReceiverId;
-    private ArrayList<String> receivedDataList = new ArrayList<>();
+    private ArrayList<Map<String, Object>> receivedDataList = new ArrayList<>();
     private String receivedId;
     private ArrayList<EventCardInfo> Event_dataList = new ArrayList<>();
     private HomeEventLogAdapter Event_adapter;
     private RecyclerView recyclerViewEventLog;
 
-    public static GuardianMenuEventFragment newInstance(String idTxt, ArrayList<String> dataList) {
+    public static GuardianMenuEventFragment newInstance(String idTxt, ArrayList<Map<String, Object>> dataList) {
         GuardianMenuEventFragment fragment = new GuardianMenuEventFragment();
         Bundle args = new Bundle();
         args.putString("id",idTxt);
-        args.putStringArrayList("data_list",dataList);
+        args.putSerializable("data_list",dataList);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,13 +51,14 @@ public class GuardianMenuEventFragment extends Fragment {
         Bundle bundle = getArguments();
         receivedId = bundle.getString("id");
 
-        if(getArguments() != null){
-            receivedDataList = getArguments().getStringArrayList("data_list");
+        if(getArguments() != null && bundle.containsKey("data_list")){
+            receivedDataList = (ArrayList<Map<String, Object>>) getArguments().getSerializable("data_list");
 
-
-            for(String i : receivedDataList){
-                if(!i.equals("outing")){
-                    newRecyclerView(i);
+            if(receivedDataList != null){
+                for(Map<String, Object> data : receivedDataList){
+                    long timeValue = (long) data.get("time");
+                    String typeValue = (String) data.get("type");
+                    newRecyclerView(timeValue, typeValue);
                 }
             }
         }
@@ -82,80 +75,25 @@ public class GuardianMenuEventFragment extends Fragment {
         Event_adapter = new HomeEventLogAdapter(Event_dataList, receivedId);
         recyclerViewEventLog.setAdapter(Event_adapter);
 
-        Log.d(TAG, "onCreateView: "+receivedId);
-
-
-        databaseReference.child("Guardian_list").child(receivedId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.hasChild("CareReceiverID")){
-                    getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
-
-                    databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").addChildEventListener(new ChildEventListener() {
-                        @Override
-                        public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                        }
-
-                        @Override
-                        public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                            if(snapshot.getKey().matches("emergency")){
-                                if (snapshot.getValue().equals("1")) {
-                                    String status = "emergency";
-
-                                    newRecyclerView(status);
-                                }
-                            }
-                            else if(snapshot.getKey().matches("fire")){
-
-                                if (snapshot.getValue().equals("1")) {
-                                    String status = "fire";
-                                    newRecyclerView(status);
-                                }
-                            }
-                            Event_adapter.notifyDataSetChanged();
-                        }
-
-                        @Override
-                        public void onChildRemoved(@NonNull DataSnapshot snapshot) {
-
-                        }
-
-                        @Override
-                        public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-
-                        }
-
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-
-                        }
-                    });
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
 
         return view;
     }
 
 
-    private void newRecyclerView(String status){
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        String currentDate = dateFormat.format(calendar.getTime());
-        String currentTime = timeFormat.format(calendar.getTime());
+    private void newRecyclerView(long time, String status){
+        Date date = new Date(time);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH시 mm분 ss초");
 
-        EventCardInfo Data = new EventCardInfo(currentDate, currentTime, status);
+        String formattedDate = dateFormat.format(date);
+        String formattedTime = timeFormat.format(date);
+
+        EventCardInfo Data = new EventCardInfo(formattedDate, formattedTime, status);
         Event_dataList.add(0,Data);
         if (Event_dataList.size() > 4) {
             Event_dataList.remove(Event_dataList.size() - 1);
         }
+
     }
 }
 

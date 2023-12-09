@@ -25,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * <h3> Guardian Home Activity </h3>
@@ -84,7 +85,7 @@ public class GuardianHome extends AppCompatActivity {
             if (item.getItemId() == R.id.menu_home) {
                 transaction.replace(R.id.frameLayout, guardianMenuHomeFragment).commit();
             } else if (item.getItemId() == R.id.menu_event) {
-                ArrayList<String> dataList = guardianMenuHomeFragment.getDataList();
+                ArrayList<Map<String, Object>> dataList = guardianMenuHomeFragment.getDataList();
                 transaction.replace(R.id.frameLayout, guardianMenuEventFragment.newInstance(idTxt,dataList)).commit();
             } else if (item.getItemId() == R.id.menu_logout) {
                 //자동 로그인 정보 삭제

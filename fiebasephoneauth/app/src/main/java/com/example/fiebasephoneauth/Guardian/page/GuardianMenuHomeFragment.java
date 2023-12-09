@@ -1,6 +1,7 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
 import static android.Manifest.permission.SEND_SMS;
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -8,6 +9,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -247,6 +249,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                         if(!snapshot.hasChild("sms")) {
                             if (ContextCompat.checkSelfPermission(getActivity(), SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
                                 sendSMS(eventType, key);
+                                Log.d(TAG, "onChildAdded: " + key);
                             } else {
                                 requestPermissions(new String[]{SEND_SMS}, 1);
                             }
@@ -402,32 +405,30 @@ public class GuardianMenuHomeFragment extends Fragment {
                 SmsManager smsManager = SmsManager.getDefault();
                 String message = snapshot.child("Address").getValue(String.class) + "\n" + snapshot.child("name").getValue(String.class) + "\n";
 
-                // sms 전송된 이벤트 확인을 위해 boolean 타입의 sms key를 추가함
-                databaseReference.child("CareReceiver_list").child(getCareReceiverId)
-                        .child("ActivityData").child("latestEvent").child(key).child("sms").setValue(true);
 
                 // 응급 상황 type 별 메세지 description 발송
                 switch (type){
                     case "fire":
                         smsManager.sendTextMessage(CareGiver_phone,null,message+"화재가 발생했습니다.",null,null);
-                        smsManager.sendTextMessage(safety,null,message+"화재가 발생했습니다.",null,null);
+//                        smsManager.sendTextMessage(safety,null,message+"화재가 발생했습니다.",null,null);
                         break;
                     case "emergency":
                         smsManager.sendTextMessage(CareGiver_phone,null,message + "응급 상황 발생",null,null);
-                        smsManager.sendTextMessage(safety,null,message + "응급 상황 발생",null,null);
+//                        smsManager.sendTextMessage(safety,null,message + "응급 상황 발생",null,null);
                         break;
                     case "no_movement_detected_1":
                         smsManager.sendTextMessage(CareGiver_phone,null,message + "12시간 이상 움직임이 없습니다.",null,null);
-                        smsManager.sendTextMessage(safety,null,message + "12시간 이상 움직임이 없습니다.",null,null);
+//                        smsManager.sendTextMessage(safety,null,message + "12시간 이상 움직임이 없습니다.",null,null);
                         break;
                     case "no_movement_detected_2":
                         smsManager.sendTextMessage(CareGiver_phone,null,message + "24시간 이상 움직임이 없습니다.",null,null);
-                        smsManager.sendTextMessage(safety,null,message + "24시간 이상 움직임이 없습니다.",null,null);
+//                        smsManager.sendTextMessage(safety,null,message + "24시간 이상 움직임이 없습니다.",null,null);
                         break;
 
                 }
-
-
+                // sms 전송된 이벤트 확인을 위해 boolean 타입의 sms key를 추가함
+                databaseReference.child("CareReceiver_list").child(getCareReceiverId)
+                        .child("ActivityData").child("latestEvent").child(key).child("sms").setValue(true);
             }
 
             @Override

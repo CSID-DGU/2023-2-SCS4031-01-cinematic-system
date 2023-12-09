@@ -1,9 +1,6 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.content.Intent;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,9 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 
 public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapter.viewHolder> {
     DatabaseReference docRef = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
@@ -33,12 +28,9 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
     private String idTxt;
     private String title;
     private String[] imgSrc;
+    private String time;
 
-    Calendar calendar = Calendar.getInstance();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("MM월 dd일");
-    SimpleDateFormat timeFormat = new SimpleDateFormat("HH시 mm분");
-    String currentDate = dateFormat.format(calendar.getTime());
-    String currentTime = timeFormat.format(calendar.getTime());
+
 
     public HomeEventLogAdapter(ArrayList<EventCardInfo> arrayList,String id){
         this.EventCardInfo_arrayList = arrayList;
@@ -59,6 +51,7 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
         CardView eventLogCard;
         TextView eventLogCardTitle;
         TextView eventLogCardDescription;
+        TextView eventLogCardTime;
         ImageView eventLogCardIcon;
         Button eventLogCardSeeDetail;
         public viewHolder(View itemView){
@@ -67,6 +60,7 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
             eventLogCardIcon = itemView.findViewById(R.id.event_log_card_icon);
             eventLogCardTitle = itemView.findViewById(R.id.event_log_card_title);
             eventLogCardDescription = itemView.findViewById(R.id.event_log_card_description);
+            eventLogCardTime = itemView.findViewById(R.id.event_log_card_timestamp);
 
             eventLogCardSeeDetail = itemView.findViewById(R.id.event_log_see_detail_button);
             eventLogCardSeeDetail.setOnClickListener(this);
@@ -77,12 +71,12 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
             if(v.getId() == R.id.event_log_see_detail_button){
                 String Title = eventLogCardTitle.getText().toString();
                 String Description = eventLogCardDescription.getText().toString();
+                String Time = eventLogCardTime.getText().toString();
                 Intent intent = new Intent(v.getContext(), GuardianEventLogDetail.class);
                 intent.putExtra("Title",Title);
                 intent.putExtra("ImgSrc", imgSrc[getAdapterPosition()]);
                 intent.putExtra("Description",Description);
-                intent.putExtra("Date",currentDate);
-                intent.putExtra("Time",currentTime);
+                intent.putExtra("Time",Time);
                 intent.putExtra("id",idTxt);
 
                 // 모든 이벤트에 대해 자세히 보기 버튼 클릭했을때 동작이 됨 -> 활동량 응급상황에 대해서만 수행되도록 변경 필요함
@@ -100,7 +94,6 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
 
                     }
                 });
-                Log.d(TAG, "onClick: "+idTxt);
                 v.getContext().startActivity(intent);
             }
         }
@@ -115,11 +108,13 @@ public class HomeEventLogAdapter extends RecyclerView.Adapter<HomeEventLogAdapte
     @Override
     public void onBindViewHolder(HomeEventLogAdapter.viewHolder holder, int position){
         title = EventCardInfo_arrayList.get(position).getTitle();
+        time = EventCardInfo_arrayList.get(position).getTime();
         imgSrc[position] = EventCardInfo_arrayList.get(position).getImgSrc();
         int imgResId = holder.itemView.getContext().getResources().getIdentifier(imgSrc[position], "drawable", holder.itemView.getContext().getPackageName());
         holder.eventLogCardTitle.setText(title);
         holder.eventLogCardDescription.setText(EventCardInfo_arrayList.get(position).getDescription_short());
         holder.eventLogCardIcon.setImageResource(imgResId);
+        holder.eventLogCardTime.setText(time);
     }
 
     @Override

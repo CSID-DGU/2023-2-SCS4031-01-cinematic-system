@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -61,7 +60,6 @@ public class GuardianEventLogDetail extends AppCompatActivity {
         String Title = intent.getStringExtra("Title");
         String ImgSrc = intent.getStringExtra("ImgSrc");
         String Description = intent.getStringExtra("Description");
-        String Date = intent.getStringExtra("Date");
         String Time = intent.getStringExtra("Time");
         String idTxt = intent.getStringExtra("id");
 
@@ -84,7 +82,7 @@ public class GuardianEventLogDetail extends AppCompatActivity {
         int imgSrc = getResources().getIdentifier(ImgSrc,"drawable",getPackageName());
         emer_type_icon.setImageResource(imgSrc);
         event_description.setText(Description);
-        event_time.setText(Date + " " +Time);
+        event_time.setText(Time);
 
         databaseReference.child("Guardian_list").child(idTxt).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override

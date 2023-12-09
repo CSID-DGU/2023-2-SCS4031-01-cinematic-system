@@ -28,13 +28,11 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 /**
  * <h3> 보호자의 홈 메인 페이지 </h3>
@@ -51,28 +49,25 @@ public class GuardianMenuHomeFragment extends Fragment {
     TextView homeCareReceiverName, homeCareReceiverGenderAge, homeCareReceiverAddress;
     CardView home_Outing_cardView, home_Activity_cardView;
     TextView  home_Outing_description, home_Activity_description;
+
     Button homeSeeDetailButton;
     String getName;
     String getOuting;
     String getActivity = "정상 입니다.";
     String getCareReceiverId;
-    long time;
-    String status;
+    String idTxt;
 
-    boolean isHandlerRunning = false;
     Handler handler = new Handler();
     Handler handler1 = new Handler(Looper.getMainLooper());
 
-
-    Calendar calendar = Calendar.getInstance();
-    SimpleDateFormat dateFormat = new SimpleDateFormat("dd");
-    SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-    String current_Date = dateFormat.format(calendar.getTime());
-    String current_Time = timeFormat.format(calendar.getTime());
-
+    //이벤트 페이지로 넘길 ArrayList
     private static final int MAX_SIZE = 4;
-    private ArrayList<String> dataList;
-    String idTxt;
+    private ArrayList<Map<String,Object>> dataList;
+
+    // 외출, 활동 및 새로운 알림 리사이클러뷰
+    private ArrayList<NewNotificationData> items;
+    private HomeNewNotificationAdapter Adapter;
+    private RecyclerView recyclerViewNewNotification;
 
     public GuardianMenuHomeFragment(){
     }
@@ -80,12 +75,6 @@ public class GuardianMenuHomeFragment extends Fragment {
     public static GuardianMenuHomeFragment newInstance(){
         return new GuardianMenuHomeFragment();
     }
-
-    // 외출, 활동 및 새로운 알림 리사이클러뷰
-    private ArrayList<NewNotificationData> items;
-    private HomeNewNotificationAdapter Adapter;
-    private RecyclerView recyclerViewNewNotification;
-
 
 
     @Override
@@ -153,7 +142,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 getOuting = snapshot.child("ActivityData").child("door").child("outing").getValue(String.class);
                                 if (getOuting.equals("1")){
                                     home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
-                                    docRef.child("time").removeValue();
+                                    //docRef.child("time").removeValue();
                                     home_Activity_description.setText(getName+"님은 현재 외출 중 입니다.");
 
                                 }
@@ -220,8 +209,11 @@ public class GuardianMenuHomeFragment extends Fragment {
                             for(DataSnapshot table : snapshot.getChildren()){
                                 long time = table.child("time").getValue(Long.class);
                                 String type = table.child("type").getValue(String.class);
-                                addData(type);
                                 nonActivityRecyclerView(time,type);
+                                Map<String, Object> map = new HashMap<>();
+                                map.put("type",type);
+                                map.put("time",time);
+                                addData(map);
                             }
                         }
                     }
@@ -256,7 +248,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                             @Override
                             public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                                 if("cnt".equals(snapshot.getKey())){
-                                    updateLastActivityTime();
+                                    //updateLastActivityTime();
                                 }
                             }
 
@@ -311,15 +303,15 @@ public class GuardianMenuHomeFragment extends Fragment {
         return view;
     }
 
-    private void addData(String data){
-        dataList.add(data);
+    private void addData(Map<String, Object> map){
+        dataList.add(map);
 
         if(dataList.size() > MAX_SIZE){
             dataList.remove(0);
         }
     }
 
-    public ArrayList<String> getDataList(){
+    public ArrayList<Map<String,Object>> getDataList(){
         return dataList;
     }
     private void startHandler_log(){
@@ -398,20 +390,6 @@ public class GuardianMenuHomeFragment extends Fragment {
         }
         Adapter.notifyDataSetChanged();
     }
-    private void newRecyclerView(String status){
-        Calendar calendar = Calendar.getInstance();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
-        String currentDate = dateFormat.format(calendar.getTime());
-        String currentTime = timeFormat.format(calendar.getTime());
-
-        NewNotificationData Data = new NewNotificationData(currentDate, currentTime, status);
-        items.add(0,Data);
-        if (items.size() > 4) {
-            items.remove(items.size() - 1);
-        }
-        Adapter.notifyDataSetChanged();
-    }
 
     private void updateLastActivityTime() {
         docRef.child("time").setValue(ServerValue.TIMESTAMP, new DatabaseReference.CompletionListener() {
@@ -437,7 +415,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                             // 최초의 경고 범위에 들어온 경우
                             lastWarningTime = currentTime;
                             getActivity = "no_movement_detected_1";
-                            updateLatestEvent(currentTime, getActivity);
+                            //updateLatestEvent(currentTime, getActivity);
                         }
                     }
                     // 응급
@@ -446,7 +424,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                             // 최초의 응급 범위에 들어온 경우
                             lastEmergencyTime = currentTime;
                             getActivity = "no_movement_detected_2";
-                            updateLatestEvent(currentTime, getActivity);
+                            //updateLatestEvent(currentTime, getActivity);
                         }
                     } else if (activityCode == 4) {
                         // 범위를 벗어난 경우

@@ -46,6 +46,7 @@ public class GuardianMenuEventFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         Bundle bundle = getArguments();
         receivedId = bundle.getString("id");
 
@@ -71,7 +72,6 @@ public class GuardianMenuEventFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_guardian_menu_event, container, false);
 
         recyclerViewEventLog = (RecyclerView) view.findViewById(R.id.recent_notification_recycler_view);
-        recyclerViewEventLog.setHasFixedSize(true);
         recyclerViewEventLog.setLayoutManager(new LinearLayoutManager(getActivity()));
         Event_adapter = new HomeEventLogAdapter(Event_dataList, receivedId);
         recyclerViewEventLog.setAdapter(Event_adapter);
@@ -91,10 +91,9 @@ public class GuardianMenuEventFragment extends Fragment {
 
         EventCardInfo Data = new EventCardInfo(formattedDate, formattedTime, status);
         Event_dataList.add(0,Data);
-        if (Event_dataList.size() > 4) {
+        if (Event_dataList.size() > 8) {
             Event_dataList.remove(Event_dataList.size() - 1);
         }
-
     }
 }
 

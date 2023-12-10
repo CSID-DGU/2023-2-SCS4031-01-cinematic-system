@@ -127,7 +127,7 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
                             const numChildren = Object.keys(latestEvent).length;
                             console.log("numChildren: ", numChildren);
                             // // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
-                            if (numChildren > 4) {
+                            if (numChildren > 8) {
                                 keys.sort();
                                 const oldestKey = keys[0];
                                 careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();
@@ -234,7 +234,7 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
                 const numChildren = Object.keys(latestEvent).length;
                 console.log("numChildren: ", numChildren);
                 // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
-                if (numChildren > 4) {
+                if (numChildren > 8) {
                     keys.sort();
                     const oldestKey = keys[0];
                     careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();
@@ -394,7 +394,7 @@ exports.confirmOuting = functions.database.ref("/CareReceiver_list/{userId}/Acti
                 const numChildren = Object.keys(latestEvent).length;
                 console.log("numChildren: ", numChildren);
                 // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
-                if (numChildren > 4) {
+                if (numChildren > 8) {
                     keys.sort();
                     const oldestKey = keys[0];
                     careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();
@@ -587,7 +587,7 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
                     const numChildren = Object.keys(latestEvent).length;
                     console.log("numChildren: ", numChildren);
                     // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
-                    if (numChildren > 4) {
+                    if (numChildren > 8) {
                         keys.sort();
                         const oldestKey = keys[0];
                         careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();

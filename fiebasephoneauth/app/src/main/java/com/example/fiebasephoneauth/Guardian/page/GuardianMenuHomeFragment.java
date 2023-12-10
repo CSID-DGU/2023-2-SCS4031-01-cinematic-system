@@ -385,7 +385,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
         NewNotificationData Data = new NewNotificationData(formattedDate, formattedTime, status);
         items.add(0,Data);
-        if (items.size() > 4) {
+        if (items.size() > 8) {
             items.remove(items.size() - 1);
         }
         Adapter.notifyDataSetChanged();

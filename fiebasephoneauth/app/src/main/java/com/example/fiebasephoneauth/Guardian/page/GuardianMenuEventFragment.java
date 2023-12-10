@@ -1,6 +1,9 @@
 package com.example.fiebasephoneauth.Guardian.page;
 
+import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
+
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,8 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.fiebasephoneauth.R;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -24,9 +25,6 @@ import java.util.Map;
  * 보호자가 피보호자의 이벤트 로그를 확인할 수 있는 페이지
  */
 public class GuardianMenuEventFragment extends Fragment {
-    DatabaseReference databaseReference = FirebaseDatabase.getInstance().getReferenceFromUrl("https://fir-phoneauth-97f7e-default-rtdb.firebaseio.com/");
-
-    String getCareReceiverId;
     private ArrayList<Map<String, Object>> receivedDataList = new ArrayList<>();
     private String receivedId;
     private ArrayList<EventCardInfo> Event_dataList = new ArrayList<>();
@@ -59,9 +57,9 @@ public class GuardianMenuEventFragment extends Fragment {
                     long timeValue = (long) data.get("time");
                     String typeValue = (String) data.get("type");
 
-                    if(!typeValue.equals("outing")) {
-                        newRecyclerView(timeValue, typeValue);
-                    }
+                    newRecyclerView(timeValue, typeValue);
+
+                    Log.d(TAG, "이벤트 화면 RecyclerView 확인: "+typeValue);
                 }
             }
         }
@@ -93,7 +91,7 @@ public class GuardianMenuEventFragment extends Fragment {
 
         EventCardInfo Data = new EventCardInfo(formattedDate, formattedTime, status);
         Event_dataList.add(0,Data);
-        if (Event_dataList.size() > 8) {
+        if (Event_dataList.size() > 4) {
             Event_dataList.remove(Event_dataList.size() - 1);
         }
 

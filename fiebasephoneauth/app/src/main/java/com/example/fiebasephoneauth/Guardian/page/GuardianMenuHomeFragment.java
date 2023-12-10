@@ -148,7 +148,6 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 if (getOuting.equals("1")){
                                     home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
                                     home_Activity_description.setText(getName+"님은 현재 외출 중 입니다.");
-
                                 }
                                 else if (getOuting.equals("0")){
                                     home_Outing_description.setText(getName+"님은 현재 실내에 있습니다.");
@@ -386,7 +385,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
         NewNotificationData Data = new NewNotificationData(formattedDate, formattedTime, status);
         items.add(0,Data);
-        if (items.size() > 4) {
+        if (items.size() > 8) {
             items.remove(items.size() - 1);
         }
         Adapter.notifyDataSetChanged();

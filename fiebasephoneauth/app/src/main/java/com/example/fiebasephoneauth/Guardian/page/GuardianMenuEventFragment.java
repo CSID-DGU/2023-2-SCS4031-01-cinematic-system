@@ -93,7 +93,7 @@ public class GuardianMenuEventFragment extends Fragment {
 
         EventCardInfo Data = new EventCardInfo(formattedDate, formattedTime, status);
         Event_dataList.add(0,Data);
-        if (Event_dataList.size() > 4) {
+        if (Event_dataList.size() > 8) {
             Event_dataList.remove(Event_dataList.size() - 1);
         }
 

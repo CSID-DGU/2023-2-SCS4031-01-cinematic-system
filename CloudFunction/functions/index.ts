@@ -127,7 +127,7 @@ exports.checkEmergency = functions.database.ref("/CareReceiver_list/{userId}/Act
                             const numChildren = Object.keys(latestEvent).length;
                             console.log("numChildren: ", numChildren);
                             // // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
-                            if (numChildren > 4) {
+                            if (numChildren > 8) {
                                 keys.sort();
                                 const oldestKey = keys[0];
                                 careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();
@@ -234,7 +234,7 @@ exports.checkFire = functions.database.ref("/CareReceiver_list/{userId}/Activity
                 const numChildren = Object.keys(latestEvent).length;
                 console.log("numChildren: ", numChildren);
                 // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
-                if (numChildren > 4) {
+                if (numChildren > 8) {
                     keys.sort();
                     const oldestKey = keys[0];
                     careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();
@@ -394,7 +394,7 @@ exports.confirmOuting = functions.database.ref("/CareReceiver_list/{userId}/Acti
                 const numChildren = Object.keys(latestEvent).length;
                 console.log("numChildren: ", numChildren);
                 // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
-                if (numChildren > 4) {
+                if (numChildren > 8) {
                     keys.sort();
                     const oldestKey = keys[0];
                     careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();
@@ -459,7 +459,156 @@ exports.checkActivities = functions.database.ref("CareReceiver_list/{userId}/Act
 
             careReceiverDataRef.child("ActivityData").child("activity").child("time").set(currentTime.toString());
         });
-  });
+
+        /**
+         * 시연용 코드입니다.
+         */
+
+        // 활동량 미감지 코드 매핑
+        enum ACTIVITY_CODE {
+            "activityDetected" = 0,
+            "noActivitiesDetectedLastEightHours" = 1,
+            "noActivitiesDetectedLastTwelveHours" = 2,
+            "noActivitiesDetectedLastTwentyFourHours" = 3,
+            "outOfBound" = 4,
+        }
+
+        careReceiverDataRef.child(`ActivityData/activity`).once("value").then((activitySnapshot: DataSnapshot) => {
+            const activityData = activitySnapshot.val();
+
+            const time: number = activityData.time;
+            const currentTime: number = Date.now();
+            const timeDiffSeconds : number = Math.floor((currentTime - time) / 1000);
+
+            if (activityData.ACTIVITY_CODE === undefined) {
+                careReceiverDataRef.child(`ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.activityDetected);
+            }
+
+            if(timeDiffSeconds < 15 && activityData.ACTIVITY_CODE !== 0) {
+                careReceiverDataRef.child(`ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.activityDetected);
+            }
+
+        });
+
+
+        setTimeout(() => {
+            careReceiverDataRef.child(`ActivityData/activity`).once("value").then((activitySnapshot: DataSnapshot) => {
+                const activityData = activitySnapshot.val();
+
+                const time: number = activityData.time;
+                const currentTime: number = Date.now();
+                const timeDiffSeconds : number = Math.floor((currentTime - time) / 1000);
+
+                if (timeDiffSeconds >= 15) {
+                    careReceiverDataRef.child(`ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastEightHours);
+                }
+            });
+        }, 15000);
+
+        setTimeout(() => {
+            careReceiverDataRef.child(`ActivityData/activity`).once("value").then((activitySnapshot: DataSnapshot) => {
+                const activityData = activitySnapshot.val();
+
+                const time: number = activityData.time;
+                const currentTime: number = Date.now();
+                const timeDiffSeconds : number = Math.floor((currentTime - time) / 1000);
+
+                if (timeDiffSeconds >= 30) {
+                    careReceiverDataRef.child(`ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
+                    sendPushNotificationToGuardian(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
+                    updateLatestEvent(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
+                }
+            });
+        }, 30000);
+
+        setTimeout(() => {
+            careReceiverDataRef.child(`ActivityData/activity`).once("value").then((activitySnapshot: DataSnapshot) => {
+                const activityData = activitySnapshot.val();
+
+                const time: number = activityData.time;
+                const currentTime: number = Date.now();
+                const timeDiffSeconds : number = Math.floor((currentTime - time) / 1000);
+
+                if (timeDiffSeconds >= 45) {
+                    careReceiverDataRef.child(`ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
+                    sendPushNotificationToGuardian(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
+                    updateLatestEvent(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
+                }
+            });
+        }, 45000);
+
+
+        // 피보호자의 보호자를 찾아서 푸시 알림을 보내는 함수
+        function sendPushNotificationToGuardian(cases: ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours | ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours) {
+            let HOUR: number = 0;
+            cases === ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours ? HOUR = 12 : HOUR = 24;
+
+            guardianDataRef.once("value").then((guardianListSnapshot: DataSnapshot) => {
+                guardianListSnapshot.forEach((guardianSnapshot: DataSnapshot) => {
+                    const guardianData = guardianSnapshot.val();
+                    const carereceiverId = guardianData.CareReceiverID;
+
+                    if (carereceiverId === userId && guardianData.deviceToken) {
+                        const userNameRef = admin.database().ref(`/CareReceiver_list/${userId}/name`);
+
+                        userNameRef.once("value").then((userNameSnapshot: DataSnapshot) => {
+                            const name = userNameSnapshot.val();
+
+                            const tokenObject = guardianData.deviceToken;
+                            console.log("tokenObject: ", tokenObject);
+
+                            for (const key in tokenObject) {
+                                if (Object.prototype.hasOwnProperty.call(tokenObject, key)) {
+                                    const token = tokenObject[key];
+                                    const message = {
+                                        notification: {
+                                            title: "활동 미감지 알림",
+                                            body: `${name} 님의 활동이 ${HOUR} 시간 동안 감지되지 않습니다`,
+                                        },
+                                        token: token,
+                                    };
+                                    admin.messaging().send(message).then((response: string) => {
+                                        console.log("Message sent successfully:", response, "token: ", token);
+                                    })
+                                        .catch((error: string) => {
+                                            console.log("Error sending message: ", error);
+                                        });
+                                }
+                            }
+                        });
+                    }
+                });
+            });
+        }
+
+        // latestEvent 업데이트하는 함수
+        function updateLatestEvent(cases: ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours | ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours) {
+            let type: string = "";
+            cases === ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours ? type = "no_movement_detected_1" : type = "no_movement_detected_2";
+
+            careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot: DataSnapshot) => {
+                const latestEvent = latestEventSnapshot.val();
+                const keys = Object.keys(latestEvent);
+                const numChildren = Object.keys(latestEvent).length;
+                console.log("numChildren: ", numChildren);
+                // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
+                if (numChildren > 8) {
+                    keys.sort();
+                    const oldestKey = keys[0];
+                    careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();
+                }
+            });
+            const timeStamp = Date.now();
+            const latestEvent = admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/latestEvent`);
+            latestEvent.push(
+                {
+                    time: timeStamp,
+                    type: type
+                }
+            );
+        }
+
+    });
 
 // 주기적 활동량 감시
 exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context : any) => {
@@ -476,18 +625,20 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
         "outOfBound" = 4,
     }
 
+
+
     // 모든 피보호자에 대해 활동량을 확인
-    careReceiverDataRef.once("value").then((careReceiverListSnapshot : DataSnapshot) => {
+    careReceiverDataRef.once("value").then((careReceiverListSnapshot: DataSnapshot) => {
         careReceiverListSnapshot.forEach((careReceiverSnapshot: DataSnapshot) => {
             const careReceiverData = careReceiverSnapshot.val();
-            const userId : string | null = careReceiverSnapshot.key;
+            const userId: string | null = careReceiverSnapshot.key;
 
             // 피보호자의 활동량을 확인
             careReceiverDataRef.child(`${userId}/ActivityData/activity`).once("value").then((activitySnapshot: DataSnapshot) => {
                 const activityData = activitySnapshot.val();
 
-                const time : number = activityData.time;
-                const currentTime : number = Date.now();
+                const time: number = activityData.time;
+                const currentTime: number = Date.now();
 
                 const timeDiffHours : number = Math.floor((currentTime - time) / 1000 / 60 / 60);
 
@@ -502,7 +653,7 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
                 }
 
                 // 12시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 12 && timeDiffHours < 24 && activityData.ACTIVITY_CODE !== 2 ) {
+                if (timeDiffHours >= 12 && timeDiffHours < 24 && activityData.ACTIVITY_CODE !== 2) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
                     // 피보호자의 보호자에게 푸시 알림을 보냄 && 활동량 미감지 기록
                     sendPushNotificationToGuardian(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
@@ -530,19 +681,19 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
             });
 
             // 피보호자의 보호자를 찾아서 푸시 알림을 보내는 함수
-            function sendPushNotificationToGuardian(cases : ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours | ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours) {
-                let HOUR :number = 0;
+            function sendPushNotificationToGuardian(cases: ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours | ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours) {
+                let HOUR: number = 0;
                 cases === ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours ? HOUR = 12 : HOUR = 24;
 
-                guardianDataRef.once("value").then((guardianListSnapshot : DataSnapshot) => {
-                    guardianListSnapshot.forEach((guardianSnapshot : DataSnapshot) => {
+                guardianDataRef.once("value").then((guardianListSnapshot: DataSnapshot) => {
+                    guardianListSnapshot.forEach((guardianSnapshot: DataSnapshot) => {
                         const guardianData = guardianSnapshot.val();
                         const carereceiverId = guardianData.CareReceiverID;
 
                         if (carereceiverId === userId && guardianData.deviceToken) {
                             const userNameRef = admin.database().ref(`/CareReceiver_list/${userId}/name`);
 
-                            userNameRef.once("value").then((userNameSnapshot : DataSnapshot) => {
+                            userNameRef.once("value").then((userNameSnapshot: DataSnapshot) => {
                                 const name = userNameSnapshot.val();
 
                                 const tokenObject = guardianData.deviceToken;
@@ -558,10 +709,10 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
                                             },
                                             token: token,
                                         };
-                                        admin.messaging().send(message).then((response : string) => {
+                                        admin.messaging().send(message).then((response: string) => {
                                             console.log("Message sent successfully:", response, "token: ", token);
                                         })
-                                            .catch((error : string) => {
+                                            .catch((error: string) => {
                                                 console.log("Error sending message: ", error);
                                             });
                                     }
@@ -573,17 +724,17 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
             }
 
             // latestEvent 업데이트하는 함수
-            function updateLatestEvent(cases : ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours | ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours) {
-                let type : string = "";
+            function updateLatestEvent(cases: ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours | ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours) {
+                let type: string = "";
                 cases === ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours ? type = "no_movement_detected_1" : type = "no_movement_detected_2";
 
-                careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot : DataSnapshot) => {
+                careReceiverDataRef.child("ActivityData").child("latestEvent").once("value").then((latestEventSnapshot: DataSnapshot) => {
                     const latestEvent = latestEventSnapshot.val();
                     const keys = Object.keys(latestEvent);
                     const numChildren = Object.keys(latestEvent).length;
                     console.log("numChildren: ", numChildren);
                     // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
-                    if (numChildren > 4) {
+                    if (numChildren > 8) {
                         keys.sort();
                         const oldestKey = keys[0];
                         careReceiverDataRef.child("ActivityData").child("latestEvent").child(oldestKey).remove();
@@ -598,13 +749,12 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
                     }
                 );
             }
-
         });
     });
 });
 
 // 매 자정마다 피보호자의 활동량을 초기화 및 하루 활동 로그를 저장
-exports.onResetActivity = functions.pubsub.schedule("0 3 * * *").onRun((context : any) => {
+exports.onResetActivity = functions.pubsub.schedule("0 7 * * *").onRun((context : any) => {
     console.log("활동 로그 초기화가 ", Date.now(), "에 실행되었습니다.");
     const careReceiverDataRef = admin.database().ref(`/CareReceiver_list/`);
     const guardianDataRef = admin.database().ref("/Guardian_list/");
@@ -615,18 +765,35 @@ exports.onResetActivity = functions.pubsub.schedule("0 3 * * *").onRun((context 
             const careReceiverData = careReceiverSnapshot.val();
             const userId : string | null = careReceiverSnapshot.key;
 
-            // 피보호자의 cnt_list를 초기화
-            for(let i = 0; i < 24; i++) {
-                careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("cnt_list").child(i.toString()).set("0");
-            }
-
             // 피보호자의 활동량 로그를 저장
             careReceiverDataRef.child(`${userId}/ActivityData/activity`).once("value").then((activitySnapshot: DataSnapshot) => {
                 const activityData = activitySnapshot.val();
-                const date : number = new Date().getDate() - 1 ;
+                const year : number = new Date().getFullYear();
+                const month : number = new Date().getMonth();
+                const date : number = new Date().getDate();
+                const time : number = new Date(year, month, date).getTime();
                 const cnt_list = activityData.cnt_list;
 
-                admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/activityLog`).child(date.toString()).set(cnt_list);
+                admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/activityLog`).child(time.toString()).set(cnt_list);
+
+                // 피보호자의 cnt_list를 초기화
+                for(let i = 0; i < 24; i++) {
+                    careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("cnt_list").child(i.toString()).set("0");
+                }
+            });
+
+            // 활동량 로그가 7개가 넘는 경우 가장 오래된 로그를 삭제
+            careReceiverDataRef.child(`${userId}/ActivityData/activityLog`).once("value").then((activityLogSnapshot : DataSnapshot) => {
+                const activityLog = activityLogSnapshot.val();
+                const keys = Object.keys(activityLog);
+                const numChildren = Object.keys(activityLog).length;
+                console.log("numChildren: ", numChildren);
+                // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
+                if (numChildren > 7) {
+                    keys.sort();
+                    const oldestKey = keys[0];
+                    careReceiverDataRef.child(`${userId}/ActivityData/activityLog`).child(oldestKey).remove();
+                }
             });
         });
     });

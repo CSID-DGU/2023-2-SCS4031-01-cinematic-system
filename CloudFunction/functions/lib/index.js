@@ -524,9 +524,12 @@ exports.onResetActivity = functions.pubsub.schedule("0 7 * * *").onRun((context)
             // 피보호자의 활동량 로그를 저장
             careReceiverDataRef.child(`${userId}/ActivityData/activity`).once("value").then((activitySnapshot) => {
                 const activityData = activitySnapshot.val();
+                const year = new Date().getFullYear();
+                const month = new Date().getMonth();
                 const date = new Date().getDate();
+                const time = new Date(year, month, date).getTime();
                 const cnt_list = activityData.cnt_list;
-                admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/activityLog`).child(date.toString()).set(cnt_list);
+                admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/activityLog`).child(time.toString()).set(cnt_list);
                 // 피보호자의 cnt_list를 초기화
                 for (let i = 0; i < 24; i++) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("cnt_list").child(i.toString()).set("0");

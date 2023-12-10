@@ -414,35 +414,37 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
                 const activityData = activitySnapshot.val();
                 const time = activityData.time;
                 const currentTime = Date.now();
-                const timeDiffHours = Math.floor((currentTime - time) / 1000 / 60 / 60);
+                //const timeDiffHours : number = Math.floor((currentTime - time) / 1000 / 60 / 60);
+                // 임시 수정 코드
+                const timeDiffHours = Math.floor((currentTime - time) / 1000);
                 // ACTIVITY_CODE 필드가 없는 경우 0으로 초기화
                 if (activityData.ACTIVITY_CODE === undefined) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.activityDetected);
                 }
                 // 8시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 8 && timeDiffHours < 12 && activityData.ACTIVITY_CODE !== 1) {
+                if (timeDiffHours >= 50 && timeDiffHours < 110 && activityData.ACTIVITY_CODE !== 1) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastEightHours);
                 }
                 // 12시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 12 && timeDiffHours < 24 && activityData.ACTIVITY_CODE !== 2) {
+                if (timeDiffHours >= 110 && timeDiffHours < 170 && activityData.ACTIVITY_CODE !== 2) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
                     // 피보호자의 보호자에게 푸시 알림을 보냄 && 활동량 미감지 기록
                     sendPushNotificationToGuardian(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
                     updateLatestEvent(ACTIVITY_CODE.noActivitiesDetectedLastTwelveHours);
                 }
                 // 24시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 24 && timeDiffHours < 30 && activityData.ACTIVITY_CODE !== 3) {
+                if (timeDiffHours >= 170 && timeDiffHours < 230 && activityData.ACTIVITY_CODE !== 3) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
                     // 피보호자의 보호자에게 푸시 알림을 보냄 && 활동량 미감지 기록
                     sendPushNotificationToGuardian(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
                     updateLatestEvent(ACTIVITY_CODE.noActivitiesDetectedLastTwentyFourHours);
                 }
                 // 30시간 이상 활동량이 감지되지 않았을 때
-                if (timeDiffHours >= 30 && activityData.ACTIVITY_CODE !== 4) {
+                if (timeDiffHours >= 230 && activityData.ACTIVITY_CODE !== 4) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.outOfBound);
                 }
                 // 다시 활동을 감지했을 때 ACTIVITY_CODE를 0으로 초기화
-                if (timeDiffHours < 8 && activityData.ACTIVITY_CODE !== 0) {
+                if (timeDiffHours < 50 && activityData.ACTIVITY_CODE !== 0) {
                     careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("ACTIVITY_CODE").set(ACTIVITY_CODE.activityDetected);
                 }
             });
@@ -510,7 +512,7 @@ exports.onTracking = functions.pubsub.schedule("every 1 minutes").onRun((context
     });
 });
 // 매 자정마다 피보호자의 활동량을 초기화 및 하루 활동 로그를 저장
-exports.onResetActivity = functions.pubsub.schedule("0 3 * * *").onRun((context) => {
+exports.onResetActivity = functions.pubsub.schedule("0 7 * * *").onRun((context) => {
     console.log("활동 로그 초기화가 ", Date.now(), "에 실행되었습니다.");
     const careReceiverDataRef = admin.database().ref(`/CareReceiver_list/`);
     const guardianDataRef = admin.database().ref("/Guardian_list/");
@@ -519,16 +521,32 @@ exports.onResetActivity = functions.pubsub.schedule("0 3 * * *").onRun((context)
         careReceiverListSnapshot.forEach((careReceiverSnapshot) => {
             const careReceiverData = careReceiverSnapshot.val();
             const userId = careReceiverSnapshot.key;
-            // 피보호자의 cnt_list를 초기화
-            for (let i = 0; i < 24; i++) {
-                careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("cnt_list").child(i.toString()).set("0");
-            }
             // 피보호자의 활동량 로그를 저장
             careReceiverDataRef.child(`${userId}/ActivityData/activity`).once("value").then((activitySnapshot) => {
                 const activityData = activitySnapshot.val();
-                const date = new Date().getDate() - 1;
+                const year = new Date().getFullYear();
+                const month = new Date().getMonth();
+                const date = new Date().getDate();
+                const time = new Date(year, month, date).getTime();
                 const cnt_list = activityData.cnt_list;
-                admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/activityLog`).child(date.toString()).set(cnt_list);
+                admin.database().ref(`/CareReceiver_list/${userId}/ActivityData/activityLog`).child(time.toString()).set(cnt_list);
+                // 피보호자의 cnt_list를 초기화
+                for (let i = 0; i < 24; i++) {
+                    careReceiverDataRef.child(`${userId}/ActivityData/activity`).child("cnt_list").child(i.toString()).set("0");
+                }
+            });
+            // 활동량 로그가 7개가 넘는 경우 가장 오래된 로그를 삭제
+            careReceiverDataRef.child(`${userId}/ActivityData/activityLog`).once("value").then((activityLogSnapshot) => {
+                const activityLog = activityLogSnapshot.val();
+                const keys = Object.keys(activityLog);
+                const numChildren = Object.keys(activityLog).length;
+                console.log("numChildren: ", numChildren);
+                // 먼저 생성된 기록을 삭제하고 새로운 기록을 추가
+                if (numChildren > 7) {
+                    keys.sort();
+                    const oldestKey = keys[0];
+                    careReceiverDataRef.child(`${userId}/ActivityData/activityLog`).child(oldestKey).remove();
+                }
             });
         });
     });

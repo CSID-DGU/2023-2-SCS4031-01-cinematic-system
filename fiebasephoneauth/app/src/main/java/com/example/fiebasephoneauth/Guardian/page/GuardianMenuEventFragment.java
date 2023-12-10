@@ -58,7 +58,10 @@ public class GuardianMenuEventFragment extends Fragment {
                 for(Map<String, Object> data : receivedDataList){
                     long timeValue = (long) data.get("time");
                     String typeValue = (String) data.get("type");
-                    newRecyclerView(timeValue, typeValue);
+
+                    if(!typeValue.equals("outing")) {
+                        newRecyclerView(timeValue, typeValue);
+                    }
                 }
             }
         }

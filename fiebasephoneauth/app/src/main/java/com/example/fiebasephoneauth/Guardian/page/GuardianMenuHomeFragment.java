@@ -246,7 +246,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                         String key = snapshot.getKey();
                         String eventType = snapshot.child("type").getValue(String.class);
-                        if(!snapshot.hasChild("sms")) {
+                        if(!snapshot.hasChild("sms") && !eventType.equals("outing")) {
                             if (ContextCompat.checkSelfPermission(getActivity(), SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
                                 sendSMS(eventType, key);
                                 Log.d(TAG, "onChildAdded: " + key);

@@ -226,7 +226,7 @@
         android:layout_marginTop="10dp"
         android:scrollbars="vertical"
         app:layout_constraintTop_toBottomOf="@+id/new_notification"
-        card_view:layout_constraintBottom_toTopOf="@+id/bottom"
+        app:layout_constraintBottom_toTopOf="@+id/bottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         />
@@ -237,7 +237,6 @@
         android:layout_height="85dp"
         app:cardBackgroundColor="#FAFAFA"
         app:layout_constraintBottom_toBottomOf="parent"
-
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

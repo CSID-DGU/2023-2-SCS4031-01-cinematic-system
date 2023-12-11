@@ -222,11 +222,21 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerview_home_new_notification"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="0dp"
         android:layout_marginTop="10dp"
+        android:scrollbars="vertical"
         app:layout_constraintTop_toBottomOf="@+id/new_notification"
+        app:layout_constraintBottom_toTopOf="@+id/bottom"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/bottom"
+        android:layout_width="match_parent"
+        android:layout_height="85dp"
+        app:cardBackgroundColor="#FAFAFA"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

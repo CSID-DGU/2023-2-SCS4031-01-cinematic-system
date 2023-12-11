@@ -65,7 +65,7 @@ public class GuardianMenuHomeFragment extends Fragment {
     Handler handler1 = new Handler(Looper.getMainLooper());
 
     //이벤트 페이지로 넘길 ArrayList
-    private static final int MAX_SIZE = 4;
+    private static final int MAX_SIZE = 8;
     private ArrayList<Map<String,Object>> dataList;
 
     // 외출, 활동 및 새로운 알림 리사이클러뷰
@@ -148,7 +148,6 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 if (getOuting.equals("1")){
                                     home_Outing_description.setText(getName+"님은 현재 외출 중 입니다.");
                                     home_Activity_description.setText(getName+"님은 현재 외출 중 입니다.");
-
                                 }
                                 else if (getOuting.equals("0")){
                                     home_Outing_description.setText(getName+"님은 현재 실내에 있습니다.");
@@ -167,6 +166,47 @@ public class GuardianMenuHomeFragment extends Fragment {
                         }
                     });
                 }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+        //활동 로그 수정
+        Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                databaseReference.child("CareReceiver_list").child(getCareReceiverId)
+                        .child("ActivityData").child("activity").child("ACTIVITY_CODE").addValueEventListener(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if(snapshot.exists()){
+                                    Long activityCode = snapshot.getValue(Long.class);
+
+                                    if(activityCode == 0){
+                                        home_Activity_description.setText("정상 입니다.");
+                                    }
+                                    //주의
+                                    else if(activityCode == 1){
+                                        home_Activity_description.setText("8시간 동안 활동이 없습니다.");
+                                    }
+                                    //경고
+                                    else if(activityCode == 2){
+                                        home_Activity_description.setText("12시간 동안 활동이 없습니다.");
+                                    }
+                                    //응급
+                                    else if(activityCode == 3 || activityCode == 4){
+                                        home_Activity_description.setText("24시간 동안 활동이 없습니다.");
+                                    }
+                                }
+                            }
+
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+
+                            }
+                        });
             }
 
             @Override
@@ -216,11 +256,14 @@ public class GuardianMenuHomeFragment extends Fragment {
                                 long time = table.child("time").getValue(Long.class);
                                 String type = table.child("type").getValue(String.class);
                                 nonActivityRecyclerView(time,type);
-                                Map<String, Object> map = new HashMap<>();
-                                map.put("type",type);
-                                map.put("time",time);
-                                addData(map);
 
+                                if(!type.equals("outing")) {
+                                    Map<String, Object> map = new HashMap<>();
+                                    map.put("type", type);
+                                    map.put("time", time);
+                                    addData(map);
+                                    Log.d(TAG, "홈 화면 RecyclerView 목록: "+type);
+                                }
                             }
                         }
                     }
@@ -238,6 +281,7 @@ public class GuardianMenuHomeFragment extends Fragment {
             }
         });
 
+        // SMS 전송 메시지 전송
         Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -246,7 +290,7 @@ public class GuardianMenuHomeFragment extends Fragment {
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
                         String key = snapshot.getKey();
                         String eventType = snapshot.child("type").getValue(String.class);
-                        if(!snapshot.hasChild("sms")) {
+                        if(!snapshot.hasChild("sms") && !eventType.equals("outing")) {
                             if (ContextCompat.checkSelfPermission(getActivity(), SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
                                 sendSMS(eventType, key);
                                 Log.d(TAG, "onChildAdded: " + key);
@@ -283,8 +327,6 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
-
-        startHandler_log();
 
         homeSeeDetailButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -324,51 +366,6 @@ public class GuardianMenuHomeFragment extends Fragment {
         return dataList;
     }
 
-    /**
-     * 활동 로그 1초 마다 업데이트
-     * fetchAndCompareTime() 메소드에서 사용하는 Listener를 Child Listener로 변경하면 안써도 될 거 같음 (회의 후 수정)
-     */
-    private void startHandler_log(){
-        handler1.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                fetchAndCompareTime();
-
-                startHandler_log();
-            }
-        }, 1000);
-    }
-    private void fetchAndCompareTime(){
-        docRef.child("ACTIVITY_CODE").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
-                    Long activityCode = snapshot.getValue(Long.class);
-
-                    if(activityCode == 0){
-                        home_Activity_description.setText("정상 입니다.");
-                    }
-                    //주의
-                    else if(activityCode == 1){
-                        home_Activity_description.setText("8시간 동안 활동이 없습니다.");
-                    }
-                    //경고
-                    else if(activityCode == 2){
-                        home_Activity_description.setText("12시간 동안 활동이 없습니다.");
-                    }
-                    //응급
-                    else if(activityCode == 3 || activityCode == 4){
-                        home_Activity_description.setText("24시간 동안 활동이 없습니다.");
-                    }
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-    }
     //화면을 벗어나면 사용한 ArrayList 초기화
     private void clearData(){
         items.clear();
@@ -386,7 +383,7 @@ public class GuardianMenuHomeFragment extends Fragment {
 
         NewNotificationData Data = new NewNotificationData(formattedDate, formattedTime, status);
         items.add(0,Data);
-        if (items.size() > 4) {
+        if (items.size() > 8) {
             items.remove(items.size() - 1);
         }
         Adapter.notifyDataSetChanged();

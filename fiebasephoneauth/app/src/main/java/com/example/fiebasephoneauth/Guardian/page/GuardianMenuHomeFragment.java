@@ -219,21 +219,43 @@ public class GuardianMenuHomeFragment extends Fragment {
         Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("door")
-                        .child("outing").addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                                String outingValue = snapshot.getValue(String.class);
-                                if(outingValue.equals("0")){
-                                    home_Activity_description.setText("정상 입니다.");
+                if(snapshot.hasChild("CareReceiverID")) {
+                    getCareReceiverId = snapshot.child("CareReceiverID").getValue(String.class);
+
+                    docRef = databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activity");
+
+                    // 이 부분에서 activityCode 값을 가져옵니다.
+                    databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("activityCode")
+                            .addListenerForSingleValueEvent(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                    if (snapshot.exists()) {
+                                        activityCode = snapshot.getValue(Long.class);
+
+                                        databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("door")
+                                                .child("outing").addValueEventListener(new ValueEventListener() {
+                                                    @Override
+                                                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                                        String outingValue = snapshot.getValue(String.class);
+                                                        if(outingValue.equals("0") && activityCode == 0){
+                                                            home_Activity_description.setText("정상 입니다.");
+                                                        }
+                                                    }
+
+                                                    @Override
+                                                    public void onCancelled(@NonNull DatabaseError error) {
+                                                        // 처리 중 에러 발생 시 작성할 코드
+                                                    }
+                                                });
+                                    }
                                 }
-                            }
 
-                            @Override
-                            public void onCancelled(@NonNull DatabaseError error) {
-
-                            }
-                        });
+                                @Override
+                                public void onCancelled(@NonNull DatabaseError error) {
+                                    // 처리 중 에러 발생 시 작성할 코드
+                                }
+                            });
+                }
             }
 
             @Override
@@ -288,16 +310,19 @@ public class GuardianMenuHomeFragment extends Fragment {
                 databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("latestEvent").addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        String key = snapshot.getKey();
-                        String eventType = snapshot.child("type").getValue(String.class);
-                        if(!snapshot.hasChild("sms") && !eventType.equals("outing")) {
-                            if (ContextCompat.checkSelfPermission(getActivity(), SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-                                sendSMS(eventType, key);
-                                Log.d(TAG, "onChildAdded: " + key);
-                            } else {
-                                requestPermissions(new String[]{SEND_SMS}, 1);
+                        if (isAdded()) {
+                            String key = snapshot.getKey();
+                            String eventType = snapshot.child("type").getValue(String.class);
+                            if (!snapshot.hasChild("sms") && !eventType.equals("outing")) {
+                                if (ContextCompat.checkSelfPermission(requireActivity(), SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+                                    sendSMS(eventType, key);
+                                    Log.d(TAG, "onChildAdded: " + key);
+                                } else {
+                                    requestPermissions(new String[]{SEND_SMS}, 1);
+                                }
                             }
                         }
+
 
                     }
 
@@ -353,6 +378,8 @@ public class GuardianMenuHomeFragment extends Fragment {
 
         return view;
     }
+
+    private long activityCode;
 
     private void addData(Map<String, Object> map){
         dataList.add(map);

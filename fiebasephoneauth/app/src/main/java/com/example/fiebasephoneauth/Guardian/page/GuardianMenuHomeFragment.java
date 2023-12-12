@@ -414,19 +414,19 @@ public class GuardianMenuHomeFragment extends Fragment {
                 switch (type){
                     case "fire":
                         smsManager.sendTextMessage(CareGiver_phone,null,message+"화재가 발생했습니다.",null,null);
-//                        smsManager.sendTextMessage(safety,null,message+"화재가 발생했습니다.",null,null);
+                        smsManager.sendTextMessage(safety,null,message+"화재가 발생했습니다.",null,null);
                         break;
                     case "emergency":
                         smsManager.sendTextMessage(CareGiver_phone,null,message + "응급 상황 발생",null,null);
-//                        smsManager.sendTextMessage(safety,null,message + "응급 상황 발생",null,null);
+                        smsManager.sendTextMessage(safety,null,message + "응급 상황 발생",null,null);
                         break;
                     case "no_movement_detected_1":
                         smsManager.sendTextMessage(CareGiver_phone,null,message + "12시간 이상 움직임이 없습니다.",null,null);
-//                        smsManager.sendTextMessage(safety,null,message + "12시간 이상 움직임이 없습니다.",null,null);
+                        smsManager.sendTextMessage(safety,null,message + "12시간 이상 움직임이 없습니다.",null,null);
                         break;
                     case "no_movement_detected_2":
                         smsManager.sendTextMessage(CareGiver_phone,null,message + "24시간 이상 움직임이 없습니다.",null,null);
-//                        smsManager.sendTextMessage(safety,null,message + "24시간 이상 움직임이 없습니다.",null,null);
+                        smsManager.sendTextMessage(safety,null,message + "24시간 이상 움직임이 없습니다.",null,null);
                         break;
 
                 }

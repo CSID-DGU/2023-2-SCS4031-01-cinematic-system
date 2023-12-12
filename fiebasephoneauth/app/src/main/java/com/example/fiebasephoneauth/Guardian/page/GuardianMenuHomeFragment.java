@@ -3,6 +3,9 @@ package com.example.fiebasephoneauth.Guardian.page;
 import static android.Manifest.permission.SEND_SMS;
 import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
 
+import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
@@ -60,6 +63,9 @@ public class GuardianMenuHomeFragment extends Fragment {
     String getOuting;
     String getCareReceiverId;
     String idTxt;
+    String getCareReceiverAddress;
+    String CareGiver_phone;
+    String safety = "+821088067574";
 
     //fetchAndCompareTime()메소드 작동할 핸들러 생성
     Handler handler1 = new Handler(Looper.getMainLooper());
@@ -139,8 +145,12 @@ public class GuardianMenuHomeFragment extends Fragment {
 
                             homeCareReceiverGenderAge.setText(getCareReceiverAge+"/"+getCareReceiverGender);
 
-                            String getCareReceiverAddress = snapshot.child("Address").getValue(String.class);
+                            getCareReceiverAddress = snapshot.child("Address").getValue(String.class);
                             homeCareReceiverAddress.setText(getCareReceiverAddress);
+
+                            //비상연락
+                            CareGiver_phone = snapshot.child("CareGiverPhoneNum").getValue(String.class);
+
 
 
                             if(snapshot.hasChild("ActivityData")){
@@ -282,49 +292,55 @@ public class GuardianMenuHomeFragment extends Fragment {
 
             }
         });
-
-        // SMS 전송 메시지 전송
+        /**
+         * sms 중복 전송 오류 해결중
+         */
         Gaurdian_Ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot snapshot) {
-                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("latestEvent").addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                        if (isAdded()) {
-                            String key = snapshot.getKey();
-                            String eventType = snapshot.child("type").getValue(String.class);
-                            if (!snapshot.hasChild("sms") && !eventType.equals("outing")) {
-                                if (ContextCompat.checkSelfPermission(requireActivity(), SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
-                                    sendSMS(eventType, key);
-                                    Log.d(TAG, "onChildAdded: " + key);
-                                } else {
-                                    requestPermissions(new String[]{SEND_SMS}, 1);
+                databaseReference.child("CareReceiver_list").child(getCareReceiverId).child("ActivityData").child("latestEvent")
+                        .addChildEventListener(new ChildEventListener() {
+                            @Override
+                            public void onChildAdded(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                                if(isAdded()){
+                                    //latestEvent에 추가된 새로운 key값의 자식인 type에 대한 value를 가져옴
+                                    String newType = snapshot.child("type").getValue(String.class);
+                                    Boolean smsField = snapshot.child("sms").getValue(Boolean.class);
+
+                                    if(smsField != null && smsField){
+                                        return;
+                                    }
+                                    if (ContextCompat.checkSelfPermission(requireActivity(), SEND_SMS) == PackageManager.PERMISSION_GRANTED) {
+                                        if(!"outing".equals(newType) && smsField == null){
+                                            sendSMS(newType,snapshot.getKey());
+                                        }
+                                    } else {
+                                        requestPermissions(new String[]{SEND_SMS}, 1);
+                                    }
+
                                 }
                             }
-                        }
 
+                            @Override
+                            public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-                    }
+                            }
 
-                    @Override
-                    public void onChildChanged(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
-                    }
+                            @Override
+                            public void onChildRemoved(@NonNull DataSnapshot snapshot) {
 
-                    @Override
-                    public void onChildRemoved(@NonNull DataSnapshot snapshot) {
+                            }
 
-                    }
+                            @Override
+                            public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
 
-                    @Override
-                    public void onChildMoved(@NonNull DataSnapshot snapshot, @Nullable String previousChildName) {
+                            }
 
-                    }
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
 
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError error) {
-
-                    }
-                });
+                            }
+                        });
             }
 
             @Override
@@ -395,52 +411,58 @@ public class GuardianMenuHomeFragment extends Fragment {
         }
         Adapter.notifyDataSetChanged();
     }
-    // SMS 전송 메소드
+    //SMS 전송 메소드
     private void sendSMS(String type, String key){
-        databaseReference.child("CareReceiver_list").child(getCareReceiverId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                //지자체 담당자(DB에 저장된 CareGiver_phone 값)
-                String CareGiver_phone = snapshot.child("CareGiverPhoneNum").getValue(String.class);
-                //안전센터(119) 시연을 위해 팀원 중 한명의 Phone 번호로
-                String safety = "+821088067574";
+        // SMS 서비스 연결 및 피보호자 필수 정보
+        SmsManager smsManager = SmsManager.getDefault();
+        String message = getCareReceiverAddress + "\n" + getName + "\n";
 
-                // SMS 서비스 연결 및 피보호자 필수 정보
-                SmsManager smsManager = SmsManager.getDefault();
-                String message = snapshot.child("Address").getValue(String.class) + "\n" + snapshot.child("name").getValue(String.class) + "\n";
+        PendingIntent sentIntent = PendingIntent.getBroadcast(getActivity(),0,new Intent("SMS_SENT"),PendingIntent.FLAG_MUTABLE);
 
+        // 응급 상황 type 별 메세지 description 발송
+        switch (type){
+            case "fire":
+                smsManager.sendTextMessage("+821049365174",null,message+"화재가 발생했습니다.",sentIntent,null);
+//                smsManager.sendTextMessage(safety,null,message+"화재가 발생했습니다.",null,null);
+                Log.d(TAG, "sendSMS: 메시지 전송!");
+                break;
+            case "emergency":
+                smsManager.sendTextMessage("+821049365174",null,message + "응급 상황 발생",sentIntent,null);
+//                smsManager.sendTextMessage(safety,null,message + "응급 상황 발생",null,null);
+                break;
+            case "no_movement_detected_1":
+                smsManager.sendTextMessage("+821049365174",null,message + "12시간 이상 움직임이 없습니다.",sentIntent,null);
+//                smsManager.sendTextMessage(safety,null,message + "12시간 이상 움직임이 없습니다.",null,null);
+                Log.d(TAG, "sendSMS: 메시지 전송!");
+                break;
+            case "no_movement_detected_2":
+                smsManager.sendTextMessage("+821049365174",null,message + "24시간 이상 움직임이 없습니다.",sentIntent,null);
+//                smsManager.sendTextMessage(safety,null,message + "24시간 이상 움직임이 없습니다.",null,null);
+                Log.d(TAG, "sendSMS: 메시지 전송!");
+                break;
 
-                // 응급 상황 type 별 메세지 description 발송
-                switch (type){
-                    case "fire":
-                        smsManager.sendTextMessage(CareGiver_phone,null,message+"화재가 발생했습니다.",null,null);
-                        smsManager.sendTextMessage(safety,null,message+"화재가 발생했습니다.",null,null);
-                        break;
-                    case "emergency":
-                        smsManager.sendTextMessage(CareGiver_phone,null,message + "응급 상황 발생",null,null);
-                        smsManager.sendTextMessage(safety,null,message + "응급 상황 발생",null,null);
-                        break;
-                    case "no_movement_detected_1":
-                        smsManager.sendTextMessage(CareGiver_phone,null,message + "12시간 이상 움직임이 없습니다.",null,null);
-                        smsManager.sendTextMessage(safety,null,message + "12시간 이상 움직임이 없습니다.",null,null);
-                        break;
-                    case "no_movement_detected_2":
-                        smsManager.sendTextMessage(CareGiver_phone,null,message + "24시간 이상 움직임이 없습니다.",null,null);
-                        smsManager.sendTextMessage(safety,null,message + "24시간 이상 움직임이 없습니다.",null,null);
-                        break;
-
-                }
-                // sms 전송된 이벤트 확인을 위해 boolean 타입의 sms key를 추가함
-                databaseReference.child("CareReceiver_list").child(getCareReceiverId)
-                        .child("ActivityData").child("latestEvent").child(key).child("sms").setValue(true);
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
+        }
+        
+        boolean isSMS = true;
+        if(isSMS){
+            databaseReference.child("CareReceiver_list").child(getCareReceiverId)
+                    .child("ActivityData").child("latestEvent").child(key).child("sms").setValue(true);
+        }
+        else{
+            Log.d(TAG, "sendSMS: 전송 실패!");
+        }
     }
+    private BroadcastReceiver sentReceiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if(getResultCode() == getActivity().RESULT_OK){
+                Log.d(TAG, "onReceive: 전송 성공!");
+            }
+            else{
+                Log.d(TAG, "onReceive: 전송 실패!");
+            }
+        }
+    };
 }
 
 class NewNotificationData {
